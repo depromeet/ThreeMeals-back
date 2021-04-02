@@ -1,0 +1,25 @@
+# Dependency directories
+node_modules/
+package-lock.json
+
+
+# history
+.history/
+
+# dist
+dist/*
+
+# logs
+logs
+log
+*.log
+.log/
+
+
+# dotenv environment variables file
+.env
+.env.test
+
+
+# Runtime data
+*.seed
