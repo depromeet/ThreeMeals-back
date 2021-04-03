@@ -1,5 +1,5 @@
 import {Request, Response} from 'express';
-import express = require('express');
+import express from 'express';
 
 
 // db
@@ -7,21 +7,23 @@ import {sequelize} from './models';
 
 // middleware
 import * as middleware from './middleware';
-import hpp = require('hpp')
-import helmet = require('helmet')
-import morgan = require('morgan')
-import cors = require('cors')
+import helmet from 'helmet';
+import morgan from 'morgan';
+import cors from 'cors';
+
 
 // cookie, session
-import cookieParser = require('cookie-parser')
-import session = require('express-session')
+import cookieParser from 'cookie-Parser';
+import session from 'express-session';
+
 
 // passport
-import passport = require('passport')
+
+import passport from 'passport';
 import * as dotenv from 'dotenv';
 
 // router
-import Router from './router/index';
+import router from './router/index';
 
 // apollo
 import {ApolloServer} from 'apollo-server-express';
@@ -33,11 +35,11 @@ dotenv.config();
 
 
 export const server: ApolloServer = new ApolloServer({
-  typeDefs: _typedefs,
-  resolvers: _resolvers,
-  playground: true,
-  introspection: true,
-  });
+    typeDefs: _typedefs,
+    resolvers: _resolvers,
+    playground: true,
+    introspection: true,
+});
 
 
 export class App {
@@ -66,24 +68,24 @@ export class App {
         this.status404();
 
         this.errorHandler();
-      }
+    }
 
-      apollo(app : express.Application) {
+    apollo(app : express.Application) {
         server.applyMiddleware({app});
-      }
+    }
 
 
-      dbConnection() {
+    dbConnection() {
         sequelize.sync({force: false})
-        .then(() => {
-        console.log('데이터베이스 연결 성공');
-        })
-        .catch((e: Error) => {
-        console.error(e);
-        });
-      }
+            .then(() => {
+                console.log('데이터베이스 연결 성공');
+            })
+            .catch((e: Error) => {
+                console.error(e);
+            });
+    }
 
-      setSession() {
+    setSession() {
         this.app.use(cookieParser(process.env.COOKIE_SECRET));
         this.app.use(session({
             secret: 'depro',
@@ -93,45 +95,34 @@ export class App {
                 maxAge: 2000 * 60 * 60, // 지속시간 2시간
             },
             name: 'rnbck',
-            }));
-      }
+        }));
+    }
 
 
-      setMiddleWare() {
+    setMiddleWare() {
         this.app.use(express.json());
         this.app.use(express.urlencoded({extended: true}));
         this.app.use(cors());
-        this.app.use(hpp());
         this.app.use(helmet());
         this.app.use(morgan('dev'));
         this.app.use(passport.initialize());
         this.app.use(passport.session());
-      }
+    }
 
 
-      setStatic() {
+    setStatic() {
         this.app.use('/', express.static('uploads'));
-      }
+    }
 
-      getRouting() {
-        this.app.use(Router);
-      }
+    getRouting() {
+        this.app.use(router);
+    }
 
-      status404() {
+    status404() {
         this.app.use(middleware.notFound);
-      }
+    }
 
-      errorHandler() {
-          this.app.use(middleware.errorHandler);
-      }
+    errorHandler() {
+        this.app.use(middleware.errorHandler);
+    }
 }
-
-
-// const app = new App().app;
-
-// const PORT = 4000;
-
-// app.listen({port: PORT}, () =>
-//     console.log(`Server ready at http://localhost:${PORT}${server.graphqlPath}`),
-// );
-

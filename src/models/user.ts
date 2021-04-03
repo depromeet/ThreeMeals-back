@@ -21,47 +21,47 @@ class User extends Model {
 
 User.init({
 
-  nickname: {
-    type: DataTypes.STRING(20), // 20글자 이하
-    allowNull: false, // 필수
-  },
+    nickname: {
+        type: DataTypes.STRING(20), // 20글자 이하
+        allowNull: false, // 필수
+    },
 
-  userId: {
-    type: DataTypes.STRING(20),
-    allowNull: false,
-    unique: true, // 고유한 값
-  },
+    userId: {
+        type: DataTypes.STRING(20),
+        allowNull: false,
+        unique: true, // 고유한 값
+    },
 
-  password: {
-    type: DataTypes.STRING(100), // 100글자 이하
-    allowNull: false,
-  },
-  createdAt: {
-    type: DataTypes.DATE,
-    allowNull: false,
-    defaultValue: DataTypes.NOW,
-  },
-  updatedAt: {
-    type: DataTypes.DATE,
-    allowNull: false,
-    defaultValue: DataTypes.NOW,
-  },
+    password: {
+        type: DataTypes.STRING(100), // 100글자 이하
+        allowNull: false,
+    },
+    createdAt: {
+        type: DataTypes.DATE,
+        allowNull: false,
+        defaultValue: DataTypes.NOW,
+    },
+    updatedAt: {
+        type: DataTypes.DATE,
+        allowNull: false,
+        defaultValue: DataTypes.NOW,
+    },
 },
 
 {
-  sequelize,
-  modelName: 'User',
-  tableName: 'user',
-  charset: 'utf8',
-  collate: 'utf8_general_ci', // 한글이 저장돼요
+    sequelize,
+    modelName: 'User',
+    tableName: 'user',
+    charset: 'utf8',
+    collate: 'utf8_general_ci', // 한글이 저장돼요
 });
 
 export const associate = (db: dbType) => {
-  db.User.hasMany(db.Post, {foreignKey: 'userId',
-    sourceKey: 'id', as: 'Posts'});
+    db.User.hasMany(db.Post, {foreignKey: 'userId',
+        sourceKey: 'id', as: 'Posts'});
 
-  db.User.hasMany(db.Comment, {foreignKey: 'userId',
-   sourceKey: 'id', as: 'Comment'});
+    db.User.hasMany(db.Comment, {foreignKey: 'userId',
+        sourceKey: 'id', as: 'Comment'});
 };
 
 export default User;

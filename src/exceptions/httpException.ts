@@ -1,13 +1,14 @@
-class httpException extends Error {
+class HttpException extends Error {
   message: string;
   status: number;
   constructor(message: string, status: number) {
-    super();
-    Error.captureStackTrace(this, this.constructor);
+      super();
+      Error.captureStackTrace(this, this.constructor);
 
-    this.message = message || 'server problem';
-    this.status = status || 500;
+      this.message = message || 'server problem';
+      this.status = status || 500;
   }
 }
 
-export default httpException;
+export default HttpException;
+

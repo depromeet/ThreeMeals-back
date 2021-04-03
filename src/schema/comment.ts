@@ -18,16 +18,16 @@ const commentTypeDefs = gql`
 const commentResolvers = {
     Query: {
         comments: async (parent: any, _args: any, context: any) => {
-          const comment = await Comment.findAll({});
-          if (!comment) {
-            throw new NotFoundException('no comment');
-          }
-          return comment;
-      },
+            const comment = await Comment.findAll({});
+            if (!comment) {
+                throw new NotFoundException('no comment');
+            }
+            return comment;
+        },
     },
-  };
+};
 
 
 export {
-  commentTypeDefs, commentResolvers,
+    commentTypeDefs, commentResolvers,
 };

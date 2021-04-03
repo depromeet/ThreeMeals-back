@@ -5,13 +5,13 @@ import {userTypeDefs, userResolvers} from './user';
 
 
 export {
-  muTypeDefs, typeDefs,
-  commentTypeDefs, commentResolvers,
-  userTypeDefs, userResolvers,
+    muTypeDefs, typeDefs,
+    commentTypeDefs, commentResolvers,
+    userTypeDefs, userResolvers,
 };
 
 export default {
-  muTypeDefs, typeDefs,
-  commentTypeDefs, commentResolvers,
-  userTypeDefs, userResolvers,
+    muTypeDefs, typeDefs,
+    commentTypeDefs, commentResolvers,
+    userTypeDefs, userResolvers,
 };
