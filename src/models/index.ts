@@ -4,9 +4,9 @@ import User, {associate as associateUser} from './user';
 
 export * from './sequelize';
 const db = {
-  Comment,
-  Post,
-  User,
+    Comment,
+    Post,
+    User,
 };
 export type dbType = typeof db;
 
