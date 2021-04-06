@@ -1,38 +1,19 @@
 import {Request, Response} from 'express';
 import express from 'express';
-
-
-// db
-import {sequelize} from './models';
-
-// middleware
-import * as middleware from './middleware';
+import * as dotenv from 'dotenv';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import cors from 'cors';
-
-
-// cookie, session
 import cookieParser from 'cookie-Parser';
-import session from 'express-session';
-
-
-// passport
-
-import passport from 'passport';
-import * as dotenv from 'dotenv';
-
-// router
-import router from './router/index';
-
-// apollo
 import {ApolloServer} from 'apollo-server-express';
+
+import {sequelize} from './models';
+import * as middleware from './middleware';
 import _resolvers from './_resolvers';
 import _typedefs from './_typedefs';
-
+import router from './router/index';
 
 dotenv.config();
-
 
 export const server: ApolloServer = new ApolloServer({
     typeDefs: _typedefs,
@@ -87,15 +68,6 @@ export class App {
 
     setSession() {
         this.app.use(cookieParser(process.env.COOKIE_SECRET));
-        this.app.use(session({
-            secret: 'depro',
-            resave: false,
-            saveUninitialized: false,
-            cookie: {
-                maxAge: 2000 * 60 * 60, // 지속시간 2시간
-            },
-            name: 'rnbck',
-        }));
     }
 
 
@@ -105,8 +77,6 @@ export class App {
         this.app.use(cors());
         this.app.use(helmet());
         this.app.use(morgan('dev'));
-        this.app.use(passport.initialize());
-        this.app.use(passport.session());
     }
 
 
