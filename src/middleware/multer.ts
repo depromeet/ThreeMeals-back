@@ -1,7 +1,7 @@
 import * as path from 'path';
-import aws from 'aws-sdk';
-import multer from 'multer';
-import multerS3 from 'multer-s3';
+import * as aws from 'aws-sdk';
+import * as multer from 'multer';
+import * as multerS3 from 'multer-s3';
 
 const dotenv = require('dotenv');
 dotenv.config(); // LOAD CONFIG
