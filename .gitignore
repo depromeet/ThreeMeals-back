@@ -1,6 +1,17 @@
+### macOS template
+# General
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Visual Studio code
+.vscode/*
+
+# Jetbrains
+.idea/*
+
 # Dependency directories
 node_modules/
-package-lock.json
 
 
 # history
@@ -18,8 +29,7 @@ log
 
 # dotenv environment variables file
 .env
-.env.test
-
+.env.*
 
 # Runtime data
 *.seed
