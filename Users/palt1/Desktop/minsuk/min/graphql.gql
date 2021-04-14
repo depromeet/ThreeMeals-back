@@ -1,0 +1,63 @@
+//graphQL 명령어 test
+
+
+//사용자 전체 목록
+query {
+	users{
+    id
+    nickname
+    userId
+    password
+    createdAt
+    updatedAt
+	}
+}
+
+
+//사용자 1번 찾기  -> comment join은 잘 모르겠..
+query {
+	user(id : 1){
+    id
+    nickname
+    userId
+    password
+    createdAt
+    updatedAt
+	}
+}
+
+
+//사용자 입력
+mutation {
+  insertUsers (
+    nickname: "deeo",
+    userId: "66",
+    password: "4232",
+  ) {
+    nickname
+    userId
+    password
+  }
+}
+
+
+
+
+//사용자 입력
+mutation {
+  insertUsers (
+    nickname: "deeo",
+    provider: "66",
+    status: "4232",
+    provider_id: "4232",
+    image: "4232",
+    content: "4232",
+  ) {
+    nickname
+    provider
+    status
+    provider_id
+    image
+    content
+  }
+}
