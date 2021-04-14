@@ -1,0 +1,29 @@
+{
+  "compilerOptions": {
+    "strict" : true,
+    "module": "commonjs",
+    "declaration": true,
+    "removeComments": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "target":"es6",
+    "lib":["es2015","es6","es2016","es2017","es2018","es2019"],
+    "moduleResolution":"node",
+    "noImplicitAny": true,
+    "outDir": "dist",
+    "baseUrl": "./",
+    "incremental": true,
+    "allowSyntheticDefaultImports": true,
+    "allowJs": true,
+    "typeRoots": [
+      "./node_modules/@types",
+      "./src/types"
+    ]
+  },
+  "rules":{
+    "camelcase": "off",
+    "@typescript-eslint/camelcase": ["warn"]
+  },
+  "include": ["src/**/*", "test/**/*"],
+  "exclude": ["node_modules", "dist"]
+}
