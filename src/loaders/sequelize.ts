@@ -11,14 +11,11 @@ export default async (): Promise<Sequelize> => {
     modelInitializers.forEach((initializer) => initializer.link(sequelize));
 
     // sequelize sync
-    await sequelize.sync({
-        force: config.db.default.synchronize && config.db.default.dropSchema,
-        alter: config.db.default.synchronize && !config.db.default.dropSchema,
-    })
-        .then(() => logger.info('데이터베이스 연결 성공'))
-        .catch((e: Error) => {
-            logger.error(e);
-        });
+    if (config.db.default.synchronize) {
+        await sequelize.sync().then(() => logger.info('데이터베이스 연결 성공'));
+    } else {
+        await sequelize.authenticate().then(() => logger.info('데이터베이스 연결 성공'));
+    }
 
     return sequelize;
 };

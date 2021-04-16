@@ -1,10 +1,14 @@
+/* eslint-disable camelcase */
 import {Model} from 'sequelize';
 import {Field, ObjectType} from 'type-graphql';
-import Container from 'typedi';
 
 export interface CommentAttributes {
     id: number;
     content: string;
+    parent_id: number;
+    secret_type: string;
+    createdAt: Date;
+    updatedAt: Date;
 }
 
 @ObjectType()
@@ -14,6 +18,16 @@ export default class Comment extends Model implements CommentAttributes {
 
     @Field()
     public content!: string;
-}
 
-Container.set('comment', Comment);
+    @Field()
+    public parent_id!: number;
+
+    @Field()
+    public secret_type!: string;
+
+    @Field()
+    public createdAt!: Date;
+
+    @Field()
+    public updatedAt!: Date;
+}
