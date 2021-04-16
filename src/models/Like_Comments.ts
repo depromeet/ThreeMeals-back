@@ -4,7 +4,7 @@ import {Model} from 'sequelize';
 
 export interface Like_CommentsAttributes {
     id: number;
-    user_id: number;
+    account_id: number;
     comment_id: number;
     createdAt: Date;
 }
@@ -15,7 +15,7 @@ export default class Like_Comments extends Model implements Like_CommentsAttribu
     public id!: number;
 
     @Field()
-    public user_id!: number;
+    public account_id!: number;
 
     @Field()
     public comment_id!: number;

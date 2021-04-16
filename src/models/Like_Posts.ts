@@ -4,7 +4,7 @@ import {Model} from 'sequelize';
 
 export interface Like_PostsAttributes {
     id: number;
-    user_id: number;
+    account_id: number;
     post_id: number;
     createdAt: Date;
 }
@@ -15,7 +15,7 @@ export default class Like_Posts extends Model implements Like_PostsAttributes {
     public id!: number;
 
     @Field()
-    public user_id!: number;
+    public account_id!: number;
 
     @Field()
     public post_id!: number;

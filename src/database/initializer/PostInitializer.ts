@@ -58,7 +58,7 @@ export default class PostInitializer implements ModelInitializer {
             {foreignKey: 'post_id', sourceKey: 'id'});
 
         Post.belongsTo(Account,
-            {foreignKey: 'user_id', targetKey: 'id'} );
+            {foreignKey: 'account_id', targetKey: 'id'} );
 
         Post.belongsToMany(Account,
             {through: 'Like_Posts', foreignKey: 'post_id', sourceKey: 'id', as: 'likers_post'});

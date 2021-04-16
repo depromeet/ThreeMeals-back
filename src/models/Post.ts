@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import {Field, ObjectType} from 'type-graphql';
 import {Model} from 'sequelize';
 import Account from './Account';
@@ -40,5 +41,5 @@ export default class Post extends Model implements PostAttributes {
     public updatedAt!: Date;
 
     @Field((type) => Account)
-    public readonly User?: Account;
+    public readonly Account?: Account;
 }

@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import {Model} from 'sequelize';
 import {Field, ObjectType} from 'type-graphql';
 

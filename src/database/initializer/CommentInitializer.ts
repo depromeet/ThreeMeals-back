@@ -46,7 +46,7 @@ export default class CommentInitializer implements ModelInitializer {
 
     associate(sequelize: Sequelize): void {
         Comment.belongsTo(Account,
-            {foreignKey: 'user_id', targetKey: 'id'} );
+            {foreignKey: 'account_id', targetKey: 'id'} );
 
         Comment.belongsTo(Post,
             {foreignKey: 'post_id', targetKey: 'id'} );

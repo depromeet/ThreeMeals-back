@@ -20,7 +20,7 @@ export default class Like_CommentsInitializer implements ModelInitializer {
                 allowNull: false,
                 autoIncrement: true,
             },
-            user_id: {
+            account_id: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
             },

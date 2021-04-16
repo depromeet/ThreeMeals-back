@@ -19,7 +19,7 @@ export default class Post_EmoticonInitializer implements ModelInitializer {
                 allowNull: false,
                 autoIncrement: true,
             },
-            user_id: {
+            account_id: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
             },

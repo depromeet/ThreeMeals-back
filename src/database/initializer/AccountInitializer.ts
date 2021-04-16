@@ -60,10 +60,10 @@ export default class UserInitializer implements ModelInitializer {
 
     associate(sequelize: Sequelize): void {
         User.hasMany(Post,
-            {foreignKey: 'user_id', sourceKey: 'id', as: 'Posts'});
+            {foreignKey: 'account_id', sourceKey: 'id', as: 'Posts'});
 
         User.hasMany(Comment,
-            {foreignKey: 'user_id', sourceKey: 'id'});
+            {foreignKey: 'account_id', sourceKey: 'id'});
 
         User.belongsToMany(Post,
             {through: 'Like_Posts', foreignKey: 'user_id', sourceKey: 'id', as: 'likes_post'});
