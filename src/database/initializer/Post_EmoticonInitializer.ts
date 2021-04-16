@@ -6,7 +6,12 @@ import Post_Emoticon from '../../models/Post_Emoticon';
 import {ModelInitializer} from '../ModelInitializer';
 
 export default class Post_EmoticonInitializer implements ModelInitializer {
-    init(sequelize: Sequelize): void {
+    init(sequelize: Sequelize): void {}
+
+    associate(sequelize: Sequelize): void {
+    }
+
+    link(sequelize: Sequelize): void {
         Post_Emoticon.init({
             id: {
                 field: 'id',
@@ -54,10 +59,5 @@ export default class Post_EmoticonInitializer implements ModelInitializer {
             collate: 'utf8mb4_general_ci',
         });
     }
-
-    associate(sequelize: Sequelize): void {
-    }
-
-    link(sequelize: Sequelize): void {}
 }
 

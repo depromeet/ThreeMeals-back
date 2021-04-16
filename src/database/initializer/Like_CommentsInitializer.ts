@@ -5,7 +5,13 @@ import Like_Comments from '../../models/Like_Comments';
 import {ModelInitializer} from '../ModelInitializer';
 
 export default class Like_CommentsInitializer implements ModelInitializer {
-    init(sequelize: Sequelize): void {
+    init(sequelize: Sequelize): void {}
+
+    associate(sequelize: Sequelize): void {
+
+    }
+
+    link(sequelize: Sequelize): void {
         Like_Comments.init({
             id: {
                 field: 'id',
@@ -35,11 +41,5 @@ export default class Like_CommentsInitializer implements ModelInitializer {
             collate: 'utf8mb4_general_ci',
         });
     }
-
-    associate(sequelize: Sequelize): void {
-
-    }
-
-    link(sequelize: Sequelize): void {}
 }
 
