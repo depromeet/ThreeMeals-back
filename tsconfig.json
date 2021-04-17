@@ -20,6 +20,10 @@
       "./src/types"
     ]
   },
+  "rules":{
+    "camelcase": "off",
+    "@typescript-eslint/camelcase": ["warn"]
+  },
   "include": ["src/**/*", "test/**/*"],
   "exclude": ["node_modules", "dist"]
 }
