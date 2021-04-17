@@ -1,18 +1,25 @@
+import { config } from './src/config';
+
 module.exports = {
-  type: 'mysql',
-  host: process.env.DB_HOST || '127.0.0.1',
-  username: process.env.DB_USER || 'root',
-  password: process.env.DB_PASSWORD || '',
-  database: process.env.DB_NAME || 'test',
+  name: 'default',
+  type: config.db.default.dialect,
+  host: config.db.default.host,
+  username: config.db.default.username,
+  password: config.db.default.password,
+  database: config.db.default.database,
   charset: 'utf8',
   driver: 'mysql',
-  synchronize: process.env.NODE_ENV !== 'production',
+  synchronize: config.db.default.synchronize,
   entities: [__dirname + '/dist/entities/**/**.entity.{js,ts}'],
-  logging: process.env.NODE_ENV !== 'production' ? 'all' : 'error',
+  logging: config.db.default.logging,
   migrations: ['migration/*.ts'],
   cli: {
     migrationsDir: 'migration',
   },
-  connectTimeout: 30000,
+  connectTimeout: config.db.default.connectionTimeout,
   acquireTimeout: 30000,
+  extra: {
+    charset: 'utf8mb4_general_ci',
+    connectionLimit: config.db.default.maximumPoolSize,
+  },
 };

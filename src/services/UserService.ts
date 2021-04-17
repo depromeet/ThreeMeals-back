@@ -6,6 +6,10 @@ import { User } from '../entities/user/user.entity';
 import { logger } from '../logger/winston';
 import * as faker from 'faker';
 import { koreanMnemonic } from '../constants';
+import { getCustomRepository } from 'typeorm';
+import { UserRepository } from '../repositories/userRepository';
+
+const userRepository = getCustomRepository(UserRepository);
 
 @Service()
 export class UserService {
@@ -16,8 +20,7 @@ export class UserService {
       username += faker.datatype.number(100);
     }
     const userId = uuid().toString();
-    const user = await User.create(args);
-    await user.save();
+    const user = await userRepository.createAndSave(username, 'cesces333');
     return user;
   }
 
