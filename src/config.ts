@@ -27,6 +27,7 @@ export interface IConfig {
             connectionTimeout: number;
             synchronize: boolean;
             logging: boolean;
+            dropSchema: boolean;
         };
     };
 
@@ -66,6 +67,7 @@ export const config: IConfig = {
             connectionTimeout: process.env.DB_DEFAULT_CONNECTION_TIMEOUT ? parseInt(process.env.DB_DEFAULT_CONNECTION_TIMEOUT) : 10000,
             logging: process.env.DB_DEFAULT_LOGGING === 'true',
             synchronize: process.env.DB_DEFAULT_SYNCHRONIZE === 'true',
+            dropSchema: process.env.DB_DEFAULT_DROP_SCHEMA === 'true',
         },
     },
 
