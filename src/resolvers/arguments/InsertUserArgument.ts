@@ -1,10 +1,10 @@
-import {ArgsType, Field} from 'type-graphql';
+import { ArgsType, Field } from 'type-graphql';
 
 @ArgsType()
 export class InsertUserArgument {
-    @Field({nullable: true})
-    nickname?: string;
+  @Field()
+  username!: string;
 
-    @Field()
-    password!: string;
+  @Field()
+  email!: string;
 }
