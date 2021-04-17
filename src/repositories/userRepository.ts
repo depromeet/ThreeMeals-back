@@ -1,6 +1,8 @@
 import { Repository, EntityRepository } from 'typeorm';
 import { User } from '../entities/user/user.entity';
+import {Service} from "typedi";
 
+@Service()
 @EntityRepository(User)
 export class UserRepository extends Repository<User> {
   // createUser() {

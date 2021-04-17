@@ -9,11 +9,10 @@ import { koreanMnemonic } from '../constants';
 import { getCustomRepository } from 'typeorm';
 import { UserRepository } from '../repositories/userRepository';
 
-const userRepository = getCustomRepository(UserRepository);
-
 @Service()
 export class UserService {
   async createUser(args: { email: string; username: string }): Promise<User> {
+    const userRepository = getCustomRepository(UserRepository);
     let { username } = args;
     if (!username) {
       username = koreanMnemonic[faker.datatype.number(koreanMnemonic.length)];
