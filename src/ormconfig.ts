@@ -1,5 +1,5 @@
-import {IConfig} from './config';
-import {ConnectionOptions} from 'typeorm/connection/ConnectionOptions';
+import { IConfig } from './config';
+import { ConnectionOptions } from 'typeorm/connection/ConnectionOptions';
 
 export const getDefaultDBOrmConfig = (config: IConfig): ConnectionOptions => {
     return {

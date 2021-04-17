@@ -14,16 +14,16 @@ export class User extends defaultEntity {
   @Column('text')
   username!: string;
 
-  //   @Field({ nullable: true })
-  //   @Column('text', { nullable: true })
-  //   firstName?: string;
+    //   @Field({ nullable: true })
+    //   @Column('text', { nullable: true })
+    //   firstName?: string;
 
-  //   @Field({ nullable: true })
-  //   @Column('text', { nullable: true })
-  //   lastName?: string;
+    //   @Field({ nullable: true })
+    //   @Column('text', { nullable: true })
+    //   lastName?: string;
 
-  //   @Field(() => Int, { nullable: true })
-  //   @Column('int', { nullable: true })
-  //   age?: number;
+    //   @Field(() => Int, { nullable: true })
+    //   @Column('int', { nullable: true })
+    //   age?: number;
 }
 // Container.set('user', User);

@@ -7,19 +7,19 @@ import { logger } from '../logger/winston';
 import { config } from '../config';
 
 const startApiServer = async () => {
-  const app = express();
-  expressLoader({ app });
-  await apolloLoader({ app });
-  await dbConnection();
-  loadHandleError({ app });
+    const app = express();
+    expressLoader({ app });
+    await apolloLoader({ app });
+    await dbConnection();
+    loadHandleError({ app });
 
-  app.listen(config.server.port, () => {
-    logger.info(`Server ready at http://localhost:${config.server.port}`);
-  });
+    app.listen(config.server.port, () => {
+        logger.info(`Server ready at http://localhost:${config.server.port}`);
+    });
 };
 
-startApiServer().catch(err =>
-  logger.error(`Fail to start server, err: ${err.message}`),
+startApiServer().catch((err) =>
+    logger.error(`Fail to start server, err: ${err.message}`),
 );
 
 // new App().app.listen({port: PORT}, () =>

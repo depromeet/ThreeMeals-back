@@ -1,25 +1,22 @@
-import {ApolloServer} from 'apollo-server-express';
-import {Container} from 'typedi';
-import {buildSchema} from 'type-graphql';
-import {GraphQLSchema} from 'graphql';
+import { ApolloServer } from 'apollo-server-express';
+import { Container } from 'typedi';
+import { buildSchema } from 'type-graphql';
+import { GraphQLSchema } from 'graphql';
 import * as express from 'express';
-import {UserResolver} from '../resolvers';
-import {config} from '../config';
+import { UserResolver } from '../resolvers';
+import { config } from '../config';
 
-export default async ({app}: { app: express.Application }) => {
+export default async ({ app }: { app: express.Application }) => {
     const schema: GraphQLSchema = await buildSchema({
-        resolvers: [
-            UserResolver,
-        ],
+        resolvers: [UserResolver],
         container: Container,
     });
-
 
     const server = new ApolloServer({
         schema: schema,
         playground: config.server.env !== 'production',
         introspection: config.server.env !== 'production',
-        context: ({req, res}) => {
+        context: ({ req, res }) => {
             const context = {
                 req,
             };
@@ -27,5 +24,5 @@ export default async ({app}: { app: express.Application }) => {
         },
     });
 
-    server.applyMiddleware({app});
+    server.applyMiddleware({ app });
 };
