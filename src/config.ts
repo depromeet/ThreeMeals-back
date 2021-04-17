@@ -26,7 +26,6 @@ export interface IConfig {
             idlePoolSize: number;
             connectionTimeout: number;
             synchronize: boolean;
-            dropSchema: boolean;
             logging: boolean;
         };
     };
@@ -66,7 +65,6 @@ export const config: IConfig = {
             idlePoolSize: process.env.DB_DEFAULT_IDLE_POOL_SIZE ? parseInt(process.env.DB_DEFAULT_IDLE_POOL_SIZE) : 5000,
             connectionTimeout: process.env.DB_DEFAULT_CONNECTION_TIMEOUT ? parseInt(process.env.DB_DEFAULT_CONNECTION_TIMEOUT) : 10000,
             logging: process.env.DB_DEFAULT_LOGGING === 'true',
-            dropSchema: process.env.DB_DEFAULT_DROP_SCHEMA === 'true',
             synchronize: process.env.DB_DEFAULT_SYNCHRONIZE === 'true',
         },
     },
