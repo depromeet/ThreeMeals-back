@@ -3,9 +3,8 @@ import { Service } from 'typedi';
 import { Request } from 'express';
 import { AccountService } from '../services/AccountService';
 import { Account } from '../entities/account/Account';
-import { InsertAccountArgument } from './arguments/InsertUserArgument';
-// import { CommentService } from '../services/CommentService';
-// import Comment from '../entities/Comment';
+import axios from 'axios';
+// import { InsertAccountArgument } from './arguments/InsertAccountArgument';
 
 @Service()
 @Resolver(() => Account)
@@ -34,8 +33,7 @@ export class AccountResolver {
     //   }
 
     @Mutation((returns) => Account)
-    async createUser(@Args() { email, username }: InsertAccountArgument, @Ctx() ctx: any): Promise<Account> {
-        const user = await this.accountService.createUser({ email, username });
-        return user;
+    async createUser(@Args() { accessToken }: any, @Ctx() ctx: any): Promise<Account> {
+        axios.post('');
     }
 }
