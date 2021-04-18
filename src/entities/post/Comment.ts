@@ -2,7 +2,6 @@ import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, CreateDateColumn, U
 import { ObjectType, Field, Int, ID } from 'type-graphql';
 import { Account } from '../account/Account';
 import { Post } from './Post';
-
 @ObjectType()
 @Entity()
 export class Comment extends BaseEntity {
