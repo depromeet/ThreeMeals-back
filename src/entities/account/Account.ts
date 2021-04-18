@@ -1,7 +1,7 @@
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
 import { ObjectType, Field, Int, ID } from 'type-graphql';
 import { length } from 'class-validator';
-
+import { Post } from '../post/Post';
 @ObjectType()
 @Entity()
 export class Account extends BaseEntity {
@@ -40,5 +40,10 @@ export class Account extends BaseEntity {
     @Field()
     @UpdateDateColumn({})
     updatedAt!: Date;
+
+    @OneToMany((type) => Post, (post) => post.fromAccountId)
+    writePosts!: Post[];
+
+    @OneToMany((type) => Post, (post) => post.toAccountId)
+    receivePosts!: Post[];
 }
-// Container.set('user', User);
