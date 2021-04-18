@@ -1,29 +1,29 @@
 import { Inject, Service } from 'typedi';
 import { v4 as uuid } from 'uuid';
 import NotFoundException from '../exceptions/NotFoundException';
-import { User } from '../entities/user/user.entity';
+import { Account } from '../entities/account/Account';
 import { logger } from '../logger/winston';
 import * as faker from 'faker';
 import { koreanMnemonic } from '../constants';
 import { getCustomRepository } from 'typeorm';
-import { UserRepository } from '../repositories/userRepository';
+import { AccountRepository } from '../repositories/AccountRepository';
 
 @Service()
-export class UserService {
-    async createUser(args: { email: string; username: string }): Promise<User> {
-        const userRepository = getCustomRepository(UserRepository);
+export class AccountService {
+    async createUser(args: { email: string; username: string }): Promise<Account> {
+        const accountRepository = getCustomRepository(AccountRepository);
         let { username } = args;
         if (!username) {
             username = koreanMnemonic[faker.datatype.number(koreanMnemonic.length)];
             username += faker.datatype.number(100);
         }
-        const userId = uuid().toString();
-        const user = await userRepository.createAndSave(username, 'cesces333');
+
+        // const user = await accountRepository.createAccount(username, 'cesces333');
         return user;
     }
 
-    async getAllUser(): Promise<User[]> {
-        const users = await User.find();
+    async getAllUser(): Promise<Account[]> {
+        const users = await Account.find();
         return users;
     }
 

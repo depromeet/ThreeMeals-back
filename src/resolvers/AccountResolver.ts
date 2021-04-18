@@ -1,17 +1,17 @@
 import { Arg, Args, Ctx, FieldResolver, Mutation, Query, Resolver, Root } from 'type-graphql';
 import { Service } from 'typedi';
 import { Request } from 'express';
-import { UserService } from '../services/UserService';
-import { User } from '../entities/user/user.entity';
-import { InsertUserArgument } from './arguments/InsertUserArgument';
+import { AccountService } from '../services/AccountService';
+import { Account } from '../entities/account/Account';
+import { InsertAccountArgument } from './arguments/InsertUserArgument';
 // import { CommentService } from '../services/CommentService';
 // import Comment from '../entities/Comment';
 
 @Service()
-@Resolver(() => User)
-export class UserResolver {
+@Resolver(() => Account)
+export class AccountResolver {
     constructor(
-        private readonly userService: UserService, // private readonly commentService: CommentService,
+        private readonly accountService: AccountService, // private readonly commentService: CommentService,
     ) {}
 
     //   @Query(returns => User)
@@ -20,9 +20,9 @@ export class UserResolver {
     //     return user;
     //   }
 
-    @Query((returns) => [User])
-    async users(@Ctx('req') req: Request): Promise<User[]> {
-        const users = await this.userService.getAllUser();
+    @Query((returns) => [Account])
+    async users(@Ctx('req') req: Request): Promise<Account[]> {
+        const users = await this.accountService.getAllUser();
         return users;
     }
 
@@ -33,9 +33,9 @@ export class UserResolver {
     //     return comments;
     //   }
 
-    @Mutation((returns) => User)
-    async createUser(@Args() { email, username }: InsertUserArgument, @Ctx() ctx: any): Promise<User> {
-        const user = await this.userService.createUser({ email, username });
+    @Mutation((returns) => Account)
+    async createUser(@Args() { email, username }: InsertAccountArgument, @Ctx() ctx: any): Promise<Account> {
+        const user = await this.accountService.createUser({ email, username });
         return user;
     }
 }
