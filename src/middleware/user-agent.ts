@@ -1,5 +1,5 @@
-import {UAParser} from 'ua-parser-js';
-import {NextFunction, Request, Response} from 'express';
+import { UAParser } from 'ua-parser-js';
+import { NextFunction, Request, Response } from 'express';
 
 export const handleUserAgent = (req: Request, res: Response, next: NextFunction): void => {
     let ip = req.ip;

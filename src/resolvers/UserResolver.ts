@@ -1,51 +1,41 @@
-import {Arg, Args, Ctx, FieldResolver, Mutation, Query, Resolver, Root} from 'type-graphql';
-import {Service} from 'typedi';
-import {Request} from 'express';
-import {UserService} from '../services/UserService';
-import Account from '../models/Account';
-import {InsertUserArgument} from './arguments/InsertUserArgument';
-import {CommentService} from '../services/CommentService';
-import Comment from '../models/Comment';
+import { Arg, Args, Ctx, FieldResolver, Mutation, Query, Resolver, Root } from 'type-graphql';
+import { Service } from 'typedi';
+import { Request } from 'express';
+import { UserService } from '../services/UserService';
+import { User } from '../entities/user/user.entity';
+import { InsertUserArgument } from './arguments/InsertUserArgument';
+// import { CommentService } from '../services/CommentService';
+// import Comment from '../entities/Comment';
 
 @Service()
-@Resolver(() => Account)
+@Resolver(() => User)
 export class UserResolver {
     constructor(
-        private readonly userService: UserService,
-        private readonly commentService: CommentService,
+        private readonly userService: UserService, // private readonly commentService: CommentService,
     ) {}
 
-    @Query((returns) => Account)
-    async user(
-        @Arg('id') id: number,
-    ): Promise<Account> {
-        const Account = await this.userService.getUser({id});
-        return Account;
-    }
+    //   @Query(returns => User)
+    //   async user(@Arg('id') id: number): Promise<User> {
+    //     const user = await this.userService.getUser({ id });
+    //     return user;
+    //   }
 
-    @Query((returns) => [Account])
-    async users(
-        @Ctx('req') req: Request,
-    ): Promise<Account[]> {
+    @Query((returns) => [User])
+    async users(@Ctx('req') req: Request): Promise<User[]> {
         const users = await this.userService.getAllUser();
         return users;
     }
 
     // FixMe N+1 쿼리 수정 필요 주의 !!!
-    @FieldResolver()
-    async comments(
-        @Root() user: Account,
-    ): Promise<Comment[]> {
-        const comments = await this.commentService.getAllCommentsByUserId(user.id);
-        return comments;
-    }
+    //   @FieldResolver()
+    //   async comments(@Root() user: User): Promise<Comment[]> {
+    //     const comments = await this.commentService.getAllCommentsByUserId(user.id);
+    //     return comments;
+    //   }
 
-    @Mutation((returns) => Account)
-    async insertUser(
-        @Args() {nickname, password}: InsertUserArgument,
-        @Ctx() ctx: any,
-    ): Promise<Account> {
-        const user = await this.userService.createUser({nickname, password});
+    @Mutation((returns) => User)
+    async createUser(@Args() { email, username }: InsertUserArgument, @Ctx() ctx: any): Promise<User> {
+        const user = await this.userService.createUser({ email, username });
         return user;
     }
 }

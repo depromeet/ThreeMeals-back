@@ -1,6 +1,6 @@
-import {config} from '../config';
+import { config } from '../config';
 
-const {createLogger, format, transports} = require('winston');
+const { createLogger, format, transports } = require('winston');
 require('winston-daily-rotate-file');
 const fs = require('fs');
 
@@ -37,7 +37,8 @@ const logger = createLogger({
             format: format.combine(
                 format.colorize(),
                 format.printf(
-                    (info: { timestamp: any; level: any; message: any; }) => `${info.timestamp} ${info.level}: ${info.message}`,
+                    (info: { timestamp: any; level: any; message: any }) =>
+                        `${info.timestamp} ${info.level}: ${info.message}`,
                 ),
             ),
         }),
@@ -45,4 +46,4 @@ const logger = createLogger({
     ],
 });
 
-export {logger};
+export { logger };

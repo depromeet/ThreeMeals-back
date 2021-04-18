@@ -33,3 +33,6 @@ log
 
 # Runtime data
 *.seed
+
+# 회원 생성용
+test.html

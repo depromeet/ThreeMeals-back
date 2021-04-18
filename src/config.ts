@@ -11,7 +11,7 @@ export interface IConfig {
             useFile: boolean;
             logLevel: string;
             filepath: string;
-        },
+        };
     };
     db: {
         default: {
@@ -27,7 +27,8 @@ export interface IConfig {
             connectionTimeout: number;
             synchronize: boolean;
             logging: boolean;
-        }
+            dropSchema: boolean;
+        };
     };
 
     cookie: {
@@ -38,7 +39,7 @@ export interface IConfig {
         secret: string;
         expiresIn: string;
         iss: string;
-    }
+    };
 }
 
 export const config: IConfig = {
@@ -58,22 +59,15 @@ export const config: IConfig = {
             dialect: process.env.DB_DEFAULT_TYPE || 'mysql',
             username: process.env.DB_DEFAULT_USERNAME || '',
             password: process.env.DB_DEFAULT_PASSWORD || '',
-            database: process.env.DB_DEFAULT_DATABASE ||'three_meals',
+            database: process.env.DB_DEFAULT_DATABASE || 'three_meals',
             host: process.env.DB_DEFAULT_HOST || '127.0.0.1',
-            port: process.env.DB_DEFAULT_PORT ?
-                parseInt(process.env.DB_DEFAULT_PORT) :
-                3306,
-            maximumPoolSize: process.env.DB_DEFAULT_MAXIMUM_POOL_SIZE ?
-                parseInt(process.env.DB_DEFAULT_MAXIMUM_POOL_SIZE) :
-                30,
-            idlePoolSize: process.env.DB_DEFAULT_IDLE_POOL_SIZE ?
-                parseInt(process.env.DB_DEFAULT_IDLE_POOL_SIZE) :
-                5000,
-            connectionTimeout: process.env.DB_DEFAULT_CONNECTION_TIMEOUT ?
-                parseInt(process.env.DB_DEFAULT_CONNECTION_TIMEOUT) :
-                10000,
+            port: process.env.DB_DEFAULT_PORT ? parseInt(process.env.DB_DEFAULT_PORT) : 3306,
+            maximumPoolSize: process.env.DB_DEFAULT_MAXIMUM_POOL_SIZE ? parseInt(process.env.DB_DEFAULT_MAXIMUM_POOL_SIZE) : 30,
+            idlePoolSize: process.env.DB_DEFAULT_IDLE_POOL_SIZE ? parseInt(process.env.DB_DEFAULT_IDLE_POOL_SIZE) : 5000,
+            connectionTimeout: process.env.DB_DEFAULT_CONNECTION_TIMEOUT ? parseInt(process.env.DB_DEFAULT_CONNECTION_TIMEOUT) : 10000,
             logging: process.env.DB_DEFAULT_LOGGING === 'true',
             synchronize: process.env.DB_DEFAULT_SYNCHRONIZE === 'true',
+            dropSchema: process.env.DB_DEFAULT_DROP_SCHEMA === 'true',
         },
     },
 

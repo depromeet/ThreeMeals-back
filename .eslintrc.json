@@ -17,12 +17,14 @@
         "linebreak-style": 0,
         "global-require": 0,
         "eslint linebreak-style": [0, "error", "windows"],
-        "indent": ["error",4],
-        "no-console":"off",
+        "indent": ["error", 4],
+        "no-console": "off",
         "no-unused-vars": "off",
         "@typescript-eslint/no-unused-vars": "off",
         "new-cap": 0,
-        "require-jsdoc" : 0,
-        "max-len": ["error", { "code": 140 }]
+        "require-jsdoc": 0,
+        "max-len": ["error", { "code": 140 }],
+        "array-bracket-spacing": "warn",
+        "object-curly-spacing": ["error", "always"]
     }
 }
