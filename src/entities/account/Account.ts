@@ -18,7 +18,7 @@ export class Account extends BaseEntity {
     provider!: string;
 
     @Field()
-    @Column('varchar', { length: 8 })
+    @Column('varchar', { length: 20 })
     providerId!: string;
 
     @Field()
@@ -30,15 +30,15 @@ export class Account extends BaseEntity {
     image!: string;
 
     @Field()
-    @Column('text')
-    content!: string;
+    @Column('varchar', { length: 50, nullable: true })
+    content?: string;
 
     @Field()
-    @CreateDateColumn()
+    @CreateDateColumn({})
     createdAt!: Date;
 
     @Field()
-    @UpdateDateColumn()
+    @UpdateDateColumn({})
     updatedAt!: Date;
 }
 // Container.set('user', User);

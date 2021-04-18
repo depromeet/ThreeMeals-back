@@ -4,6 +4,7 @@ import { Request } from 'express';
 import { AccountService } from '../services/AccountService';
 import { Account } from '../entities/account/Account';
 import axios from 'axios';
+import { logger } from '../logger/winston';
 // import { InsertAccountArgument } from './arguments/InsertAccountArgument';
 
 @Service()
@@ -33,7 +34,19 @@ export class AccountResolver {
     //   }
 
     @Mutation((returns) => Account)
-    async createUser(@Args() { accessToken }: any, @Ctx() ctx: any): Promise<Account> {
-        axios.post('');
+    async createUserByKakao(@Arg('accessToken') accessToken: string, @Ctx() ctx: any): Promise<Account> {
+        const fetchAccountData = await axios.get('https://kapi.kakao.com/v2/user/me', {
+            headers: {
+                Authorization: 'Bearer ' + accessToken,
+            },
+        });
+
+        const accountData = {
+            id: fetchAccountData.data.id,
+            nickname: fetchAccountData.data.properties.nickname,
+            profileImg: fetchAccountData.data.properties.profile_image,
+        };
+        const account = await this.accountService.createUserByKakao(accountData);
+        return account;
     }
 }

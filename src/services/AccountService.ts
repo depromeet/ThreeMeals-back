@@ -8,18 +8,26 @@ import { koreanMnemonic } from '../constants';
 import { getCustomRepository } from 'typeorm';
 import { AccountRepository } from '../repositories/AccountRepository';
 
+interface accountInfo {
+    id: string;
+    nickname: string;
+    // eslint-disable-next-line camelcase
+    profileImg: string;
+}
 @Service()
 export class AccountService {
-    async createUser(args: { email: string; username: string }): Promise<Account> {
+    async createUserByKakao(arg: accountInfo): Promise<Account> {
         const accountRepository = getCustomRepository(AccountRepository);
-        let { username } = args;
-        if (!username) {
-            username = koreanMnemonic[faker.datatype.number(koreanMnemonic.length)];
-            username += faker.datatype.number(100);
+
+        // eslint-disable-next-line camelcase
+        let { id, nickname, profileImg } = arg;
+        if (!nickname) {
+            nickname = koreanMnemonic[faker.datatype.number(koreanMnemonic.length)];
+            nickname += faker.datatype.number(100);
         }
 
-        // const user = await accountRepository.createAccount(username, 'cesces333');
-        return user;
+        const account = await accountRepository.createAccount(arg);
+        return account;
     }
 
     async getAllUser(): Promise<Account[]> {
