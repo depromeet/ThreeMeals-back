@@ -14,6 +14,7 @@
   "author": "depromeet",
   "license": "ISC",
   "dependencies": {
+    "@types/jsonwebtoken": "^8.5.1",
     "apollo-server-express": "^2.22.1",
     "aws-sdk": "^2.874.0",
     "axios": "^0.21.1",
@@ -31,6 +32,7 @@
     "helmet": "^4.4.1",
     "hpp": "^0.2.3",
     "http-error": "0.0.6",
+    "jsonwebtoken": "^8.5.1",
     "lodash": "4.17.21",
     "lodash.merge": "^4.6.2",
     "moment": "^2.29.1",
