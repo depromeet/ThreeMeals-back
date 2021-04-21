@@ -7,7 +7,10 @@ import * as faker from 'faker';
 import { koreanMnemonic } from '../constants';
 import { getCustomRepository } from 'typeorm';
 import { AccountRepository } from '../repositories/AccountRepository';
-
+import { SignInArgument } from '../resolvers/arguments/SignInArgument';
+import { Provider } from '../types/Enums';
+import jwt from 'jsonwebtoken';
+import axios from 'axios';
 interface accountInfo {
     id: string;
     nickname: string;
@@ -16,23 +19,38 @@ interface accountInfo {
 }
 @Service()
 export class AccountService {
-    async createUserByKakao(arg: accountInfo): Promise<Account> {
-        const accountRepository = getCustomRepository(AccountRepository);
-
-        // eslint-disable-next-line camelcase
-        let { id, nickname, profileImg } = arg;
-        if (!nickname) {
-            nickname = koreanMnemonic[faker.datatype.number(koreanMnemonic.length)];
-            nickname += faker.datatype.number(100);
+    constructor(private readonly AccountRepository: AccountRepository) {}
+    async signIn({ accessToken, provider }: SignInArgument): Promise<string> {
+        const userData = await this.fetchUserData({ accessToken, provider });
+        if (userData) {
+            if (!(await this.AccountRepository.isExistedAccount(userData.data.id))) {
+                const newAccount = new Account();
+                newAccount.nickname = userData.data.nickname;
+                newAccount.providerId = userData.data.id;
+                newAccount.status = 'active';
+                newAccount.image = userData.data.profileImg;
+                await this.AccountRepository.createAccount(newAccount, provider);
+            }
+            return await this.issueJWT(userData.data);
+        } else {
+            logger.info('no user');
+            throw new NotFoundException('no user');
         }
-
-        const account = await accountRepository.createAccount(arg);
-        return account;
     }
 
-    async getAllUser(): Promise<Account[]> {
-        const users = await Account.find();
-        return users;
+    async issueJWT(userData: object): Promise<string> {
+        const accountToken = jwt.sign(userData, process.env.JWT_SECRET || 'threemeal');
+        return accountToken;
+    }
+
+    async fetchUserData({ accessToken, provider }: SignInArgument) {
+        const userData = await axios.get('https://kapi.kakao.com/v2/user/me', {
+            headers: {
+                Authorization: 'Bearer ' + accessToken,
+            },
+        });
+        console.log(userData.data);
+        return userData;
     }
 
     //   async getUser(args: { id: number }): Promise<User> {

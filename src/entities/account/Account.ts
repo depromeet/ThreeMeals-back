@@ -2,6 +2,7 @@ import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, CreateDateColumn, U
 import { ObjectType, Field, Int, ID } from 'type-graphql';
 import { length } from 'class-validator';
 import { Post } from '../post/Post';
+import { Provider } from '../../types/Enums';
 @ObjectType()
 @Entity()
 export class Account {
@@ -15,7 +16,7 @@ export class Account {
 
     @Field()
     @Column('varchar', { length: 8 })
-    provider!: string;
+    provider!: Provider;
 
     @Field()
     @Column('varchar', { name: 'provider_id', length: 20 })
@@ -29,9 +30,13 @@ export class Account {
     @Column('text')
     image!: string;
 
-    @Field()
+    @Field({ nullable: true })
     @Column('varchar', { length: 50, nullable: true })
     content?: string;
+
+    @Field({ nullable: true, description: 'insta or facebook url' })
+    @Column('varchar', { length: 50, nullable: true })
+    profileUrl?: string;
 
     @Field()
     @CreateDateColumn({ name: 'created_at' })
