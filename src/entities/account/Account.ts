@@ -4,7 +4,7 @@ import { length } from 'class-validator';
 import { Post } from '../post/Post';
 @ObjectType()
 @Entity()
-export class Account extends BaseEntity {
+export class Account {
     @Field(() => ID)
     @PrimaryGeneratedColumn()
     id!: number;
@@ -18,7 +18,7 @@ export class Account extends BaseEntity {
     provider!: string;
 
     @Field()
-    @Column('varchar', { length: 20 })
+    @Column('varchar', { name: 'provider_id', length: 20 })
     providerId!: string;
 
     @Field()
@@ -34,11 +34,11 @@ export class Account extends BaseEntity {
     content?: string;
 
     @Field()
-    @CreateDateColumn({})
+    @CreateDateColumn({ name: 'created_at' })
     createdAt!: Date;
 
     @Field()
-    @UpdateDateColumn({})
+    @UpdateDateColumn({ name: 'updated_at' })
     updatedAt!: Date;
 
     @OneToMany((type) => Post, (post) => post.fromAccountId)
