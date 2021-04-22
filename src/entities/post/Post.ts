@@ -2,22 +2,12 @@ import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, CreateDateColumn, U
 import { ObjectType, Field, Int, ID } from 'type-graphql';
 import { length } from 'class-validator';
 import { Account } from '../account/Account';
+import { Comment } from './Comment';
+import { PostEmoticon } from '../PostEmoticon';
 
-enum color {
-    Red,
-    Green,
-    Blue,
-    Orange,
-    Yellow,
-}
-
-enum postType {
-    Question,
-    Answer,
-}
 @ObjectType()
 @Entity()
-export class Post extends BaseEntity {
+export class Post {
     @Field(() => ID)
     @PrimaryGeneratedColumn()
     id!: number;
@@ -27,28 +17,20 @@ export class Post extends BaseEntity {
     content!: string;
 
     @Field()
-    @Column('varchar', { length: 10 })
-    postType!: postType;
+    @Column('varchar', { length: 10, nullable: true }) // null 가능
+    postType!: string;
 
     @Field()
     @Column('boolean')
-    state!: boolean; // 답변했냐 안했냐니까 booleanㄱㅊ?
+    state!: boolean;
 
     @Field()
     @Column('varchar', { length: 20 })
-    color!: color;
+    color!: string;
 
     @Field()
     @Column('varchar', { length: 20 })
     secretType!: string;
-
-    // @Field()
-    // @Column('int')
-    // fromAccountId!: number;
-
-    // @Field()
-    // @Column('int')
-    // toAccountId!: number;
 
     @Field()
     @CreateDateColumn({})
@@ -58,9 +40,18 @@ export class Post extends BaseEntity {
     @UpdateDateColumn({})
     updatedAt!: Date;
 
+    // Account와 1:N 관계
     @ManyToOne((type) => Account, (account) => account.id)
     fromAccountId!: Account;
 
     @ManyToOne((type) => Account, (account) => account.id)
     toAccountId!: Account;
+
+    // Post와 1:N관계
+    @OneToMany(() => Comment, (comment) => comment.post)
+    comments!: Comment[];
+
+    // PostEmoticon과 1:N
+    @OneToMany(() => PostEmoticon, (postEmoticon) => postEmoticon.post)
+    usingemoticons!: PostEmoticon[];
 }
