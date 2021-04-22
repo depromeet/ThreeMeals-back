@@ -1,14 +1,14 @@
 import 'reflect-metadata';
-import { createConnection } from 'typeorm';
+import { createConnection, useContainer } from 'typeorm';
+import { Container } from 'typedi';
 import { logger } from '../logger/winston';
 import { getDefaultDBOrmConfig } from '../ormconfig';
 import { config } from '../config';
 
 const dbConnection = async (): Promise<void> => {
+    useContainer(Container);
     createConnection(getDefaultDBOrmConfig(config)).then(() => {
-        logger.info(
-            `database ${process.env.DB_DEFAULT_DATABASE} connection created`,
-        );
+        logger.info(`database ${process.env.DB_DEFAULT_DATABASE} connection created`);
     });
 };
 

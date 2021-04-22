@@ -3,16 +3,15 @@ import { Service } from 'typedi';
 import { Request } from 'express';
 import { AccountService } from '../services/AccountService';
 import { Account } from '../entities/account/Account';
+import { Token } from '../schemas/TokenSchema';
 import axios from 'axios';
 import { logger } from '../logger/winston';
 import { SignInArgument } from './arguments/SignInArgument';
-
+import { token } from '../types/types';
 @Service()
 @Resolver(() => Account)
 export class AccountResolver {
-    constructor(
-        private readonly accountService: AccountService, // private readonly commentService: CommentService,
-    ) {}
+    constructor(private readonly accountService: AccountService) {}
 
     @Query((returns) => String)
     async helloWorld(): Promise<string> {
@@ -38,9 +37,9 @@ export class AccountResolver {
     //   }
 
     // jwtnewAccount
-    @Mutation((returns) => String)
-    async signIn(@Args() { accessToken, provider }: SignInArgument, @Ctx() ctx: any): Promise<string> {
+    @Mutation((returns) => Token)
+    async signIn(@Args() { accessToken, provider }: SignInArgument, @Ctx() ctx: any): Promise<token> {
         const accountToken = await this.accountService.signIn({ accessToken, provider });
-        return accountToken;
+        return { token: accountToken };
     }
 }
