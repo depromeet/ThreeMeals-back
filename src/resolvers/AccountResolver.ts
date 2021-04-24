@@ -2,18 +2,19 @@ import { Arg, Args, Ctx, FieldResolver, Mutation, Query, Resolver, Root } from '
 import { Service } from 'typedi';
 import { Request } from 'express';
 import { AccountService } from '../services/AccountService';
-import { Account } from '../entities/account/Account';
+import { Account } from '../entities/Account';
 import { Token } from '../schemas/TokenSchema';
 import axios from 'axios';
 import { logger } from '../logger/winston';
 import { SignInArgument } from './arguments/SignInArgument';
 import { token } from '../types/types';
+import { Provider } from '../entities/Enums';
 @Service()
 @Resolver(() => Account)
 export class AccountResolver {
     constructor(private readonly accountService: AccountService) {}
 
-    @Query((returns) => String)
+    @Query((returns) => Provider)
     async helloWorld(): Promise<string> {
         return 'hello';
     }

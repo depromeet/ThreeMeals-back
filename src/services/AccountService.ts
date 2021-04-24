@@ -1,14 +1,14 @@
 import { Inject, Service } from 'typedi';
 import { v4 as uuid } from 'uuid';
 import NotFoundException from '../exceptions/NotFoundException';
-import { Account } from '../entities/account/Account';
+import { Account } from '../entities/Account';
 import { logger } from '../logger/winston';
 import * as faker from 'faker';
 import { koreanMnemonic } from '../constants';
 import { getCustomRepository } from 'typeorm';
 import { AccountRepository } from '../repositories/AccountRepository';
 import { SignInArgument } from '../resolvers/arguments/SignInArgument';
-import { Provider } from '../types/Enums';
+import { Provider } from '../entities/Enums';
 import { InjectRepository } from 'typeorm-typedi-extensions';
 import * as jwt from 'jsonwebtoken';
 import axios from 'axios';

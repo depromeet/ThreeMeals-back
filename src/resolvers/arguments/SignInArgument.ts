@@ -1,6 +1,6 @@
 import { IsEnum, IsString } from 'class-validator';
 import { ArgsType, Field } from 'type-graphql';
-import { Provider } from '../../types/Enums';
+import { Provider } from '../../entities/Enums';
 
 @ArgsType()
 export class SignInArgument {

@@ -1,8 +1,8 @@
 import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
 import { ObjectType, Field, Int, ID } from 'type-graphql';
 import { length } from 'class-validator';
-import { Post } from '../post/Post';
-import { Provider } from '../../types/Enums';
+import { Post } from './Post';
+import { Provider } from './Enums';
 @ObjectType()
 @Entity()
 export class Account {

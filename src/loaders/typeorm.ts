@@ -7,9 +7,8 @@ import { config } from '../config';
 
 const dbConnection = async (): Promise<void> => {
     useContainer(Container);
-    createConnection(getDefaultDBOrmConfig(config)).then(() => {
-        logger.info(`database ${process.env.DB_DEFAULT_DATABASE} connection created`);
-    });
+    await createConnection(getDefaultDBOrmConfig(config));
+    logger.info(`database ${process.env.DB_DEFAULT_DATABASE} connection created`);
 };
 
 export default dbConnection;

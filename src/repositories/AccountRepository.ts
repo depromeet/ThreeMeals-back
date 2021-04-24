@@ -1,6 +1,6 @@
 import { Repository, EntityRepository } from 'typeorm';
-import { Account } from '../entities/account/Account';
-import { Provider } from '../types/Enums';
+import { Account } from '../entities/Account';
+import { Provider } from '../entities/Enums';
 import { Service } from 'typedi';
 
 // todo : 카카오에서 넘어오는 객체 타입 정해줘야됨
