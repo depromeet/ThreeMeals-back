@@ -2,8 +2,8 @@ import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateCol
 import { ObjectType, Field, Int, ID } from 'type-graphql';
 import { length } from 'class-validator';
 import { Post } from './Post';
-import { LikePosts } from './LikePosts';
 import { Comment } from './Comment';
+import { LikePosts } from './LikePosts';
 import { LikeComments } from './LikeComments';
 import { Provider } from './Enums';
 

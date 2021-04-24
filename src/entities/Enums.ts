@@ -12,8 +12,8 @@ registerEnumType(Provider, {
 
 //  Post - PostType
 enum PostType {
-    Question,
-    Answer,
+    QUESTION = 'question',
+    ANSWER = 'answer',
 }
 
 registerEnumType(PostType, {
@@ -23,9 +23,9 @@ registerEnumType(PostType, {
 
 //  Post - State
 enum State {
-    Submitted,
-    Answered,
-    Deleted,
+    SUBMITTED = 'submitted',
+    ANSWERED = 'answered',
+    DELETED = 'deleted',
 }
 
 registerEnumType(State, {

@@ -17,6 +17,5 @@ export const isAuth: MiddlewareFn<MyContext> = ({ context }, next) => {
         console.log(err);
         throw new Error('Not authenticated');
     }
-    // console.log(authorization.id);
     return next();
 };

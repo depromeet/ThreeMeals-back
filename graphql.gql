@@ -39,3 +39,35 @@ mutation {
     password
   }
 }
+
+
+mutation{
+  signIn(provider:"Kakao", accessToken:"t0weVUprlo48U8nbs0V5A8OGNlnfDMtiPkBSMgo9c5sAAAF5A_-dOg"){
+    token
+  }
+}
+
+mutation{
+  makePost(
+    content: "aaa",
+    postType: QUESTION,
+    color: "Red",
+    state: SUBMITTED,
+    secretType: "no",  
+  ){
+    content
+    postType
+    color
+    state
+    secretType
+  }
+}
+
+
+mutation{
+  deletePost(
+    id: 1
+  ){
+		id
+  }
+}

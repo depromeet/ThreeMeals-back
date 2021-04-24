@@ -1,10 +1,10 @@
 import { Entity, PrimaryGeneratedColumn, Column, JoinColumn, CreateDateColumn, UpdateDateColumn, OneToMany, ManyToOne } from 'typeorm';
 import { ObjectType, Field, Int, ID } from 'type-graphql';
-import { length } from 'class-validator';
+import { length, IsHexColor } from 'class-validator';
 import { Account } from './Account';
-import { LikePosts } from './LikePosts';
 import { Comment } from './Comment';
 import { PostEmoticon } from './PostEmoticon';
+import { LikePosts } from './LikePosts';
 import { PostType, State } from './Enums';
 
 @ObjectType()
@@ -28,7 +28,9 @@ export class Post {
     @Column('varchar')
     state!: State;
 
+    // class-validator - color인지
     @Field()
+    @IsHexColor()
     @Column('varchar', { length: 20 })
     color!: string;
 

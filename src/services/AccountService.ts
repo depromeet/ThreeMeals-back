@@ -33,7 +33,8 @@ export class AccountService {
                 newAccount.provider = provider;
                 await this.AccountRepository.createAccount(newAccount);
             }
-            return await this.issueJWT(userData.data);
+            // 필요한 정보 담아야 하는걸로 수정필요
+            return await this.issueJWT(userData.data.id);
         } else {
             logger.info('no user');
             throw new NotFoundException('no user');

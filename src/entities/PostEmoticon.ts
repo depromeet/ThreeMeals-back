@@ -1,8 +1,9 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
 import { ObjectType, Field, Int, ID } from 'type-graphql';
 import { length } from 'class-validator';
-import { Emoticon } from './Emoticon';
 import { Post } from './Post';
+import { Emoticon } from './Emoticon';
+
 
 @ObjectType()
 @Entity()
@@ -32,12 +33,12 @@ export class PostEmoticon {
     // emoticonId!: number;
 
 
-    // Post과 1:N
+    // Post과 N:1
     @ManyToOne((type) => Post, (post) => post.usingemoticons)
     @JoinColumn({ name: 'postId' })
     post!: Post;
 
-    // Emoticon과 1:N
+    // Emoticon과 N:1
     @ManyToOne((type) => Emoticon, (emoticon) => emoticon.usedemoticons)
     @JoinColumn({ name: 'emoticonId' })
     emoticon!: Emoticon;
