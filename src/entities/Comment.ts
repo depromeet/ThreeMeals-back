@@ -1,10 +1,13 @@
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, CreateDateColumn, UpdateDateColumn, OneToMany, ManyToOne } from 'typeorm';
+// eslint-disable-next-line max-len
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany, ManyToOne, JoinColumn } from 'typeorm';
 import { ObjectType, Field, Int, ID } from 'type-graphql';
 import { Account } from './Account';
 import { Post } from './Post';
+import { LikeComments } from './LikeComments';
+
 @ObjectType()
 @Entity()
-export class Comment extends BaseEntity {
+export class Comment {
     @Field(() => ID)
     @PrimaryGeneratedColumn()
     id!: number;
@@ -25,15 +28,25 @@ export class Comment extends BaseEntity {
     @UpdateDateColumn({})
     updatedAt!: Date;
 
-    @ManyToOne((type) => Account, (account) => account.id)
-    accountId!: Account;
+    // Account와 N:1 관계
+    @ManyToOne((type) => Account, (account) => account.writeComments)
+    @JoinColumn({ name: 'accountId' })
+    account!: Account;
 
-    @ManyToOne((type) => Post, (post) => post.id)
-    postId!: Post;
+    // Post와 N:1 관계
+    @ManyToOne((type) => Post, (post) => post.comments)
+    @JoinColumn({ name: 'postId' })
+    post!: Post;
 
-    @ManyToOne((type) => Comment, (comment) => comment.childrenId)
-    parentId!: Comment;
+    // LikeComments 1:N 관계
+    @OneToMany((type) => LikeComments, (likecomments) => likecomments.comment)
+    likedcomments!: LikeComments[]
 
-    @OneToMany((type) => Comment, (comment) => comment.parentId)
-    childrenId!: Comment[];
+    // Comment 내에서 self join
+    @OneToMany((type) => Comment, (comment) => comment.parent)
+    children!: Comment[];
+
+    @ManyToOne((type) => Comment, (comment) => comment.children, { nullable: true } ) // null 가능
+    @JoinColumn({ name: 'parentId' })
+    parent!: Comment;
 }

@@ -1,23 +1,15 @@
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, CreateDateColumn, UpdateDateColumn, OneToMany, ManyToOne } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, JoinColumn, CreateDateColumn, UpdateDateColumn, OneToMany, ManyToOne } from 'typeorm';
 import { ObjectType, Field, Int, ID } from 'type-graphql';
 import { length } from 'class-validator';
 import { Account } from './Account';
+import { LikePosts } from './LikePosts';
+import { Comment } from './Comment';
+import { PostEmoticon } from './PostEmoticon';
+import { PostType, State } from './Enums';
 
-enum color {
-    Red,
-    Green,
-    Blue,
-    Orange,
-    Yellow,
-}
-
-enum postType {
-    Question,
-    Answer,
-}
 @ObjectType()
 @Entity()
-export class Post extends BaseEntity {
+export class Post {
     @Field(() => ID)
     @PrimaryGeneratedColumn()
     id!: number;
@@ -26,29 +18,23 @@ export class Post extends BaseEntity {
     @Column('text')
     content!: string;
 
+    // Enum
     @Field()
-    @Column('varchar', { length: 10 })
-    postType!: postType;
+    @Column('varchar')
+    postType!: PostType;
 
+    // Enum
     @Field()
-    @Column('boolean')
-    state!: boolean; // 답변했냐 안했냐니까 booleanㄱㅊ?
+    @Column('varchar')
+    state!: State;
 
     @Field()
     @Column('varchar', { length: 20 })
-    color!: color;
+    color!: string;
 
     @Field()
     @Column('varchar', { length: 20 })
     secretType!: string;
-
-    // @Field()
-    // @Column('int')
-    // fromAccountId!: number;
-
-    // @Field()
-    // @Column('int')
-    // toAccountId!: number;
 
     @Field()
     @CreateDateColumn({})
@@ -58,9 +44,24 @@ export class Post extends BaseEntity {
     @UpdateDateColumn({})
     updatedAt!: Date;
 
-    @ManyToOne((type) => Account, (account) => account.id)
-    fromAccountId!: Account;
+    // Account와 N:1 관계
+    @ManyToOne((type) => Account, (account) => account.writePosts)
+    @JoinColumn({ name: 'fromAccountId' })
+    fromAccount!: Account;
 
-    @ManyToOne((type) => Account, (account) => account.id)
-    toAccountId!: Account;
+    @ManyToOne((type) => Account, (account) => account.receivePosts)
+    @JoinColumn({ name: 'toAccountId' })
+    toAccount!: Account;
+
+    // LikePosts 1:N 관계
+    @OneToMany((type) => LikePosts, (likeposts) => likeposts.post)
+    likedposts!: Post[];
+
+    // Comment와 1:N관계
+    @OneToMany(() => Comment, (comment) => comment.post)
+    comments!: Comment[];
+
+    // PostEmoticon과 1:N
+    @OneToMany(() => PostEmoticon, (postEmoticon) => postEmoticon.post)
+    usingemoticons!: PostEmoticon[];
 }

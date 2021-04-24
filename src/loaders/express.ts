@@ -4,9 +4,9 @@ import * as cookieParser from 'cookie-parser';
 import * as morgan from 'morgan';
 import * as helmet from 'helmet';
 import { config } from '../config';
-import { handleUserAgent } from '../middleware/user-agent';
+import { handleUserAgent } from '../middleware/express/user-agent';
 import { logger } from '../logger/winston';
-import { handle404Error, handleError } from '../middleware/error';
+import { handle404Error, handleError } from '../middleware/express/error';
 import router from '../routers';
 
 export default ({ app }: { app: express.Application }) => {
