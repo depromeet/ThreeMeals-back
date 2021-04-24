@@ -1,6 +1,5 @@
 import { RequestHandler } from 'express';
 import { Container } from 'typedi';
-import { UserService } from '../../services/UserService';
 
 export const find: RequestHandler = async (req, res, next) => {
     //   try {

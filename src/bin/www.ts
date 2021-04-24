@@ -5,7 +5,6 @@ import expressLoader, { loadHandleError } from '../loaders/express';
 import dbConnection from '../loaders/typeorm';
 import { logger } from '../logger/winston';
 import { config } from '../config';
-
 const startApiServer = async () => {
     const app = express();
     expressLoader({ app });
@@ -18,9 +17,7 @@ const startApiServer = async () => {
     });
 };
 
-startApiServer().catch((err) =>
-    logger.error(`Fail to start server, err: ${err.message}`),
-);
+startApiServer().catch((err) => logger.error(`Fail to start server, err: ${err.message}`));
 
 // new App().app.listen({port: PORT}, () =>
 //     console.log(`Server ready at http://localhost:${PORT}${server.graphqlPath}`),
