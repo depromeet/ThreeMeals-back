@@ -62,8 +62,8 @@ jobs:                                # Job 설정
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.HOST }}
-          username: ${{ secrets.SECRET_KEY }}
-          password: ${{ secrets.SECRET_ACCESS_KEY }}
+          key: ${{ secrets.SSH_KEY }}
+#           password: ${{ secrets.SECRET_ACCESS_KEY }}
           # port: ${{ secrets.PORT }} # default : 22
           script: |
             cd /opt/myproject && git pull origin master
