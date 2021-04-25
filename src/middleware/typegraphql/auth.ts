@@ -15,9 +15,8 @@ export const isAuth: MiddlewareFn<AuthContext> = ({ context }, next) => {
 
         const jwtToken = authorization.split(' ')[1];
         const payload = verify(jwtToken, process.env.JWT_SECRET || 'threemeal');
-        // console.log(payload);
+
         context.payload = payload as any;
-        // console.log(context.payload);
     } catch (err) {
         console.log(err);
         throw new Error('Not authenticated');

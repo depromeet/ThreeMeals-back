@@ -12,30 +12,27 @@ import { Provider } from '../entities/Enums';
 import { InjectRepository } from 'typeorm-typedi-extensions';
 import * as jwt from 'jsonwebtoken';
 import axios from 'axios';
-interface accountInfo {
-    id: string;
-    nickname: string;
-    // eslint-disable-next-line camelcase
-    profileImg: string;
-}
+import { classToPlain } from 'class-transformer';
 @Service()
 export class AccountService {
     constructor(@InjectRepository() private readonly AccountRepository: AccountRepository) {}
+
     async signIn({ accessToken, provider }: SignInArgument): Promise<string> {
         const userData = await this.fetchUserData({ accessToken, provider });
-        console.log(userData);
         if (userData) {
-            if (!(await this.AccountRepository.isExistedAccount(userData.data.id))) {
+            let accountData = await this.AccountRepository.getAccount(userData.data.id);
+            if (!accountData) {
                 const newAccount = new Account();
                 newAccount.nickname = userData.data.properties.nickname;
                 newAccount.providerId = userData.data.id;
                 newAccount.status = 'active';
                 newAccount.image = userData.data.properties.profile_image;
                 newAccount.provider = provider;
-                await this.AccountRepository.createAccount(newAccount);
+                accountData = await this.AccountRepository.createAccount(newAccount);
             }
             // 필요한 정보 담아야 하는걸로 수정필요
-            return await this.issueJWT(userData.data);
+
+            return await this.issueJWT(classToPlain(accountData));
         } else {
             logger.info('no user');
             throw new NotFoundException('no user');
