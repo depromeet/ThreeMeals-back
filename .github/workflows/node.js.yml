@@ -61,6 +61,7 @@ jobs:                                # Job 설정
       - name: Deploy                  # deply to EC2
         uses: appleboy/ssh-action@master
         with:
+          username: ${{ secrets.USER_NAME }}
           host: ${{ secrets.HOST }}
           key: ${{ secrets.SSH_KEY }}
 #           password: ${{ secrets.SECRET_ACCESS_KEY }}
