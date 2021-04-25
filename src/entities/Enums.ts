@@ -2,7 +2,7 @@ import { registerEnumType } from 'type-graphql';
 
 // Account - Provider
 enum Provider {
-    Kakao,
+    Kakao = 'Kakao',
 }
 
 registerEnumType(Provider, {
@@ -12,8 +12,8 @@ registerEnumType(Provider, {
 
 //  Post - PostType
 enum PostType {
-    QUESTION = 'question',
-    ANSWER = 'answer',
+    question = 'question',
+    answer = 'answer',
 }
 
 registerEnumType(PostType, {
@@ -21,17 +21,29 @@ registerEnumType(PostType, {
     description: '물어봐 / 답해줘',
 });
 
-//  Post - State
-enum State {
-    SUBMITTED = 'submitted',
-    ANSWERED = 'answered',
-    DELETED = 'deleted',
+//  Post - postState
+enum PostState {
+    submitted = 'submitted',
+    answered = 'answered',
+    deleted = 'deleted',
 }
 
-registerEnumType(State, {
-    name: 'State',
+registerEnumType(PostState, {
+    name: 'PostState',
     description: 'Post 상태',
 });
 
 
-export { Provider, PostType, State };
+//  Post - secretType
+enum SecretType {
+    temp = 'temp',
+    forever = 'forever',
+}
+
+registerEnumType(SecretType, {
+    name: 'SecretType',
+    description: '익명 여부',
+});
+
+
+export { Provider, PostType, PostState, SecretType };

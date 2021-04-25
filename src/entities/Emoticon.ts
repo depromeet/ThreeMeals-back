@@ -11,7 +11,7 @@ export class Emoticon {
     id!: number;
 
     @Field()
-    @Column('varchar')
+    @Column('varchar', { name: 'file_url' })
     fileUrl!: string;
 
     @Field()
@@ -20,5 +20,5 @@ export class Emoticon {
 
     // PostEmoticon과 1:N
     @OneToMany(() => PostEmoticon, (postemoticon) => postemoticon.emoticon)
-    usedemoticons!: PostEmoticon[];
+    usedEmoticons!: PostEmoticon[];
 }

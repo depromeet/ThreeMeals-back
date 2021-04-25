@@ -42,23 +42,25 @@ mutation {
 
 
 mutation{
-  signIn(provider:"Kakao", accessToken:"t0weVUprlo48U8nbs0V5A8OGNlnfDMtiPkBSMgo9c5sAAAF5A_-dOg"){
+  signIn(provider:"Kakao", accessToken:"onrx5LiuAb6eotfyygH1WisM3ceBxBhBf2Xk2worDR4AAAF5CJInxw"){
     token
   }
 }
 
+// jwt : eyJhbGciOiJIUzI1NiJ9.MTcwNjcwMTQ2OA.lWvEo8fZUAGsynyvxTC9H3Zz1Av9Cjb2WRESDsT5TSQ
+
 mutation{
   makePost(
     content: "aaa",
-    postType: QUESTION,
-    color: "Red",
-    state: SUBMITTED,
+    postType: "question",
+    color: "#777",
+    postState: "submitted",
     secretType: "no",  
   ){
     content
     postType
     color
-    state
+    postState
     secretType
   }
 }

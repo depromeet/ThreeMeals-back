@@ -6,8 +6,8 @@ import { Post } from '../entities/Post';
 import { logger } from '../logger/winston';
 import { InsertPostArgument, UpdatePostArgument } from './arguments/PostArgument';
 import { PostType } from '../entities/Enums';
-import { isAuth } from '../middleware/express/auth';
-import { MyContext } from '../middleware/express/mycontext';
+import { isAuth } from '../middleware/typegraphql/auth';
+import { AuthContext } from '../middleware/express/AuthContext';
 
 @Service()
 @Resolver(() => Post)
@@ -26,12 +26,12 @@ export class PostResolver {
     @Mutation((returns) => Post)
     @UseMiddleware(isAuth)
     async makePost(
-        @Args() { content, postType, color, state, secretType }: InsertPostArgument,
-        @Ctx() { payload }: MyContext,
+        @Args() { content, postType, color, postState, secretType }: InsertPostArgument,
+        @Ctx() { payload }: AuthContext,
     ): Promise<Post> {
         // providerId
-        console.log(payload);
-        const post = await this.postService.makePost({ content, postType, color, state, secretType });
+        // console.log(payload);
+        const post = await this.postService.makePost({ content, postType, color, postState, secretType });
         return post;
     }
 

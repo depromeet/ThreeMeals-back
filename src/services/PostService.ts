@@ -2,7 +2,8 @@ import { Inject, Service } from 'typedi';
 import { Post } from '../entities/Post';
 import { PostRepository } from '../repositories/PostRepository';
 import { InjectRepository } from 'typeorm-typedi-extensions';
-import { PostType, State } from '../entities/Enums';
+import { PostType, PostState, SecretType } from '../entities/Enums';
+import { InsertPostArgument, UpdatePostArgument } from '../resolvers/arguments/PostArgument';
 import { logger } from 'src/logger/winston';
 
 @Service()
@@ -12,20 +13,20 @@ export class PostService {
         content: string,
         postType: PostType,
         color: string,
-        state: State,
-        secretType: string
+        postState: PostState,
+        secretType: SecretType
     }): Promise<Post> {
         // fromAccountId 리졸버에서 넣어줘야 하는데 더 고민 필요
         // const fromAccountId = uuid().toString();
         // const toAccountId = uuid().toString();
 
-        const { content, postType, state, color, secretType } = args;
+        const { content, postType, postState, color, secretType } = args;
         const newPost = new Post();
 
         newPost.content = content;
         newPost.postType = postType;
         newPost.color = color;
-        newPost.state = state;
+        newPost.postState = postState;
         newPost.secretType = secretType;
 
         console.log(newPost);
@@ -56,7 +57,7 @@ export class PostService {
         id: number,
         content: string,
         color: string,
-        secretType: string
+        secretType: SecretType
     }): Promise<Post> {
         const { id, content, color, secretType } = args;
         const updatepost = this.PostRepository.create({ id: id });

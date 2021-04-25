@@ -13,15 +13,15 @@ export class PostEmoticon {
     id!: number;
 
     @Field()
-    @Column('decimal', { precision: 8, scale: 2 })
+    @Column('float', { precision: 8, scale: 2 })
     positionX!: number;
 
     @Field()
-    @Column('decimal', { precision: 8, scale: 2 })
+    @Column('float', { precision: 8, scale: 2 })
     positionY!: number;
 
     @Field()
-    @Column('decimal', { precision: 8, scale: 2 })
+    @Column('float', { precision: 8, scale: 2 })
     rotate!: number;
 
     // @Field((type) => Int)
@@ -34,12 +34,12 @@ export class PostEmoticon {
 
 
     // Post과 N:1
-    @ManyToOne((type) => Post, (post) => post.usingemoticons)
-    @JoinColumn({ name: 'postId' })
+    @ManyToOne((type) => Post, (post) => post.usingEmoticons)
+    @JoinColumn({ name: 'post_id' })
     post!: Post;
 
     // Emoticon과 N:1
-    @ManyToOne((type) => Emoticon, (emoticon) => emoticon.usedemoticons)
-    @JoinColumn({ name: 'emoticonId' })
+    @ManyToOne((type) => Emoticon, (emoticon) => emoticon.usedEmoticons)
+    @JoinColumn({ name: 'emoticon_id' })
     emoticon!: Emoticon;
 }

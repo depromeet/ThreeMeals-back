@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 
-export interface MyContext {
+export interface AuthContext {
   req: Request;
   res: Response;
-  payload?: { providerId: string };
+  payload?: { userId: string };
 }

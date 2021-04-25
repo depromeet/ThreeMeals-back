@@ -23,6 +23,7 @@ export class AccountService {
     constructor(@InjectRepository() private readonly AccountRepository: AccountRepository) {}
     async signIn({ accessToken, provider }: SignInArgument): Promise<string> {
         const userData = await this.fetchUserData({ accessToken, provider });
+        console.log(userData);
         if (userData) {
             if (!(await this.AccountRepository.isExistedAccount(userData.data.id))) {
                 const newAccount = new Account();
@@ -34,7 +35,7 @@ export class AccountService {
                 await this.AccountRepository.createAccount(newAccount);
             }
             // 필요한 정보 담아야 하는걸로 수정필요
-            return await this.issueJWT(userData.data.id);
+            return await this.issueJWT(userData.data);
         } else {
             logger.info('no user');
             throw new NotFoundException('no user');

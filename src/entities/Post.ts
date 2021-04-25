@@ -5,7 +5,7 @@ import { Account } from './Account';
 import { Comment } from './Comment';
 import { PostEmoticon } from './PostEmoticon';
 import { LikePosts } from './LikePosts';
-import { PostType, State } from './Enums';
+import { PostType, PostState, SecretType } from './Enums';
 
 @ObjectType()
 @Entity()
@@ -19,14 +19,14 @@ export class Post {
     content!: string;
 
     // Enum
-    @Field()
-    @Column('varchar')
+    @Field((type) => PostType)
+    @Column('varchar', { name: 'post_type' })
     postType!: PostType;
 
     // Enum
-    @Field()
-    @Column('varchar')
-    state!: State;
+    @Field((type) => PostState)
+    @Column('varchar', { name: 'post_state' })
+    postState!: PostState;
 
     // class-validator - color인지
     @Field()
@@ -34,30 +34,34 @@ export class Post {
     @Column('varchar', { length: 20 })
     color!: string;
 
-    @Field()
-    @Column('varchar', { length: 20 })
-    secretType!: string;
+    // @Field()
+    // @Column('varchar', { name: 'secret_type', length: 20 })
+    // secretType!: string;
+
+    @Field((type) => SecretType)
+    @Column('varchar', { name: 'secret_type' })
+    secretType!: SecretType;
 
     @Field()
-    @CreateDateColumn({})
+    @CreateDateColumn({ name: 'created_at' })
     createdAt!: Date;
 
     @Field()
-    @UpdateDateColumn({})
+    @UpdateDateColumn({ name: 'updated_at' })
     updatedAt!: Date;
 
     // Account와 N:1 관계
     @ManyToOne((type) => Account, (account) => account.writePosts)
-    @JoinColumn({ name: 'fromAccountId' })
+    @JoinColumn({ name: 'from_account_id' })
     fromAccount!: Account;
 
     @ManyToOne((type) => Account, (account) => account.receivePosts)
-    @JoinColumn({ name: 'toAccountId' })
+    @JoinColumn({ name: 'to_account_id' })
     toAccount!: Account;
 
     // LikePosts 1:N 관계
     @OneToMany((type) => LikePosts, (likeposts) => likeposts.post)
-    likedposts!: Post[];
+    likedPosts!: Post[];
 
     // Comment와 1:N관계
     @OneToMany(() => Comment, (comment) => comment.post)
@@ -65,5 +69,5 @@ export class Post {
 
     // PostEmoticon과 1:N
     @OneToMany(() => PostEmoticon, (postEmoticon) => postEmoticon.post)
-    usingemoticons!: PostEmoticon[];
+    usingEmoticons!: PostEmoticon[];
 }

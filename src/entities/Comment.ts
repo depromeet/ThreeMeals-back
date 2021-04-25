@@ -17,36 +17,36 @@ export class Comment {
     content!: string;
 
     @Field()
-    @Column('varchar', { length: 20 })
+    @Column('varchar', { name: 'secret_type', length: 20 })
     secretType!: string;
 
     @Field()
-    @CreateDateColumn({})
+    @CreateDateColumn({ name: 'created_at' })
     createdAt!: Date;
 
     @Field()
-    @UpdateDateColumn({})
+    @UpdateDateColumn({ name: 'updated_at' })
     updatedAt!: Date;
 
     // Account와 N:1 관계
     @ManyToOne((type) => Account, (account) => account.writeComments)
-    @JoinColumn({ name: 'accountId' })
+    @JoinColumn({ name: 'account_id' })
     account!: Account;
 
     // Post와 N:1 관계
     @ManyToOne((type) => Post, (post) => post.comments)
-    @JoinColumn({ name: 'postId' })
+    @JoinColumn({ name: 'post_id' })
     post!: Post;
 
     // LikeComments 1:N 관계
     @OneToMany((type) => LikeComments, (likecomments) => likecomments.comment)
-    likedcomments!: LikeComments[]
+    likedComments!: LikeComments[]
 
     // Comment 내에서 self join
     @OneToMany((type) => Comment, (comment) => comment.parent)
     children!: Comment[];
 
     @ManyToOne((type) => Comment, (comment) => comment.children, { nullable: true } ) // null 가능
-    @JoinColumn({ name: 'parentId' })
+    @JoinColumn({ name: 'parent_id' })
     parent!: Comment;
 }

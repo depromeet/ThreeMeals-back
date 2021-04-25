@@ -19,7 +19,7 @@ export class Account {
     nickname!: string;
 
     // Enum
-    @Field()
+    @Field((type) => Provider)
     @Column('varchar', { length: 8 })
     provider!: Provider;
 
@@ -40,7 +40,7 @@ export class Account {
     content?: string;
 
     @Field({ nullable: true, description: 'insta or facebook url' })
-    @Column('varchar', { length: 50, nullable: true })
+    @Column('varchar', { name: 'profile_url', length: 50, nullable: true })
     profileUrl?: string;
 
     @Field()
@@ -64,9 +64,9 @@ export class Account {
 
     // LikePosts 1:N 관계
     @OneToMany((type) => LikePosts, (likeposts) => likeposts.account)
-    likeposts!: Post[];
+    likePosts!: LikePosts[];
 
     // LikeComments 1:N 관계
     @OneToMany((type) => LikeComments, (likecomments) => likecomments.account)
-    likecomments!: LikeComments[];
+    likeComments!: LikeComments[];
 }

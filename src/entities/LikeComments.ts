@@ -12,16 +12,16 @@ export class LikeComments {
     id!: number;
 
     @Field()
-    @CreateDateColumn({})
+    @CreateDateColumn({ name: 'created_at' })
     createdAt!: Date;
 
     // Account와 N:1 관계
-    @ManyToOne((type) => Account, (account) => account.likecomments)
-    @JoinColumn({ name: 'accountId' })
+    @ManyToOne((type) => Account, (account) => account.likeComments)
+    @JoinColumn({ name: 'account_id' })
     account!: Account;
 
     // Post와 N:1 관계
-    @ManyToOne((type) => Comment, (comment) => comment.likedcomments)
-    @JoinColumn({ name: 'commentId' })
+    @ManyToOne((type) => Comment, (comment) => comment.likedComments)
+    @JoinColumn({ name: 'comment_id' })
     comment!: Comment;
 }
