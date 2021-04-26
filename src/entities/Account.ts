@@ -1,8 +1,12 @@
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
 import { ObjectType, Field, Int, ID } from 'type-graphql';
 import { length } from 'class-validator';
 import { Post } from './Post';
+import { Comment } from './Comment';
+import { LikePosts } from './LikePosts';
+import { LikeComments } from './LikeComments';
 import { Provider } from './Enums';
+
 @ObjectType()
 @Entity()
 export class Account {
@@ -14,7 +18,8 @@ export class Account {
     @Column('varchar', { length: 8 })
     nickname!: string;
 
-    @Field()
+    // Enum
+    @Field((type) => Provider)
     @Column('varchar', { length: 8 })
     provider!: Provider;
 
@@ -35,7 +40,7 @@ export class Account {
     content?: string;
 
     @Field({ nullable: true, description: 'insta or facebook url' })
-    @Column('varchar', { length: 50, nullable: true })
+    @Column('varchar', { name: 'profile_url', length: 50, nullable: true })
     profileUrl?: string;
 
     @Field()
@@ -46,9 +51,22 @@ export class Account {
     @UpdateDateColumn({ name: 'updated_at' })
     updatedAt!: Date;
 
-    @OneToMany((type) => Post, (post) => post.fromAccountId)
+    // Post와 1:N 관계
+    @OneToMany((type) => Post, (post) => post.fromAccount)
     writePosts!: Post[];
 
-    @OneToMany((type) => Post, (post) => post.toAccountId)
+    @OneToMany((type) => Post, (post) => post.toAccount)
     receivePosts!: Post[];
+
+    // Comment와 1:N 관계
+    @OneToMany((type) => Comment, (comment) => comment.account)
+    writeComments!: Comment[];
+
+    // LikePosts 1:N 관계
+    @OneToMany((type) => LikePosts, (likeposts) => likeposts.account)
+    likePosts!: LikePosts[];
+
+    // LikeComments 1:N 관계
+    @OneToMany((type) => LikeComments, (likecomments) => likecomments.account)
+    likeComments!: LikeComments[];
 }
