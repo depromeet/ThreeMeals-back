@@ -30,12 +30,12 @@ export class Comment {
 
     // Account와 N:1 관계
     @ManyToOne((type) => Account, (account) => account.writeComments)
-    @JoinColumn({ name: 'account_id' })
+    @JoinColumn({ name: 'account_id', referencedColumnName: 'id' })
     account!: Account;
 
     // Post와 N:1 관계
     @ManyToOne((type) => Post, (post) => post.comments)
-    @JoinColumn({ name: 'post_id' })
+    @JoinColumn({ name: 'post_id', referencedColumnName: 'id' })
     post!: Post;
 
     // LikeComments 1:N 관계
@@ -47,6 +47,6 @@ export class Comment {
     children!: Comment[];
 
     @ManyToOne((type) => Comment, (comment) => comment.children, { nullable: true } ) // null 가능
-    @JoinColumn({ name: 'parent_id' })
+    @JoinColumn({ name: 'parent_id', referencedColumnName: 'id' })
     parent!: Comment;
 }

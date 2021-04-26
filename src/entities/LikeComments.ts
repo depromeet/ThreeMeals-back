@@ -17,11 +17,11 @@ export class LikeComments {
 
     // Account와 N:1 관계
     @ManyToOne((type) => Account, (account) => account.likeComments)
-    @JoinColumn({ name: 'account_id' })
+    @JoinColumn({ name: 'account_id', referencedColumnName: 'id' })
     account!: Account;
 
     // Post와 N:1 관계
     @ManyToOne((type) => Comment, (comment) => comment.likedComments)
-    @JoinColumn({ name: 'comment_id' })
+    @JoinColumn({ name: 'comment_id', referencedColumnName: 'id' })
     comment!: Comment;
 }

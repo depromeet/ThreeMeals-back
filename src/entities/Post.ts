@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import { Entity, PrimaryGeneratedColumn, Column, JoinColumn, CreateDateColumn, UpdateDateColumn, OneToMany, ManyToOne } from 'typeorm';
 import { ObjectType, Field, Int, ID } from 'type-graphql';
 import { length, IsHexColor } from 'class-validator';
@@ -51,12 +52,14 @@ export class Post {
     updatedAt!: Date;
 
     // Account와 N:1 관계
+    @Column()
+    fromAccountId!: number;
     @ManyToOne((type) => Account, (account) => account.writePosts)
-    @JoinColumn({ name: 'from_account_id' })
+    @JoinColumn({ name: 'from_account_id', referencedColumnName: 'id' })
     fromAccount!: Account;
 
     @ManyToOne((type) => Account, (account) => account.receivePosts)
-    @JoinColumn({ name: 'to_account_id' })
+    @JoinColumn({ name: 'to_account_id', referencedColumnName: 'id' })
     toAccount!: Account;
 
     // LikePosts 1:N 관계

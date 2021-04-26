@@ -28,7 +28,6 @@ export class PostService {
         newPost.color = color;
         newPost.postState = postState;
         newPost.secretType = secretType;
-
         console.log(newPost);
         await this.PostRepository.createPost(newPost);
 
