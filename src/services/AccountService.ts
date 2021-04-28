@@ -1,6 +1,7 @@
 import { Inject, Service } from 'typedi';
 import { v4 as uuid } from 'uuid';
-import NotFoundException from '../exceptions/NotFoundException';
+import BaseError from '../exceptions/BaseError';
+import { ERROR_CODE } from '../exceptions/ErrorCode';
 import { Account } from '../entities/Account';
 import { logger } from '../logger/winston';
 import * as faker from 'faker';
@@ -38,7 +39,7 @@ export class AccountService {
             return await this.issueJWT(userData.data);
         } else {
             logger.info('no user');
-            throw new NotFoundException('no user');
+            throw new BaseError(ERROR_CODE.USER_NOT_FOUND);
         }
     }
 
