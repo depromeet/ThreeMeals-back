@@ -3,12 +3,13 @@ import { Container } from 'typedi';
 import { buildSchema } from 'type-graphql';
 import { GraphQLSchema } from 'graphql';
 import * as express from 'express';
-import { AccountResolver, PostResolver } from '../resolvers';
+import { AccountResolver, PostResolver, CommentResolver } from '../resolvers';
 import { config } from '../config';
 
 export default async ({ app }: { app: express.Application }) => {
+    console.log(__dirname);
     const schema: GraphQLSchema = await buildSchema({
-        resolvers: [AccountResolver, PostResolver],
+        resolvers: [__dirname + '../resolvers/*Resolver.{ts,js}'],
         container: Container,
     });
 
