@@ -7,9 +7,8 @@ import { AccountResolver, PostResolver, CommentResolver } from '../resolvers';
 import { config } from '../config';
 
 export default async ({ app }: { app: express.Application }) => {
-    console.log(__dirname);
     const schema: GraphQLSchema = await buildSchema({
-        resolvers: [__dirname + '../resolvers/*Resolver.{ts,js}'],
+        resolvers: [AccountResolver, PostResolver, CommentResolver],
         container: Container,
     });
 

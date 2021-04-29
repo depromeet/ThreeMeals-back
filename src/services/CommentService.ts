@@ -14,12 +14,19 @@ export class CommentService {
         private readonly postRepository: PostRepository,
     ) {}
 
-    async createComment(args: { content: string; secretType: SecretType; postId: number }): Promise<Comment> {
+    async createComment(args: { content: string; postId: number }): Promise<Comment> {
         const post = await this.postRepository.getPost(args.postId);
+        console.log(post);
         const newComment = new Comment();
         newComment.content = args.content;
-        newComment.secretType = args.secretType;
         newComment.post = post;
-        return await this.commentRepository.createComment(newComment);
+        const result = await this.commentRepository.createComment(newComment);
+        console.log(result);
+        return result;
+    }
+
+    async getCommentsByPostId(postId: number): Promise<Comment[]> {
+        const comments = await this.commentRepository.getCommentsByPostId(postId);
+        return comments;
     }
 }

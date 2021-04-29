@@ -1,6 +1,6 @@
 import { IsEnum, IsNumber, IsString } from 'class-validator';
 import { Field, ArgsType } from 'type-graphql';
-import { SecretType } from '../../entities/Enums';
+
 @ArgsType()
 export class CreateCommentArgs {
     @IsString({
@@ -8,12 +8,6 @@ export class CreateCommentArgs {
     })
     @Field()
     content!: string;
-
-    @IsEnum(SecretType, {
-        message: 'type of secret',
-    })
-    @Field((type) => String)
-    secretType!: SecretType;
 
     @IsNumber()
     @Field()

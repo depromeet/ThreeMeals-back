@@ -1,4 +1,4 @@
-import { Arg, Args, Ctx, FieldResolver, Mutation, Resolver, Root, UseMiddleware } from 'type-graphql';
+import { Arg, Args, Ctx, FieldResolver, Mutation, Query, Resolver, Root, UseMiddleware } from 'type-graphql';
 import { Service } from 'typedi';
 import { Request } from 'express';
 import { CommentService } from '../services/CommentService';
@@ -26,6 +26,12 @@ export class CommentResolver {
         return comment;
     }
 
+    @Query((returns) => [Comment])
+    @UseMiddleware(isAuth)
+    async getComments(@Arg('postId') postId: number, @Ctx() { payload }: AuthContext): Promise<Comment[]> {
+        const comments = await this.commentService.getCommentsByPostId(postId);
+        return comments;
+    }
     // @Query((returns) => Comment)
     // @UseMiddleware(isAuth)
     // async getComments(@argsToArgsConfig() args: any, @Ctx() { payload });

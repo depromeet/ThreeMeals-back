@@ -8,4 +8,9 @@ export class CommentRepository extends Repository<Comment> {
     async createComment(newComment: Comment): Promise<Comment> {
         return await this.manager.save(newComment);
     }
+
+    async getCommentsByPostId(postId: number): Promise<Comment[]> {
+        const comments = await this.find({ relations: ['post'] });
+        return comments;
+    }
 }
