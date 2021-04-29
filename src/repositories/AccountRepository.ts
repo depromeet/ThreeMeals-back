@@ -18,9 +18,9 @@ export class AccountRepository extends Repository<Account> {
         return await this.manager.save(newAccount);
     }
 
-    async isExistedAccount(providerId: string): Promise<boolean> {
-        const account = await this.findOne({ providerId: providerId });
-        if (account) return true;
-        else return false;
+    async getAccount(providerId: string): Promise<Account | undefined> {
+        const account = await this.findOne({ providerId: providerId }, { select: ['id'] });
+
+        return account;
     }
 }
