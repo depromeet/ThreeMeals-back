@@ -1,31 +1,32 @@
 import { registerEnumType } from 'type-graphql';
 
 // Account - Provider
-enum Provider {
+export enum Provider {
     Kakao = 'Kakao',
 }
 
 registerEnumType(Provider, {
     name: 'Provider',
-    description: '소셜 로그인 어디꺼에요',
+    description: '소셜 로그인 벤더사 (Kakao)',
 });
 
 //  Post - PostType
-enum PostType {
-    question = 'question',
-    answer = 'answer',
+export enum PostType {
+    Ask = 'Ask',
+    Answer = 'Answer',
+    Quiz = 'Quiz'
 }
 
 registerEnumType(PostType, {
     name: 'PostType',
-    description: '물어봐 / 답해줘',
+    description: '물어봐 / 답해줘 / OX 퀴즈',
 });
 
 //  Post - postState
-enum PostState {
-    submitted = 'submitted',
-    answered = 'answered',
-    deleted = 'deleted',
+export enum PostState {
+    Submitted = 'Submitted',
+    Completed = 'Completed',
+    Deleted = 'Deleted',
 }
 
 registerEnumType(PostState, {
@@ -35,15 +36,12 @@ registerEnumType(PostState, {
 
 
 //  Post - secretType
-enum SecretType {
-    temp = 'temp',
-    forever = 'forever',
+export enum SecretType {
+    Temp = 'Temp',
+    Forever = 'Forever',
 }
 
 registerEnumType(SecretType, {
     name: 'SecretType',
     description: '익명 여부',
 });
-
-
-export { Provider, PostType, PostState, SecretType };

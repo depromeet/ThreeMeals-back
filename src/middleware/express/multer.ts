@@ -2,10 +2,9 @@ import * as path from 'path';
 import * as aws from 'aws-sdk';
 import * as multer from 'multer';
 import * as multerS3 from 'multer-s3';
+import * as dotenv from 'dotenv';
 
-const dotenv = require('dotenv');
-dotenv.config(); // LOAD CONFIG
-
+dotenv.config();
 const s3 = new aws.S3();
 
 aws.config.update({

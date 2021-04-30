@@ -9,8 +9,8 @@ import { LikeComments } from './LikeComments';
 @Entity()
 export class Comment {
     @Field(() => ID)
-    @PrimaryGeneratedColumn()
-    id!: number;
+    @PrimaryGeneratedColumn({ type: 'bigint', unsigned: true })
+    id!: string;
 
     @Field()
     @Column('text')

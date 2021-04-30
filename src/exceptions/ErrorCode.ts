@@ -9,5 +9,8 @@ export const ERROR_CODE = {
 
     // not found
     NOT_FOUND: createErrorCode(404, 'E03', 'Not Found'),
+
+
     USER_NOT_FOUND: createErrorCode(400, 'E04', 'cannot find user'),
+    INVALID_POST_TYPE: createErrorCode(400, 'E05', 'invalid post type'),
 };

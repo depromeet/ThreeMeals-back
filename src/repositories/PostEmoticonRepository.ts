@@ -10,6 +10,15 @@ export class PostEmoticonRepository extends Repository<PostEmoticon> {
         return await this.manager.save(newPostEmoticon);
     }
 
+    async listPostEmoticonByPostId(postId: string): Promise<PostEmoticon[]> {
+        const postEmoticon = 'postEmoticon';
+        const queryBuilder = this.createQueryBuilder(postEmoticon);
+        return queryBuilder
+            .leftJoinAndSelect(`${postEmoticon}.emoticon`, 'emoticon')
+            .where(`${postEmoticon}.post_id = :postId`, { postId })
+            .getMany();
+    }
+
     async getPostEmoticonId(postEmoticonId: number): Promise<PostEmoticon | undefined> {
         const postEmoticon = await this.findOne(postEmoticonId, { select: ['id'] });
 

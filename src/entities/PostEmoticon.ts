@@ -9,8 +9,8 @@ import { Emoticon } from './Emoticon';
 @Entity()
 export class PostEmoticon {
     @Field(() => ID)
-    @PrimaryGeneratedColumn()
-    id!: number;
+    @PrimaryGeneratedColumn({ type: 'bigint', unsigned: true })
+    id!: string;
 
     @Field()
     @Column('float', { precision: 8, scale: 2 })
@@ -24,22 +24,14 @@ export class PostEmoticon {
     @Column('float', { precision: 8, scale: 2 })
     rotate!: number;
 
-    // @Field((type) => Int)
-    // @Column({ type: 'int' })
-    // postId!: number;
-
-    // @Field((type) => Int)
-    // @Column({ type: 'int' })
-    // emoticonId!: number;
-
-
     // Post과 N:1
-    @ManyToOne((type) => Post, (post) => post.usingEmoticons)
+    @ManyToOne((type) => Post, (post) => post.usedEmoticons)
     @JoinColumn({ name: 'post_id', referencedColumnName: 'id' })
-    post?: Post;
+    post!: Post | null;
 
     // Emoticon과 N:1
+    @Field(() => Emoticon)
     @ManyToOne((type) => Emoticon, (emoticon) => emoticon.usedEmoticons)
     @JoinColumn({ name: 'emoticon_id', referencedColumnName: 'id' })
-    emoticon?: Emoticon;
+    emoticon!: Emoticon | null;
 }

@@ -10,9 +10,8 @@ export class PostRepository extends Repository<Post> {
         return await this.manager.save(newPost);
     }
 
-    async getPostId(postId: number): Promise<Post | undefined> {
-        const account = await this.findOne(postId, { select: ['id'] });
-
-        return account;
+    async getPostById(postId: string): Promise<Post | undefined> {
+        const post = await this.findOne(postId, { select: ['id'] });
+        return post;
     }
 }

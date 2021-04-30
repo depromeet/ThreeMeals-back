@@ -1,8 +1,10 @@
+import * as fs from 'fs';
+import { createLogger, format, Logger, LoggerOptions, transports } from 'winston';
 import { config } from '../config';
+import * as WinstonDaily from 'winston-daily-rotate-file';
+import { ConsoleTransportOptions } from 'winston/lib/winston/transports';
 
-const { createLogger, format, transports } = require('winston');
-require('winston-daily-rotate-file');
-const fs = require('fs');
+const { combine, timestamp, label, printf, colorize, json } = format;
 
 const logDir = 'log';
 
@@ -14,7 +16,7 @@ if (!fs.existsSync(logDir)) {
     fs.mkdirSync(logDir);
 }
 
-const dailyRotateFileTransport = new transports.DailyRotateFile({
+const dailyRotateFileTransport = new WinstonDaily({
     level: 'debug',
     filename: `${logDir}/%DATE%-smart-push.log`,
     datePattern: 'YYYY-MM-DD',
@@ -22,6 +24,16 @@ const dailyRotateFileTransport = new transports.DailyRotateFile({
     maxSize: '20m',
     maxFiles: '14d',
 });
+
+const consoleTransport = new transports.Console({
+    level: 'info',
+    format: format.combine(
+        format.colorize(),
+        format.printf(
+            ({ level, message, label, timestamp }) => `${timestamp} ${level}: ${message}`,
+        ),
+    ),
+} as ConsoleTransportOptions);
 
 const logger = createLogger({
     level: config.server.log.logLevel,
@@ -32,18 +44,9 @@ const logger = createLogger({
         format.json(),
     ),
     transports: [
-        new transports.Console({
-            level: 'info',
-            format: format.combine(
-                format.colorize(),
-                format.printf(
-                    (info: { timestamp: any; level: any; message: any }) =>
-                        `${info.timestamp} ${info.level}: ${info.message}`,
-                ),
-            ),
-        }),
+        consoleTransport,
         dailyRotateFileTransport,
     ],
-});
+} as LoggerOptions);
 
 export { logger };

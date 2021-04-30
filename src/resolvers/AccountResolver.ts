@@ -7,7 +7,6 @@ import { Token } from '../schemas/TokenSchema';
 import axios from 'axios';
 import { logger } from '../logger/winston';
 import { SignInArgument } from './arguments/SignInArgument';
-import { token } from '../types/types';
 import { Provider } from '../entities/Enums';
 @Service()
 @Resolver(() => Account)
@@ -39,7 +38,7 @@ export class AccountResolver {
 
     // jwtnewAccount
     @Mutation((returns) => Token)
-    async signIn(@Args() { accessToken, provider }: SignInArgument, @Ctx() ctx: any): Promise<token> {
+    async signIn(@Args() { accessToken, provider }: SignInArgument, @Ctx() ctx: any): Promise<Token> {
         const accountToken = await this.accountService.signIn({ accessToken, provider });
         return { token: accountToken };
     }

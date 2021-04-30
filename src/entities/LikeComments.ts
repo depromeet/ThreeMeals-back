@@ -8,8 +8,8 @@ import { Comment } from './Comment';
 @Entity()
 export class LikeComments {
     @Field(() => ID)
-    @PrimaryGeneratedColumn()
-    id!: number;
+    @PrimaryGeneratedColumn({ type: 'bigint', unsigned: true })
+    id!: string;
 
     @Field()
     @CreateDateColumn({ name: 'created_at' })
