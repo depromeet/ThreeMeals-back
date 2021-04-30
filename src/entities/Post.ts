@@ -52,15 +52,13 @@ export class Post {
     updatedAt!: Date;
 
     // Account와 N:1 관계
-    @Column()
-    fromAccountId!: number;
     @ManyToOne((type) => Account, (account) => account.writePosts)
     @JoinColumn({ name: 'from_account_id', referencedColumnName: 'id' })
-    fromAccount!: Account;
+    fromAccount?: Account;
 
     @ManyToOne((type) => Account, (account) => account.receivePosts)
     @JoinColumn({ name: 'to_account_id', referencedColumnName: 'id' })
-    toAccount!: Account;
+    toAccount?: Account;
 
     // LikePosts 1:N 관계
     @OneToMany((type) => LikePosts, (likeposts) => likeposts.post)
