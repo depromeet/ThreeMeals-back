@@ -7,8 +7,8 @@ import { PostEmoticon } from './PostEmoticon';
 @Entity()
 export class Emoticon {
     @Field(() => ID)
-    @PrimaryGeneratedColumn()
-    id!: number;
+    @PrimaryGeneratedColumn({ type: 'bigint', unsigned: true })
+    id!: string;
 
     @Field()
     @Column('varchar', { name: 'file_url' })

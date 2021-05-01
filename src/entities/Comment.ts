@@ -9,16 +9,12 @@ import { LikeComments } from './LikeComments';
 @Entity()
 export class Comment {
     @Field(() => ID)
-    @PrimaryGeneratedColumn()
-    id!: number;
+    @PrimaryGeneratedColumn({ type: 'bigint', unsigned: true })
+    id!: string;
 
     @Field()
     @Column('text')
     content!: string;
-
-    @Field()
-    @Column('varchar', { name: 'secret_type', length: 20 })
-    secretType!: string;
 
     @Field()
     @CreateDateColumn({ name: 'created_at' })
@@ -34,19 +30,20 @@ export class Comment {
     account!: Account;
 
     // Post와 N:1 관계
+    @Field((type) => Post)
     @ManyToOne((type) => Post, (post) => post.comments)
     @JoinColumn({ name: 'post_id', referencedColumnName: 'id' })
     post!: Post;
 
     // LikeComments 1:N 관계
     @OneToMany((type) => LikeComments, (likecomments) => likecomments.comment)
-    likedComments!: LikeComments[]
+    likedComments!: LikeComments[];
 
     // Comment 내에서 self join
     @OneToMany((type) => Comment, (comment) => comment.parent)
     children!: Comment[];
 
-    @ManyToOne((type) => Comment, (comment) => comment.children, { nullable: true } ) // null 가능
+    @ManyToOne((type) => Comment, (comment) => comment.children, { nullable: true }) // null 가능
     @JoinColumn({ name: 'parent_id', referencedColumnName: 'id' })
     parent!: Comment;
 }

@@ -8,8 +8,8 @@ import { Post } from './Post';
 @Entity()
 export class LikePosts {
     @Field(() => ID)
-    @PrimaryGeneratedColumn()
-    id!: number;
+    @PrimaryGeneratedColumn({ type: 'bigint', unsigned: true })
+    id!: string;
 
     @Field()
     @CreateDateColumn({ name: 'created_at' })

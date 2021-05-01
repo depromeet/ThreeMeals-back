@@ -1,4 +1,4 @@
-import { Inject, Service } from 'typedi';
+import { Service } from 'typedi';
 import { Post } from '../entities/Post';
 import { PostEmoticon } from '../entities/PostEmoticon';
 import { AccountRepository } from '../repositories/AccountRepository';
@@ -7,11 +7,11 @@ import { PostEmoticonRepository } from '../repositories/PostEmoticonRepository';
 import { EmoticonRepository } from '../repositories/EmoticonRepository';
 import { LikePostsRepository } from '../repositories/LikePostsRepository';
 import { InjectRepository } from 'typeorm-typedi-extensions';
-import { PostType, PostState, SecretType } from '../entities/Enums';
+import { PostState, PostType, SecretType } from '../entities/Enums';
 import BaseError from '../exceptions/BaseError';
 import { ERROR_CODE } from '../exceptions/ErrorCode';
-import { logger } from 'src/logger/winston';
 import { toString } from 'lodash';
+import { Account } from '../entities/Account';
 
 @Service()
 export class PostService {
@@ -23,12 +23,12 @@ export class PostService {
         @InjectRepository() private readonly LikePostsRepository: LikePostsRepository,
     ) {}
 
-    async getQuestionPosts(args: { id: number }): Promise<Post[]> {
+    async getAskPosts(args: { id: number }): Promise<Post[]> {
         const { id: id } = args;
         const from = await this.AccountRepository.getAccountId(toString(id));
         const posts = await this.PostRepository.find({ where: {
-            postType: PostType.question, toAccount: from },
-        relations: ['usingEmoticons', 'usingEmoticons.emoticon'] });
+            postType: PostType.Ask, toAccount: from },
+        relations: ['usedEmoticons', 'usedEmoticons.emoticon'] });
 
         return posts;
     }
@@ -39,75 +39,66 @@ export class PostService {
         const from = await this.AccountRepository.getAccountId(toString(id));
         console.log(from);
         const posts = await this.PostRepository.find({ where: {
-            postType: PostType.answer, toAccount: from },
-        relations: ['usingEmoticons', 'usingEmoticons.emoticon'] });
+            postType: PostType.Answer, toAccount: from },
+        relations: ['usedEmoticons', 'usedEmoticons.emoticon'] });
         console.log(posts);
         return posts;
     }
 
     async createPost(args: {
+        fromAccount: Account,
+        toAccountId: string
         content: string,
         color: string,
         secretType: SecretType,
-        accountId: string,
-        toAccounId: number
-        positionX: number,
-        positionY: number,
-        rotate: number,
-        emoticonId?: number
+        postType: PostType,
+        postEmoticons: PostEmoticon[],
     }): Promise<Post> {
-        const { content, secretType, color, accountId, toAccounId,
-            positionX, positionY, rotate, emoticonId } = args;
+        // console.log(args);
+        const {
+            fromAccount: from,
+            toAccountId,
+            content,
+            color,
+            secretType,
+            postType,
+            postEmoticons,
+        } = args;
 
-        const from = await this.AccountRepository.getAccountId(accountId);
-        if (!from) {
-            throw new BaseError(ERROR_CODE.USER_NOT_FOUND);
-        }
-
-        const to = await this.AccountRepository.getAccountId(toString(toAccounId));
+        const to = await this.AccountRepository.getAccountId(toAccountId);
         if (!to) {
             throw new BaseError(ERROR_CODE.USER_NOT_FOUND);
         }
 
         // Post 생성
         const newPost = new Post();
-
-        newPost.content = content;
-        // from과 to가 같으면 답해줘. 다르면 물어봐.
-        if (from.id == to.id) {
-            newPost.postType = PostType.answer;
-        } else {
-            newPost.postType = PostType.question;
+        // from 과 to 가 같은데 답해줘가 아니라면 에러
+        if (from.id == to.id && postType !== PostType.Answer) {
+            console.log(`invalid post type, postType: ${postType}, fromId: ${from.id}, toId: ${to.id}`);
+            throw new BaseError(ERROR_CODE.INVALID_POST_TYPE);
         }
+        newPost.content = content;
         newPost.color = color;
-        newPost.postState = PostState.submitted;
+        newPost.postState = PostState.Submitted;
         newPost.secretType = secretType;
+        newPost.postType = postType;
         newPost.fromAccount = from;
         newPost.toAccount = to;
 
-        // PostEmotion 생성
-        const tmp = await this.PostRepository.createPost(newPost);
-        console.log(tmp);
-        if (emoticonId != null) {
-            const postId = await this.PostRepository.getPostId(tmp.id);
-            const emoticon = await this.EmoticonRepository.getEmoticonId(emoticonId);
-
-            const newPostEmoticon = new PostEmoticon();
-            newPostEmoticon.positionX = positionX;
-            newPostEmoticon.positionY = positionY;
-            newPostEmoticon.rotate = rotate;
-            newPostEmoticon.post = postId;
-            newPostEmoticon.emoticon = emoticon;
-            await this.PostEmoticonRepository.createPostEmoticon(newPostEmoticon);
+        if (postType !== PostType.Quiz && postEmoticons.length > 0) {
+            newPost.usedEmoticons = await this.PostEmoticonRepository.save(postEmoticons);
         }
 
-        return newPost;
+        // // PostEmotion 생성
+        const savedPost = await this.PostRepository.createPost(newPost);
+
+        return savedPost;
     }
 
     // Post 삭제
-    async deletePost(args: { id: number }): Promise<void> {
+    async deletePost(args: { id: string }): Promise<void> {
         const { id: id } = args;
-        const postId = await this.PostRepository.getPostId(id);
+        const postId = await this.PostRepository.getPostById(id);
 
         // postEmoticon 삭제
         await this.PostEmoticonRepository.delete({ post: postId });

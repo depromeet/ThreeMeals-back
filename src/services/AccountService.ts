@@ -14,14 +14,27 @@ import { InjectRepository } from 'typeorm-typedi-extensions';
 import * as jwt from 'jsonwebtoken';
 import axios from 'axios';
 import { classToPlain } from 'class-transformer';
+import { config } from '../config';
+
 @Service()
 export class AccountService {
-    constructor(@InjectRepository() private readonly AccountRepository: AccountRepository) {}
+    constructor(
+        @InjectRepository() private readonly accountRepository: AccountRepository,
+    ) {}
+
+    async getAccount(id: string): Promise<Account> {
+        const account = await this.accountRepository.findOneById(id);
+        if (!account) {
+            console.log(`cannot find account by id, ${id}`);
+            throw new Error('Not authenticated');
+        }
+        return account;
+    }
 
     async signIn({ accessToken, provider }: SignInArgument): Promise<string> {
         const userData = await this.fetchUserData({ accessToken, provider });
         if (userData) {
-            let accountData = await this.AccountRepository.getAccount(userData.data.id);
+            let accountData = await this.accountRepository.getAccount(userData.data.id);
             if (!accountData) {
                 const newAccount = new Account();
                 newAccount.nickname = userData.data.properties.nickname;
@@ -29,7 +42,7 @@ export class AccountService {
                 newAccount.status = 'active';
                 newAccount.image = userData.data.properties.profile_image;
                 newAccount.provider = provider;
-                accountData = await this.AccountRepository.createAccount(newAccount);
+                accountData = await this.accountRepository.createAccount(newAccount);
             }
             // 필요한 정보 담아야 하는걸로 수정필요
 
@@ -40,8 +53,8 @@ export class AccountService {
         }
     }
 
-    async issueJWT(userData: object): Promise<string> {
-        const accountToken = jwt.sign(userData, process.env.JWT_SECRET || 'threemeal');
+    async issueJWT(userData: Record<string, any>): Promise<string> {
+        const accountToken = jwt.sign(userData, config.jwt.secret);
         return accountToken;
     }
 

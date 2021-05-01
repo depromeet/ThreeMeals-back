@@ -11,8 +11,8 @@ import { Provider } from './Enums';
 @Entity()
 export class Account {
     @Field(() => ID)
-    @PrimaryGeneratedColumn()
-    id!: number;
+    @PrimaryGeneratedColumn({ type: 'bigint', unsigned: true })
+    id!: string;
 
     @Field()
     @Column('varchar', { length: 8 })

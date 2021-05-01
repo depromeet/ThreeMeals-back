@@ -6,7 +6,11 @@
         "node": true,
         "jest": true
     },
-    "extends": ["eslint:recommended", "google"],
+    "extends": [
+        "plugin:@typescript-eslint/eslint-recommended",
+        "plugin:@typescript-eslint/recommended",
+        "google"
+    ],
 
     "parserOptions": {
         "ecmaVersion": 2018,

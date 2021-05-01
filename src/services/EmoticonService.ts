@@ -34,7 +34,7 @@ export class EmoticonService {
 
     async findEmoticonResolver(id: number): Promise<Emoticon[]> {
         // const from = await this.PostEmoticonRepository.getPostEmoticonId(id);
-        const Emoticons = await this.EmoticonRepository.find({ id: id });
+        const Emoticons = await this.EmoticonRepository.find({ where: { id: id } });
         return Emoticons;
     }
 }
