@@ -26,44 +26,43 @@ export class PostService {
     async getAskPosts(args: { id: number }): Promise<Post[]> {
         const { id: id } = args;
         const from = await this.AccountRepository.getAccountId(toString(id));
-        const posts = await this.PostRepository.find({ where: {
-            postType: PostType.Ask, toAccount: from },
-        relations: ['usedEmoticons', 'usedEmoticons.emoticon'] });
+        const posts = await this.PostRepository.find({
+            where: {
+                postType: PostType.Ask,
+                toAccount: from,
+            },
+            relations: ['usedEmoticons', 'usedEmoticons.emoticon'],
+        });
 
         return posts;
     }
-
 
     async getAnswerPosts(args: { id: number }): Promise<Post[]> {
         const { id: id } = args;
         const from = await this.AccountRepository.getAccountId(toString(id));
         console.log(from);
-        const posts = await this.PostRepository.find({ where: {
-            postType: PostType.Answer, toAccount: from },
-        relations: ['usedEmoticons', 'usedEmoticons.emoticon'] });
+        const posts = await this.PostRepository.find({
+            where: {
+                postType: PostType.Answer,
+                toAccount: from,
+            },
+            relations: ['usedEmoticons', 'usedEmoticons.emoticon'],
+        });
         console.log(posts);
         return posts;
     }
 
     async createPost(args: {
-        fromAccount: Account,
-        toAccountId: string
-        content: string,
-        color: string,
-        secretType: SecretType,
-        postType: PostType,
-        postEmoticons: PostEmoticon[],
+        fromAccount: Account;
+        toAccountId: string;
+        content: string;
+        color: string;
+        secretType: SecretType;
+        postType: PostType;
+        postEmoticons: PostEmoticon[];
     }): Promise<Post> {
         // console.log(args);
-        const {
-            fromAccount: from,
-            toAccountId,
-            content,
-            color,
-            secretType,
-            postType,
-            postEmoticons,
-        } = args;
+        const { fromAccount: from, toAccountId, content, color, secretType, postType, postEmoticons } = args;
 
         const to = await this.AccountRepository.getAccountId(toAccountId);
         if (!to) {

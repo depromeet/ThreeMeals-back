@@ -45,4 +45,3 @@ export class AuthMiddleware implements MiddlewareInterface<AuthContext> {
         }
     }
 }
-

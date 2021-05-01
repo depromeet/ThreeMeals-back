@@ -25,6 +25,7 @@ export class Comment {
     updatedAt!: Date;
 
     // Account와 N:1 관계
+    @Field((type) => Account)
     @ManyToOne((type) => Account, (account) => account.writeComments)
     @JoinColumn({ name: 'account_id', referencedColumnName: 'id' })
     account!: Account;

@@ -96,3 +96,14 @@ mutation{
     postId: 1,
   )
 }
+
+# 코멘트 생성
+mutation {
+  createComment(postId:"1",content:"asdfasdfsad") {
+    id
+    content
+    post{
+      content
+    }
+  }
+}

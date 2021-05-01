@@ -5,6 +5,7 @@ import { Comment } from '../entities/Comment';
 import { CreateCommentArgs } from './arguments/CommentArgument';
 import { AuthMiddleware } from '../middleware/typegraphql/auth';
 import { Account } from '../entities/Account';
+import { DeleteResult } from 'typeorm';
 
 @Service()
 @Resolver(() => Comment)
@@ -13,21 +14,21 @@ export class CommentResolver {
 
     @Mutation((returns) => Comment)
     @UseMiddleware(AuthMiddleware)
-    async createComment(
-        @Args() args: CreateCommentArgs,
-        @Ctx('account') account: Account,
-    ): Promise<Comment> {
-        // providerId
-        const comment = await this.commentService.createComment(args);
+    async createComment(@Args() args: CreateCommentArgs, @Ctx('account') account: Account): Promise<Comment> {
+        const comment = await this.commentService.createComment(args, account);
         return comment;
+    }
+
+    @Mutation((returns) => String)
+    @UseMiddleware(AuthMiddleware)
+    async deleteComment(@Arg('commentId') commentId: string, @Ctx('account') account: Account): Promise<string> {
+        const result = await this.commentService.deleteComment(commentId, account);
+        return '' + result;
     }
 
     @Query((returns) => [Comment])
     @UseMiddleware(AuthMiddleware)
-    async getComments(
-        @Arg('postId') postId: string,
-        @Ctx('account') account: Account,
-    ): Promise<Comment[]> {
+    async getComments(@Arg('postId') postId: string, @Ctx('account') account: Account): Promise<Comment[]> {
         const comments = await this.commentService.getCommentsByPostId(postId);
         return comments;
     }
