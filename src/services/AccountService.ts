@@ -23,7 +23,7 @@ export class AccountService {
     ) {}
 
     async getAccount(id: string): Promise<Account> {
-        const account = await this.accountRepository.findOne(id);
+        const account = await this.accountRepository.findOneById(id);
         if (!account) {
             console.log(`cannot find account by id, ${id}`);
             throw new Error('Not authenticated');
