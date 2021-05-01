@@ -4,8 +4,8 @@ import { Service } from 'typedi';
 import { LikePosts } from '../entities/LikePosts';
 import { LikePostsService } from '../services/LikePostsService';
 import { LikePostsArgument } from './arguments/LikePostsArgument';
-import { isAuth } from '../middleware/typegraphql/auth';
 import { AuthContext } from '../middleware/express/AuthContext';
+import { AuthMiddleware } from '../middleware/typegraphql/auth';
 
 @Service()
 @Resolver(() => LikePosts)
@@ -14,7 +14,7 @@ export class LikePostsResolver {
 
 
     @Mutation((returns) => LikePosts)
-    @UseMiddleware(isAuth)
+    @UseMiddleware(AuthMiddleware)
     async createLikePosts(
         @Args() { postId }: LikePostsArgument,
         @Ctx() { account }: AuthContext,

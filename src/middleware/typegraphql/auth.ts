@@ -1,4 +1,4 @@
-import { MiddlewareFn, MiddlewareInterface, NextFn, ResolverData } from 'type-graphql';
+import { MiddlewareInterface, NextFn, ResolverData } from 'type-graphql';
 import { verify } from 'jsonwebtoken';
 import { AuthContext, isAuthPayload } from '../express/AuthContext';
 import { config } from '../../config';
@@ -46,25 +46,3 @@ export class AuthMiddleware implements MiddlewareInterface<AuthContext> {
     }
 }
 
-export const isAuth: MiddlewareFn<AuthContext> = ({ context }, next) => {
-    try {
-        const authorization = context.req.headers['authorization'];
-        if (!authorization) {
-            throw new Error('Not authenticated');
-        }
-
-        const isBearer = authorization.split(' ')[0] === 'Bearer';
-        if (!isBearer) {
-            throw new Error('Not authenticated');
-        }
-
-        const jwtToken = authorization.split(' ')[1];
-        const payload = verify(jwtToken, config.jwt.secret);
-
-        (context as any).payload = payload as any;
-        return next();
-    } catch (err) {
-        console.log(err);
-        throw new Error('Not authenticated');
-    }
-};
