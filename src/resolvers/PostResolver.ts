@@ -18,6 +18,15 @@ export class PostResolver {
         private readonly emoticonService: EmoticonService,
     ) {}
 
+    @Query((returns) => [Post])
+    async posts(
+        @Arg('userId') id: number,
+    ): Promise<Post[]> {
+        const emoticons = await this.postService.getAskPosts({ id });
+        // console.log(emoticons)
+        return emoticons;
+    }
+
     // 물어봐
     // userId는 jwt토큰에서 accoundId 즉, Account테이블에서 index기준으로 가져옴
     @Query((returns) => [Post])
