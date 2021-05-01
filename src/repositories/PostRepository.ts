@@ -12,4 +12,10 @@ export class PostRepository extends Repository<Post> {
     async getPost(postId: number): Promise<Post> {
         return await this.findOneOrFail({ id: postId });
     }
+
+    async getPostId(postId: number): Promise<Post | undefined> {
+        const account = await this.findOne(postId, { select: ['id'] });
+
+        return account;
+    }
 }

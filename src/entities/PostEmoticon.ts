@@ -36,10 +36,10 @@ export class PostEmoticon {
     // Post과 N:1
     @ManyToOne((type) => Post, (post) => post.usingEmoticons)
     @JoinColumn({ name: 'post_id', referencedColumnName: 'id' })
-    post!: Post;
+    post?: Post;
 
     // Emoticon과 N:1
     @ManyToOne((type) => Emoticon, (emoticon) => emoticon.usedEmoticons)
     @JoinColumn({ name: 'emoticon_id', referencedColumnName: 'id' })
-    emoticon!: Emoticon;
+    emoticon?: Emoticon;
 }

@@ -18,10 +18,10 @@ export class LikePosts {
     // Account와 N:1 관계
     @ManyToOne((type) => Account, (account) => account.likePosts)
     @JoinColumn({ name: 'account_id', referencedColumnName: 'id' })
-    account!: Account;
+    account?: Account;
 
     // Post와 N:1 관계
     @ManyToOne((type) => Post, (post) => post.likedPosts)
     @JoinColumn({ name: 'post_id', referencedColumnName: 'id' })
-    post!: Post;
+    post?: Post;
 }
