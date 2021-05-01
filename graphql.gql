@@ -47,7 +47,7 @@ query {
 
 // 로그인
 mutation{
-  signIn(provider:"Kakao", accessToken:"Ibq9U7GkMs6690og8zq_l5bfXeHleEIt7sk60gopb7kAAAF5IaOQMw"){
+  signIn(provider:"Kakao", accessToken:"zY_IT6gJf3bLHOZodCB-u67z048_xyTfV7P_ugopyV4AAAF5JwkBnQ"){
     token
   }
 }
@@ -57,12 +57,14 @@ mutation{
   createPost(
     content: "aaa",
     color: "#777",
-    secretType: "temp",  
-    positionX: 1.2
-    positionY: 1.2
-    rotate: 1.2
-    toAccounId: 1
-    emoticonId: 1
+    secretType: "Temp",  
+    postType: "Answer",
+		toAccountId: "1",
+    emoticons: [
+      {
+        emoticonId: "1"
+      }
+    ]
   ){
     content
     postType
@@ -71,6 +73,7 @@ mutation{
     secretType
   }
 }
+
 
 
 // post 삭제
