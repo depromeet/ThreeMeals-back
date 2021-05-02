@@ -9,6 +9,7 @@ import { config } from '../config';
 export default async ({ app }: { app: express.Application }) => {
     const schema: GraphQLSchema = await buildSchema({
         resolvers: [AccountResolver, PostResolver, LikePostsResolver, EmoticonResolver, CommentResolver],
+        // resolvers: [__dirname + '../resolvers/*.{ts,js}'],
         container: Container,
     });
 

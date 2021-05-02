@@ -1,4 +1,4 @@
-import { IsEnum, IsNumber, IsString } from 'class-validator';
+import { IsNumberString, IsEnum, IsNumber, IsString } from 'class-validator';
 import { Field, ArgsType } from 'type-graphql';
 
 @ArgsType()
@@ -9,7 +9,7 @@ export class CreateCommentArgs {
     @Field()
     content!: string;
 
-    @IsNumber()
+    @IsNumberString()
     @Field()
     postId!: string;
 }
