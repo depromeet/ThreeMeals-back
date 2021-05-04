@@ -1,3 +1,5 @@
+/* eslint-disable prefer-promise-reject-errors */
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { Inject, Service } from 'typedi';
 import { v4 as uuid } from 'uuid';
 import BaseError from '../exceptions/BaseError';
@@ -15,6 +17,11 @@ import * as jwt from 'jsonwebtoken';
 import axios from 'axios';
 import { classToPlain } from 'class-transformer';
 import { config } from '../config';
+import { GraphQLUpload, FileUpload } from 'graphql-upload';
+import { assertNamedType, GraphQLScalarType } from 'graphql';
+import { createWriteStream } from 'fs';
+import { uploadFileToS3 } from '../middleware/typegraphql/uploadS3';
+import * as AWS from 'aws-sdk';
 
 @Service()
 export class AccountService {
@@ -65,5 +72,81 @@ export class AccountService {
             },
         });
         return userData;
+    }
+
+    // 프로필 변경
+    async updateAccountInfo(args: {
+        nickname: string;
+        providerId: string;
+        // image: string;
+        content: string;
+        profileUrl: string;
+        fromAccount: Account;
+    }): Promise<Account> {
+        const { nickname, providerId, content, profileUrl, fromAccount: from } = args;
+
+        const originInfo = await this.accountRepository.getAccount(providerId);
+        const updateInfo = await this.accountRepository.findOneById(from.id);
+
+        console.log(updateInfo);
+
+        if (!updateInfo) {
+            throw new BaseError(ERROR_CODE.USER_NOT_FOUND);
+        }
+        console.log(providerId);
+        console.log(originInfo);
+        if (originInfo?.id !== updateInfo?.id) {
+            throw new BaseError(ERROR_CODE.FORBIDDEN);
+        }
+
+
+        updateInfo!.nickname = nickname;
+        // updateInfo!.image = image;
+        updateInfo!.content = content;
+        updateInfo!.profileUrl = profileUrl;
+        updateInfo!.content = content;
+
+        const accountInfo = await this.accountRepository.save(updateInfo);
+        return accountInfo;
+    }
+
+    // 이미지 변경
+    async updateImage(args: {
+        fromAccount: Account;
+        file: FileUpload;
+        providerId: string;
+    }): Promise<Account> {
+        const { fromAccount: from, file, providerId } = args;
+        const { createReadStream, filename, mimetype, encoding } = file;
+
+        const updateInfo = await this.accountRepository.findOneById(from.id);
+        if (!updateInfo) {
+            throw new BaseError(ERROR_CODE.USER_NOT_FOUND);
+        }
+
+        const originInfo = await this.accountRepository.getAccount(providerId);
+        if (originInfo?.id !== updateInfo?.id) {
+            throw new BaseError(ERROR_CODE.FORBIDDEN);
+        }
+
+        if (mimetype !== 'image/jpg' && mimetype !== 'image/jpeg' && mimetype !== 'image/png' && mimetype !== 'image/gif') {
+            throw new BaseError(ERROR_CODE.INVALID_IMAGE_TYPE);
+        }
+
+        console.log(filename);
+
+        const S3: AWS.S3 = new AWS.S3();
+        const url: boolean = await new Promise((res, rej) => {
+            createReadStream()
+                .pipe(uploadFileToS3(S3, `${updateInfo.id}/${filename}`))
+                .on('finish', () => res(true))
+                .on('error', () => rej(false));
+        });
+
+        updateInfo!.image = filename;
+
+        const accountInfo = await this.accountRepository.save(updateInfo);
+
+        return accountInfo;
     }
 }

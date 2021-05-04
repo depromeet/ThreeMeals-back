@@ -47,7 +47,7 @@ query {
 
 // 로그인
 mutation{
-  signIn(provider:"Kakao", accessToken:"zY_IT6gJf3bLHOZodCB-u67z048_xyTfV7P_ugopyV4AAAF5JwkBnQ"){
+  signIn(provider:"Kakao", accessToken:"OChZzDTvwURjSu2Y_ULZXJ4b-Vs3frmnnmUCQgo9dRsAAAF5NpcTjg"){
     token
   }
 }
@@ -108,5 +108,19 @@ mutation {
     post{
       content
     }
+  }
+}
+
+// 프로필 수정
+mutation{
+  updateAccountInfo(
+    nickname:"ddddd", 
+    providerId: "1706701468"
+		content: "aaaa"
+  ){
+    nickname
+    image
+    content
+    profileUrl
   }
 }
