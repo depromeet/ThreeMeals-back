@@ -150,4 +150,28 @@ export class AccountService {
 
         return accountInfo;
     }
+
+
+    // 기본이미지로 변경
+    async updateImageToBasic(args: {
+        fromAccount: Account;
+        providerId: string;
+    }): Promise<Account> {
+        const { fromAccount: from, providerId } = args;
+
+        const updateInfo = await this.accountRepository.findOneById(from.id);
+        if (!updateInfo) {
+            throw new BaseError(ERROR_CODE.USER_NOT_FOUND);
+        }
+
+        const originInfo = await this.accountRepository.getAccount(providerId);
+        if (originInfo?.id !== updateInfo?.id) {
+            throw new BaseError(ERROR_CODE.FORBIDDEN);
+        }
+
+        updateInfo!.image = 'https://threemeals-back.s3.ap-northeast-2.amazonaws.com/basic.PNG';
+        const accountInfo = await this.accountRepository.save(updateInfo);
+
+        return accountInfo;
+    }
 }

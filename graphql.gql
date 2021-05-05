@@ -47,7 +47,7 @@ query {
 
 // 로그인
 mutation{
-  signIn(provider:"Kakao", accessToken:"OChZzDTvwURjSu2Y_ULZXJ4b-Vs3frmnnmUCQgo9dRsAAAF5NpcTjg"){
+  signIn(provider:"Kakao", accessToken:"mREcZ6cFDdEKDv8y0jjJabNv4H3VAesdI7YMDgo9dVoAAAF5Og8SDA"){
     token
   }
 }
@@ -122,5 +122,35 @@ mutation{
     image
     content
     profileUrl
+  }
+}
+
+// 프로필 이미지 변경
+ // mutation updateImage($file: Upload!) {
+    //     updateImage(file: $file, providerId: "1706701468")
+    // }
+
+{"query":"mutation updateImage($file: Upload!) {\n\tupdateImage(file: $file, providerId: \"1706701468\"){\n    image\n  }\n}"}
+
+// curl: // {"query":"mutation updateImage($file: Upload!) {\n\tupdateImage(file: $file, providerId: \"1706701468\")\n}"}
+postman에서 실행
+
+[Headers]
+key                    value
+authorization          Bearer ~~
+
+[Body]
+key                     value
+operations             {"query":"mutation updateImage($file: Upload!) {\n\tupdateImage(file: $file, providerId: \"1706701468\")\n}"}
+map                    {"0": ["variables.file"]}
+0                      파일추가
+
+// 기본이미지로 사진 변경
+mutation{
+  updateImageToBasic(
+    providerId: "1706701468"
+  )
+  {
+    image
   }
 }
