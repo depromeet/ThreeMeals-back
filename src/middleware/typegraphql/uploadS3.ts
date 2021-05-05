@@ -11,9 +11,9 @@ aws.config.update({
     region: process.env.AWS_REGION,
 });
 
-export const uploadFileToS3 = (s3: any, path: any) => {
+export const uploadFileToS3 = (s3: any, path: any, type: any) => {
     const pass = new Stream.PassThrough();
-    const params = { Bucket: process.env.AWS_BUCKET, Key: path, Body: pass };
+    const params = { Bucket: process.env.AWS_BUCKET, Key: path, Body: pass, ContentType: type };
     s3.upload(params, function(err: any, data: any) {
         if (err) console.log(err, data);
     });

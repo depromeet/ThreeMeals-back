@@ -36,11 +36,10 @@ export class AccountResolver {
     @Mutation((returns) => Account)
     @UseMiddleware(AuthMiddleware)
     async updateAccountInfo(
-        @Args() { nickname, providerId, content, profileUrl }: updateAccountInfoArgument,
+        @Args() { providerId, content, profileUrl }: updateAccountInfoArgument,
         @Ctx('account') account: Account,
     ): Promise<Account> {
         const accountInfo = await this.accountService.updateAccountInfo({
-            nickname,
             providerId,
             content,
             profileUrl,

@@ -76,31 +76,33 @@ export class AccountService {
 
     // 프로필 변경
     async updateAccountInfo(args: {
-        nickname: string;
+        // nickname: string;
         providerId: string;
-        // image: string;
         content: string;
         profileUrl: string;
         fromAccount: Account;
     }): Promise<Account> {
-        const { nickname, providerId, content, profileUrl, fromAccount: from } = args;
+        const { providerId, content, profileUrl, fromAccount: from } = args;
 
         const originInfo = await this.accountRepository.getAccount(providerId);
         const updateInfo = await this.accountRepository.findOneById(from.id);
 
         console.log(updateInfo);
 
+        if (!originInfo) {
+            throw new BaseError(ERROR_CODE.USER_NOT_FOUND);
+        }
         if (!updateInfo) {
             throw new BaseError(ERROR_CODE.USER_NOT_FOUND);
         }
         console.log(providerId);
         console.log(originInfo);
-        if (originInfo?.id !== updateInfo?.id) {
+        if (originInfo.id !== updateInfo.id) {
             throw new BaseError(ERROR_CODE.FORBIDDEN);
         }
 
 
-        updateInfo!.nickname = nickname;
+        // updateInfo!.nickname = nickname;
         // updateInfo!.image = image;
         updateInfo!.content = content;
         updateInfo!.profileUrl = profileUrl;
@@ -138,13 +140,12 @@ export class AccountService {
         const S3: AWS.S3 = new AWS.S3();
         const url: boolean = await new Promise((res, rej) => {
             createReadStream()
-                .pipe(uploadFileToS3(S3, `${updateInfo.id}/${filename}`))
+                .pipe(uploadFileToS3(S3, `${updateInfo.id}/${filename}`, mimetype))
                 .on('finish', () => res(true))
                 .on('error', () => rej(false));
         });
-
-        updateInfo!.image = filename;
-
+        const newFilename = `https://threemeals-back.s3.ap-northeast-2.amazonaws.com/${updateInfo.id}/${filename}`;
+        updateInfo!.image = newFilename;
         const accountInfo = await this.accountRepository.save(updateInfo);
 
         return accountInfo;
