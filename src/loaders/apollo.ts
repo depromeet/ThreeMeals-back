@@ -15,6 +15,7 @@ export default async ({ app }: { app: express.Application }) => {
     });
 
     const server = new ApolloServer({
+        uploads: false,
         schema: schema,
         playground: config.server.env !== 'production',
         introspection: config.server.env !== 'production',

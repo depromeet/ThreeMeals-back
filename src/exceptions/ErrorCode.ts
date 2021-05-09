@@ -11,6 +11,7 @@ export const ERROR_CODE = {
 
     USER_NOT_FOUND: createErrorCode(400, 'E04', 'cannot find user'),
     INVALID_POST_TYPE: createErrorCode(400, 'E05', 'invalid post type'),
+    INVALID_IMAGE_TYPE: createErrorCode(400, 'E05', 'invalid image type'),
 
     FORBIDDEN: createErrorCode(403, 'E06', 'Forbidden'),
 };

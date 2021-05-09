@@ -8,6 +8,7 @@ import { handleUserAgent } from '../middleware/express/user-agent';
 import { logger } from '../logger/winston';
 import { handle404Error, handleError } from '../middleware/express/error';
 import router from '../routers';
+import { graphqlUploadExpress } from 'graphql-upload';
 
 export default ({ app }: { app: express.Application }) => {
     app.set('etag', false);
@@ -37,6 +38,7 @@ export default ({ app }: { app: express.Application }) => {
         return res.status(200).end('pong');
     });
 
+    app.use(graphqlUploadExpress({ maxFileSize: 10000000, maxFiles: 10 }));
     app.use('/', express.static('uploads'));
     app.use(router);
 };
