@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
+import {Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, RelationId} from 'typeorm';
 import { ObjectType, Field, Int, ID } from 'type-graphql';
 import { length } from 'class-validator';
 import { Post } from './Post';
@@ -28,6 +28,9 @@ export class PostEmoticon {
     @ManyToOne((type) => Post, (post) => post.usedEmoticons)
     @JoinColumn({ name: 'post_id', referencedColumnName: 'id' })
     post!: Post | null;
+
+    @RelationId((postEmoticon: PostEmoticon) => postEmoticon.post)
+    postId!: number;
 
     // Emoticon과 N:1
     @Field(() => Emoticon)

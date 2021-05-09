@@ -1,5 +1,9 @@
 import { Arg, Args, Ctx, FieldResolver, Mutation, Query, Resolver, Root, UseMiddleware } from 'type-graphql';
+import { getCustomRepository } from 'typeorm';
+import DataLoader from 'dataloader';
+import * as _ from 'lodash';
 import { Service } from 'typedi';
+import { Loader } from 'type-graphql-dataloader';
 import { Post } from '../entities/Post';
 import { PostEmoticon } from '../entities/PostEmoticon';
 import { PostService } from '../services/PostService';
@@ -8,6 +12,11 @@ import { EmoticonService } from '../services/EmoticonService';
 import { CreatePostArgument } from './arguments/CreatePostArgument';
 import { AuthMiddleware } from '../middleware/typegraphql/auth';
 import { Account } from '../entities/Account';
+import { PostEmoticonRepository } from '../repositories/PostEmoticonRepository';
+import { PostConnection } from '../schemas/PostConnection';
+import { GetMyPostArgument, GetPostArgument } from './arguments/GetPostArgument';
+import { NewPostCount, PostCount } from '../schemas/NewPostCount';
+import { PostType } from '../entities/Enums';
 
 @Service()
 @Resolver(() => Post)
@@ -18,40 +27,50 @@ export class PostResolver {
         private readonly emoticonService: EmoticonService,
     ) {}
 
-    @Query((returns) => [Post])
-    async posts(
-        @Arg('userId') id: number,
-    ): Promise<Post[]> {
-        const emoticons = await this.postService.getAskPosts({ id });
-        // console.log(emoticons)
-        return emoticons;
+    @Query((returns) => PostConnection)
+    @UseMiddleware(AuthMiddleware)
+    async getMyPosts(
+        @Args() args: GetMyPostArgument,
+        @Ctx('account') account: Account,
+    ): Promise<PostConnection> {
+        const posts = await this.postService.getPosts({
+            accountId: account.id,
+            hasComment: false,
+            hasUsedEmoticons: false,
+            after: args.after,
+            limit: args.first,
+            postType: args.postType || null,
+        });
+        return new PostConnection(posts, 'id');
     }
 
     // 물어봐
-    // userId는 jwt토큰에서 accoundId 즉, Account테이블에서 index기준으로 가져옴
     @Query((returns) => [Post])
-    async getAskPosts(
-        @Arg('userId') id: number,
-    ): Promise<Post[]> {
-        const emoticons = await this.postService.getAskPosts({ id });
-        // console.log(emoticons)
-        return emoticons;
+    async getPosts(
+        @Args() args: GetPostArgument,
+    ): Promise<PostConnection> {
+        const posts = await this.postService.getPosts({
+            accountId: args.accountId,
+            hasComment: false,
+            hasUsedEmoticons: false,
+            after: args.after,
+            limit: args.first,
+            postType: args.postType || null,
+        });
+        return new PostConnection(posts, 'id');
     }
 
-    // 답해줘
-    // userId는 jwt토큰에서 accoundId 즉, Account테이블에서 index기준으로 가져옴
-    @Query((returns) => [Post])
-    async getAnswerPosts(
-        @Arg('userId') id: number,
-    ): Promise<Post[]> {
-        const emoticons = await this.postService.getAnswerPosts({ id });
-        // console.log(emoticons)
-        return emoticons;
+    @Query((returns) => NewPostCount)
+    @UseMiddleware(AuthMiddleware)
+    async getMyNewPostCount(
+        @Ctx('account') account: Account,
+    ) {
+        return {
+            postCount: [{ postType: PostType.Answer, count: 0 }],
+        };
     }
 
     // Post 생성
-    // payload는 jwt토큰에서 accoundId 즉, Account테이블에서 index기준으로 가져옴
-    // emoticon은 선택 할 수도, 안 할 수도 있어서 nullable
     @Mutation((returns) => Post)
     @UseMiddleware(AuthMiddleware)
     async createPost(
@@ -81,11 +100,20 @@ export class PostResolver {
     }
 
     @FieldResolver((returns) => [PostEmoticon])
+    @Loader<string, PostEmoticon[]>(async (ids, { context }) => { // batchLoadFn
+        const postEmoticons = await getCustomRepository(PostEmoticonRepository)
+            .listPostEmoticonByPostIds([...ids]);
+        //     .find({
+        //     where: { post: { id: In([...ids]) } },
+        //     relations: ['emoticon'],
+        // });
+        const emoticonsById = _.groupBy(postEmoticons, 'postId');
+        return ids.map((id) => emoticonsById[id] ?? []);
+    })
     async usedEmoticons(
         @Root() post: Post,
-    ): Promise<PostEmoticon[]> {
-        const postemoticons = await this.postEmoticonService.findPostEmoticon(post.id);
-        return postemoticons;
+    ) {
+        return (dataLoader: DataLoader<string, PostEmoticon[]>) => dataLoader.load(post.id);
     }
 }
 
