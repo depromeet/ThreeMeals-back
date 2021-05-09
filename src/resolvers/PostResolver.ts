@@ -45,7 +45,7 @@ export class PostResolver {
     }
 
     // 물어봐
-    @Query((returns) => [Post])
+    @Query((returns) => [PostConnection])
     async getPosts(
         @Args() args: GetPostArgument,
     ): Promise<PostConnection> {
@@ -66,7 +66,11 @@ export class PostResolver {
         @Ctx('account') account: Account,
     ) {
         return {
-            postCount: [{ postType: PostType.Answer, count: 0 }],
+            postCount: [
+                { postType: PostType.Answer, count: 1 },
+                { postType: PostType.Quiz, count: 13 },
+                { postType: PostType.Ask, count: 5 },
+            ],
         };
     }
 
