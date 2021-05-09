@@ -16,37 +16,35 @@ import { Account } from '../entities/Account';
 @Service()
 export class PostService {
     constructor(
-        @InjectRepository() private readonly AccountRepository: AccountRepository,
-        @InjectRepository() private readonly PostRepository: PostRepository,
-        @InjectRepository() private readonly PostEmoticonRepository: PostEmoticonRepository,
-        @InjectRepository() private readonly EmoticonRepository: EmoticonRepository,
-        @InjectRepository() private readonly LikePostsRepository: LikePostsRepository,
+        @InjectRepository() private readonly accountRepository: AccountRepository,
+        @InjectRepository() private readonly postRepository: PostRepository,
+        @InjectRepository() private readonly postEmoticonRepository: PostEmoticonRepository,
+        @InjectRepository() private readonly emoticonRepository: EmoticonRepository,
+        @InjectRepository() private readonly likePostsRepository: LikePostsRepository,
     ) {}
 
-    async getAskPosts(args: { id: number }): Promise<Post[]> {
-        const { id: id } = args;
-        const from = await this.AccountRepository.getAccountId(toString(id));
-        const posts = await this.PostRepository.find({
-            where: {
-                postType: PostType.Ask,
-                toAccount: from,
-            },
-            relations: ['usedEmoticons', 'usedEmoticons.emoticon'],
-        });
-
-        return posts;
+    async getPosts(args: {
+        accountId: string,
+        hasComment: boolean,
+        hasUsedEmoticons: boolean,
+        postType: PostType | null,
+        limit: number,
+        after: string | null
+    }): Promise<Post[]> {
+        return this.postRepository.listByAccountId(args);
     }
 
-    async getAnswerPosts(args: { id: number }): Promise<Post[]> {
+    async getAnswerPosts(args: { id: string }): Promise<Post[]> {
         const { id: id } = args;
-        const from = await this.AccountRepository.getAccountId(toString(id));
+        const from = await this.accountRepository.getAccountId(toString(id));
         console.log(from);
-        const posts = await this.PostRepository.find({
+        const posts = await this.postRepository.find({
             where: {
                 postType: PostType.Answer,
                 toAccount: from,
             },
             relations: ['usedEmoticons', 'usedEmoticons.emoticon'],
+            order: { id: 'DESC' },
         });
         console.log(posts);
         return posts;
@@ -64,7 +62,7 @@ export class PostService {
         // console.log(args);
         const { fromAccount: from, toAccountId, content, color, secretType, postType, postEmoticons } = args;
 
-        const to = await this.AccountRepository.getAccountId(toAccountId);
+        const to = await this.accountRepository.getAccountId(toAccountId);
         if (!to) {
             throw new BaseError(ERROR_CODE.USER_NOT_FOUND);
         }
@@ -85,11 +83,11 @@ export class PostService {
         newPost.toAccount = to;
 
         if (postType !== PostType.Quiz && postEmoticons.length > 0) {
-            newPost.usedEmoticons = await this.PostEmoticonRepository.save(postEmoticons);
+            newPost.usedEmoticons = await this.postEmoticonRepository.save(postEmoticons);
         }
 
         // // PostEmotion 생성
-        const savedPost = await this.PostRepository.createPost(newPost);
+        const savedPost = await this.postRepository.createPost(newPost);
 
         return savedPost;
     }
@@ -97,15 +95,15 @@ export class PostService {
     // Post 삭제
     async deletePost(args: { id: string }): Promise<void> {
         const { id: id } = args;
-        const postId = await this.PostRepository.getPostById(id);
+        const postId = await this.postRepository.getPostById(id);
 
         // postEmoticon 삭제
-        await this.PostEmoticonRepository.delete({ post: postId });
+        await this.postEmoticonRepository.delete({ post: postId });
 
         // LikePosts 삭제
-        await this.LikePostsRepository.delete({ post: postId });
+        await this.likePostsRepository.delete({ post: postId });
 
         // post 삭제
-        await this.PostRepository.delete({ id: id });
+        await this.postRepository.delete({ id: id });
     }
 }

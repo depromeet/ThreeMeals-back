@@ -60,7 +60,7 @@ export class Post {
     updatedAt!: Date;
 
     // Account와 N:1 관계
-    @Field(() => Account)
+    @Field(() => Account, {nullable: true})
     @ManyToOne((type) => Account, (account) => account.writePosts)
     @JoinColumn({ name: 'from_account_id', referencedColumnName: 'id' })
     fromAccount?: Account;

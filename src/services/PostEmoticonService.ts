@@ -12,8 +12,8 @@ export class PostEmoticonService {
         @InjectRepository() private readonly postRepository: PostRepository,
     ) {}
 
-    async findPostEmoticon(postId: string): Promise<PostEmoticon[]> {
-        const postEmoticon = await this.postEmoticonRepository.listPostEmoticonByPostId(postId);
-        return postEmoticon;
-    }
+    // async findPostEmoticon(postId: string): Promise<PostEmoticon[]> {
+    //     const postEmoticon = await this.postEmoticonRepository.listPostEmoticonByPostId(postId);
+    //     return postEmoticon;
+    // }
 }

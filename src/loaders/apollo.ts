@@ -1,4 +1,5 @@
-import { ApolloServer } from 'apollo-server-express';
+import { ApolloServer, ApolloServerExpressConfig } from 'apollo-server-express';
+import { ApolloServerLoaderPlugin } from 'type-graphql-dataloader';
 import { Container } from 'typedi';
 import { buildSchema } from 'type-graphql';
 import { GraphQLSchema } from 'graphql';
@@ -18,13 +19,16 @@ export default async ({ app }: { app: express.Application }) => {
         schema: schema,
         playground: config.server.env !== 'production',
         introspection: config.server.env !== 'production',
+        plugins: [
+            ApolloServerLoaderPlugin(),
+        ],
         context: ({ req, res }) => {
             const context = {
                 req,
             };
             return context;
         },
-    });
+    } as ApolloServerExpressConfig);
 
     server.applyMiddleware({ app });
 };
