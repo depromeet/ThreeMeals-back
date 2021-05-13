@@ -5,7 +5,7 @@ import {
     JoinColumn,
     ManyToOne,
     OneToMany,
-    PrimaryGeneratedColumn,
+    PrimaryGeneratedColumn, RelationId,
     UpdateDateColumn,
 } from 'typeorm';
 import { Field, ID, ObjectType } from 'type-graphql';
@@ -43,10 +43,6 @@ export class Post {
     @Column('varchar', { length: 20 })
     color!: string;
 
-    // @Field()
-    // @Column('varchar', { name: 'secret_type', length: 20 })
-    // secretType!: string;
-
     @Field((type) => SecretType)
     @Column('varchar', { name: 'secret_type' })
     secretType!: SecretType;
@@ -59,29 +55,34 @@ export class Post {
     @UpdateDateColumn({ name: 'updated_at' })
     updatedAt!: Date;
 
+    @RelationId((post: Post) => post.fromAccount)
+    fromAccountId!: string;
+
     // Account와 N:1 관계
     @Field(() => Account, {nullable: true})
     @ManyToOne((type) => Account, (account) => account.writePosts)
     @JoinColumn({ name: 'from_account_id', referencedColumnName: 'id' })
     fromAccount?: Account;
 
+    @RelationId((post: Post) => post.toAccount)
+    toAccountId!: string;
+
     @Field(() => Account)
     @ManyToOne((type) => Account, (account) => account.receivePosts)
     @JoinColumn({ name: 'to_account_id', referencedColumnName: 'id' })
-    toAccount?: Account;
+    toAccount!: Account | null;
 
     // LikePosts 1:N 관계
     @Field(() => Post)
     @OneToMany((type) => LikePosts, (likeposts) => likeposts.post)
     likedPosts!: Post[];
 
-    // Comment와 1:N관계
-    @Field(() => [Comment])
-    @OneToMany(() => Comment, (comment) => comment.post)
-    comments!: Comment[];
-
     // PostEmoticon과 1:N
     @Field(() => [PostEmoticon])
     @OneToMany(() => PostEmoticon, (postEmoticon) => postEmoticon.post)
     usedEmoticons!: PostEmoticon[];
+
+    // Comment와 1:N관계
+    @OneToMany(() => Comment, (comment) => comment.post)
+    comments!: Comment[];
 }

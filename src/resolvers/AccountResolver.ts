@@ -1,20 +1,16 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
-/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
-/* eslint-disable prefer-promise-reject-errors */
 import { Arg, Args, Ctx, Mutation, Query, Resolver, UseMiddleware } from 'type-graphql';
 import { Service } from 'typedi';
 import { AccountService } from '../services/AccountService';
 import { Account } from '../entities/Account';
 import { Token } from '../schemas/TokenSchema';
-import axios from 'axios';
 import { AuthMiddleware } from '../middleware/typegraphql/auth';
 import { SignInArgument } from './arguments/SignInArgument';
 import { updateAccountInfoArgument, updateImageArgument } from './arguments/AccountArgument';
 import { Provider } from '../entities/Enums';
-import { uploadFileToS3 } from '../middleware/typegraphql/uploadS3';
-import { GraphQLUpload, FileUpload } from 'graphql-upload';
+import { FileUpload, GraphQLUpload } from 'graphql-upload';
 import { Boolean } from 'aws-sdk/clients/batch';
-const path = require('path');
+import BaseError from '../exceptions/BaseError';
+import { ERROR_CODE } from '../exceptions/ErrorCode';
 
 @Service()
 @Resolver(() => Account)
@@ -38,8 +34,12 @@ export class AccountResolver {
     @UseMiddleware(AuthMiddleware)
     async updateAccountInfo(
         @Args() { providerId, content, profileUrl }: updateAccountInfoArgument,
-        @Ctx('account') account: Account,
+        @Ctx('account') account?: Account,
     ): Promise<Account> {
+        if (!account) {
+            throw new BaseError(ERROR_CODE.UNAUTHORIZED);
+        }
+
         const accountInfo = await this.accountService.updateAccountInfo({
             providerId,
             content,
@@ -57,8 +57,11 @@ export class AccountResolver {
     async updateImage(
         @Arg('file', () => GraphQLUpload) file: FileUpload,
         @Args() { providerId }: updateImageArgument,
-        @Ctx('account') account: Account,
+        @Ctx('account') account?: Account,
     ): Promise<boolean> {
+        if (!account) {
+            throw new BaseError(ERROR_CODE.UNAUTHORIZED);
+        }
         await this.accountService.updateImage({ fromAccount: account, file, providerId });
 
         return true;
@@ -87,8 +90,11 @@ export class AccountResolver {
     @UseMiddleware(AuthMiddleware)
     async updateImageToBasic(
         @Args() { providerId }: updateImageArgument,
-        @Ctx('account') account: Account,
+        @Ctx('account') account?: Account,
     ): Promise<Account> {
+        if (!account) {
+            throw new BaseError(ERROR_CODE.UNAUTHORIZED);
+        }
         const accountBasicImage = await this.accountService.updateImageToBasic({ fromAccount: account, providerId });
 
         return accountBasicImage;

@@ -30,7 +30,7 @@ export class PostEmoticon {
     post!: Post | null;
 
     @RelationId((postEmoticon: PostEmoticon) => postEmoticon.post)
-    postId!: number;
+    postId!: string;
 
     // Emoticon과 N:1
     @Field(() => Emoticon)

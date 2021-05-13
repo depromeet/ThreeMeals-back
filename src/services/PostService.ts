@@ -25,29 +25,12 @@ export class PostService {
 
     async getPosts(args: {
         accountId: string,
-        hasComment: boolean,
         hasUsedEmoticons: boolean,
         postType: PostType | null,
         limit: number,
         after: string | null
     }): Promise<Post[]> {
         return this.postRepository.listByAccountId(args);
-    }
-
-    async getAnswerPosts(args: { id: string }): Promise<Post[]> {
-        const { id: id } = args;
-        const from = await this.accountRepository.getAccountId(toString(id));
-        console.log(from);
-        const posts = await this.postRepository.find({
-            where: {
-                postType: PostType.Answer,
-                toAccount: from,
-            },
-            relations: ['usedEmoticons', 'usedEmoticons.emoticon'],
-            order: { id: 'DESC' },
-        });
-        console.log(posts);
-        return posts;
     }
 
     async createPost(args: {

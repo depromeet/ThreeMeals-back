@@ -1,4 +1,4 @@
-import { IsNumber, IsString } from 'class-validator';
+import {IsNumber, IsOptional, IsString} from 'class-validator';
 import { ArgsType, ClassType, Field } from 'type-graphql';
 
 export function PaginatedArgument<T>(afterType: ClassType<T>) {
@@ -14,7 +14,7 @@ export function PaginatedArgument<T>(afterType: ClassType<T>) {
         first!: number;
 
         @Field((type) => afterType, { nullable: true })
-        after!: T;
+        after?: T;
     }
     return PaginatedArgumentClass;
 }
@@ -24,5 +24,6 @@ export class StringPaginatedArgument extends PaginatedArgument(String) {
     @IsString({
         message: 'invalid after argument',
     })
-    after!: string;
+    @IsOptional()
+    after?: string;
 }

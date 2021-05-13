@@ -5,7 +5,10 @@ import { Comment } from '../entities/Comment';
 import { CreateCommentArgs } from './arguments/CommentArgument';
 import { AuthMiddleware } from '../middleware/typegraphql/auth';
 import { Account } from '../entities/Account';
-import { DeleteResult } from 'typeorm';
+import { CommentConnection } from '../schemas/CommentConnection';
+import { GetCommentsArgument } from './arguments/GetCommentsArgument';
+import BaseError from '../exceptions/BaseError';
+import { ERROR_CODE } from '../exceptions/ErrorCode';
 
 @Service()
 @Resolver(() => Comment)
@@ -14,23 +17,49 @@ export class CommentResolver {
 
     @Mutation((returns) => Comment)
     @UseMiddleware(AuthMiddleware)
-    async createComment(@Args() args: CreateCommentArgs, @Ctx('account') account: Account): Promise<Comment> {
-        const comment = await this.commentService.createComment(args, account);
+    async createComment(
+        @Args() args: CreateCommentArgs,
+        @Ctx('account') account?: Account,
+    ): Promise<Comment> {
+        if (!account) {
+            throw new BaseError(ERROR_CODE.UNAUTHORIZED);
+        }
+        const comment = await this.commentService.createComment({
+            ...args,
+            account,
+        });
         return comment;
     }
 
     @Mutation((returns) => String)
     @UseMiddleware(AuthMiddleware)
-    async deleteComment(@Arg('commentId') commentId: string, @Ctx('account') account: Account): Promise<string> {
+    async deleteComment(
+        @Arg('commentId') commentId: string,
+        @Ctx('account') account?: Account,
+    ): Promise<string> {
+        if (!account) {
+            throw new BaseError(ERROR_CODE.UNAUTHORIZED);
+        }
         const result = await this.commentService.deleteComment(commentId, account);
         return '' + result;
     }
 
-    @Query((returns) => [Comment])
+    @Query((returns) => CommentConnection)
     @UseMiddleware(AuthMiddleware)
-    async getComments(@Arg('postId') postId: string, @Ctx('account') account: Account): Promise<Comment[]> {
-        const comments = await this.commentService.getCommentsByPostId(postId);
-        return comments;
+    async getComments(
+        @Args() args: GetCommentsArgument,
+        @Ctx('account') account?: Account,
+    ): Promise<CommentConnection> {
+        if (!account) {
+            throw new BaseError(ERROR_CODE.UNAUTHORIZED);
+        }
+        const comments = await this.commentService.getCommentsByPostId({
+            accountId: account.id,
+            postId: args.postId,
+            after: args.after ? args.after : null,
+            limit: args.first,
+        });
+        return new CommentConnection(comments, 'id');
     }
     // @Query((returns) => Comment)
     // @UseMiddleware(isAuth)

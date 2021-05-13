@@ -1,14 +1,15 @@
 import { ArgsType, Field } from 'type-graphql';
 import { IsEnum, IsNumberString, IsOptional, IsString } from 'class-validator';
-import { PaginatedArgument } from './PaginatedArgument';
+import { PaginatedArgument } from './base/PaginatedArgument';
 import { PostType } from '../../entities/Enums';
 
 @ArgsType()
-export class GetMyPostArgument extends PaginatedArgument(String) {
+export class GetMyPostsArgument extends PaginatedArgument(String) {
     @IsString({
         message: 'invalid after argument',
     })
-    after!: string;
+    @IsOptional()
+    after?: string;
 
     @Field(() => PostType, {nullable: true})
     @IsEnum(PostType, {
@@ -20,11 +21,12 @@ export class GetMyPostArgument extends PaginatedArgument(String) {
 
 
 @ArgsType()
-export class GetPostArgument extends PaginatedArgument(String) {
+export class GetPostsArgument extends PaginatedArgument(String) {
     @IsString({
         message: 'invalid after argument',
     })
-    after!: string;
+    @IsOptional()
+    after?: string;
 
     @Field(() => PostType, {nullable: true})
     @IsEnum(PostType, {
@@ -37,6 +39,5 @@ export class GetPostArgument extends PaginatedArgument(String) {
     @IsNumberString({}, {
         message: 'invalid accountId argument',
     })
-    @IsOptional()
     accountId!: string;
 }

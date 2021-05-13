@@ -45,3 +45,24 @@ registerEnumType(SecretType, {
     name: 'SecretType',
     description: '익명 여부',
 });
+
+//  Post - postState
+export enum CommentState {
+    Submitted = 'Submitted',
+    Deleted = 'Deleted',
+}
+
+registerEnumType(CommentState, {
+    name: 'CommentState',
+    description: 'Comment 상태',
+});
+
+export enum OXComment {
+    O = 'O',
+    X = 'X',
+}
+
+registerEnumType(OXComment, {
+    name: 'OXComment',
+    description: 'OX 답변내용',
+});

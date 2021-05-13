@@ -7,37 +7,43 @@ import { Loader } from 'type-graphql-dataloader';
 import { Post } from '../entities/Post';
 import { PostEmoticon } from '../entities/PostEmoticon';
 import { PostService } from '../services/PostService';
-import { PostEmoticonService } from '../services/PostEmoticonService';
-import { EmoticonService } from '../services/EmoticonService';
 import { CreatePostArgument } from './arguments/CreatePostArgument';
 import { AuthMiddleware } from '../middleware/typegraphql/auth';
 import { Account } from '../entities/Account';
 import { PostEmoticonRepository } from '../repositories/PostEmoticonRepository';
 import { PostConnection } from '../schemas/PostConnection';
-import { GetMyPostArgument, GetPostArgument } from './arguments/GetPostArgument';
-import { NewPostCount, PostCount } from '../schemas/NewPostCount';
+import { GetMyPostsArgument, GetPostsArgument } from './arguments/GetPostsArgument';
+import { NewPostCount } from '../schemas/NewPostCount';
 import { PostType } from '../entities/Enums';
+import { CommentService } from '../services/CommentService';
+import BaseError from '../exceptions/BaseError';
+import { ERROR_CODE } from '../exceptions/ErrorCode';
+import { Comment } from '../entities/Comment';
+import { CommentRepository } from '../repositories/CommentRepository';
+import {PostCommentSchema} from "../schemas/PostCommentSchema";
 
 @Service()
 @Resolver(() => Post)
 export class PostResolver {
     constructor(
         private readonly postService: PostService,
-        private readonly postEmoticonService: PostEmoticonService,
-        private readonly emoticonService: EmoticonService,
+        private readonly commentService: CommentService,
     ) {}
 
     @Query((returns) => PostConnection)
     @UseMiddleware(AuthMiddleware)
     async getMyPosts(
-        @Args() args: GetMyPostArgument,
-        @Ctx('account') account: Account,
+        @Args() args: GetMyPostsArgument,
+        @Ctx('account') account?: Account,
     ): Promise<PostConnection> {
+        if (!account) {
+            throw new BaseError(ERROR_CODE.UNAUTHORIZED);
+        }
+
         const posts = await this.postService.getPosts({
             accountId: account.id,
-            hasComment: false,
             hasUsedEmoticons: false,
-            after: args.after,
+            after: args.after ? args.after : null,
             limit: args.first,
             postType: args.postType || null,
         });
@@ -47,13 +53,12 @@ export class PostResolver {
     // 물어봐
     @Query((returns) => [PostConnection])
     async getPosts(
-        @Args() args: GetPostArgument,
+        @Args() args: GetPostsArgument,
     ): Promise<PostConnection> {
         const posts = await this.postService.getPosts({
             accountId: args.accountId,
-            hasComment: false,
             hasUsedEmoticons: false,
-            after: args.after,
+            after: args.after ? args.after : null,
             limit: args.first,
             postType: args.postType || null,
         });
@@ -63,8 +68,11 @@ export class PostResolver {
     @Query((returns) => NewPostCount)
     @UseMiddleware(AuthMiddleware)
     async getMyNewPostCount(
-        @Ctx('account') account: Account,
+        @Ctx('account') account?: Account,
     ) {
+        if (!account) {
+            throw new BaseError(ERROR_CODE.UNAUTHORIZED);
+        }
         return {
             postCount: [
                 { postType: PostType.Answer, count: 1 },
@@ -79,8 +87,11 @@ export class PostResolver {
     @UseMiddleware(AuthMiddleware)
     async createPost(
         @Args() { content, color, secretType, postType, toAccountId, emoticons }: CreatePostArgument,
-        @Ctx('account') account: Account,
+        @Ctx('account') account?: Account,
     ): Promise<Post> {
+        if (!account) {
+            throw new BaseError(ERROR_CODE.UNAUTHORIZED);
+        }
         const post = await this.postService.createPost({
             content,
             color,
@@ -107,10 +118,6 @@ export class PostResolver {
     @Loader<string, PostEmoticon[]>(async (ids, { context }) => { // batchLoadFn
         const postEmoticons = await getCustomRepository(PostEmoticonRepository)
             .listPostEmoticonByPostIds([...ids]);
-        //     .find({
-        //     where: { post: { id: In([...ids]) } },
-        //     relations: ['emoticon'],
-        // });
         const emoticonsById = _.groupBy(postEmoticons, 'postId');
         return ids.map((id) => emoticonsById[id] ?? []);
     })
@@ -118,6 +125,25 @@ export class PostResolver {
         @Root() post: Post,
     ) {
         return (dataLoader: DataLoader<string, PostEmoticon[]>) => dataLoader.load(post.id);
+    }
+
+    @FieldResolver((returns) => [PostCommentSchema])
+    @Loader<Post, Comment[]>(async (posts, { context }) => { // batchLoadFn
+        const commentRepository = getCustomRepository(CommentRepository);
+        const onlyOneCommentPostIds = posts
+            .filter((post) => (post.postType === PostType.Quiz || post.postType === PostType.Ask))
+            .map((post) => post.id);
+        let comments: Comment[] = [];
+        if (onlyOneCommentPostIds.length > 0) {
+            comments = await commentRepository.listByPostIds([...onlyOneCommentPostIds]);
+        }
+        const commentsById = _.groupBy(comments, 'postId');
+        return posts.map((post) => commentsById[post.id] ?? []);
+    })
+    async comments(
+        @Root() post: Post,
+    ) {
+        return (dataLoader: DataLoader<Post, Comment[]>) => dataLoader.load(post);
     }
 }
 

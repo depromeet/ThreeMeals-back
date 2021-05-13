@@ -1,9 +1,7 @@
-import { Repository, EntityRepository } from 'typeorm';
-import { Post } from '../entities/Post';
-import { Service } from 'typedi';
-import { PostEmoticon } from '../entities/PostEmoticon';
-import retryTimes = jest.retryTimes;
-import {PostType} from "../entities/Enums";
+import {EntityRepository, Repository} from 'typeorm';
+import {Post} from '../entities/Post';
+import {Service} from 'typedi';
+import {PostType} from '../entities/Enums';
 
 @Service()
 @EntityRepository(Post)
@@ -19,25 +17,20 @@ export class PostRepository extends Repository<Post> {
     async listByAccountId(args: {
         accountId: string,
         postType: PostType | null,
-        hasComment: boolean,
         hasUsedEmoticons: boolean,
         limit: number,
         after: string | null
     }): Promise<Post[]> {
-        const { accountId, hasComment, hasUsedEmoticons, limit, after, postType } = args;
+        const { accountId, hasUsedEmoticons, limit, after, postType } = args;
         const post = 'post';
         const queryBuilder = this.createQueryBuilder(post);
-        let builder = queryBuilder
+        let builder = queryBuilder;
 
         if (hasUsedEmoticons) {
             builder = builder
                 .leftJoinAndSelect(`${post}.usedEmoticons`, 'usedEmoticons')
                 .leftJoinAndSelect(`usedEmoticons.emoticon`, 'emoticon');
         }
-
-        builder = hasComment ?
-            builder.leftJoinAndSelect(`${post}.comments`, 'comments') :
-            builder;
 
         builder = builder
             .where(`${post}.to_account_id = :accountId`, { accountId });
@@ -56,13 +49,10 @@ export class PostRepository extends Repository<Post> {
             .getMany();
     }
 
-
     async getPostById(postId: string): Promise<Post | undefined> {
-        const post = await this.findOne(postId, { select: ['id'] });
-        return post;
-    }
-
-    async getPost(postId: string): Promise<Post> {
-        return await this.findOneOrFail({ id: postId });
+        const post = 'post';
+        return this.createQueryBuilder(post)
+            .where(`${post}.id = :postId`, { postId })
+            .getOne();
     }
 }
