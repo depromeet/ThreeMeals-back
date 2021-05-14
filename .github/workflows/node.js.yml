@@ -37,5 +37,5 @@ jobs:                                # Job 설정
           script: |
             cd /app/depromeet/ThreeMeals-back/ && git pull origin master
             npm run build
-            pm2 restart ecosystem.config.js
+            /home/ubuntu/npm-global-modules/bin/pm2 restart ecosystem.config.js
 
