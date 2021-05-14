@@ -1,5 +1,6 @@
 import { Field, ID, ObjectType } from 'type-graphql';
 import { CommentState, SecretType } from '../entities/Enums';
+import { Account } from '../entities/Account';
 
 @ObjectType('comments')
 export class PostCommentSchema {
@@ -20,4 +21,10 @@ export class PostCommentSchema {
 
     @Field()
     updatedAt!: Date;
+
+    @Field((type) => Account, { nullable: true })
+    account!: Account | null;
+
+    @Field()
+    postId!: string;
 }

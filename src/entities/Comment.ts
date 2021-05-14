@@ -14,6 +14,8 @@ import { Account } from './Account';
 import { Post } from './Post';
 import { LikeComments } from './LikeComments';
 import { CommentState, SecretType } from './Enums';
+import BaseError from '../exceptions/BaseError';
+import { ERROR_CODE } from '../exceptions/ErrorCode';
 
 @ObjectType()
 @Entity()
@@ -46,32 +48,56 @@ export class Comment {
     accountId!: string;
 
     // Account와 N:1 관계
-    @Field((type) => Account)
+    @Field((type) => Account, { nullable: true })
     @ManyToOne((type) => Account, (account) => account.writeComments)
     @JoinColumn({ name: 'account_id', referencedColumnName: 'id' })
-    account!: Account;
+    account!: Account | null;
 
+    @Field()
     @RelationId((comment: Comment) => comment.post)
     postId!: string;
 
     // Post와 N:1 관계
     @ManyToOne((type) => Post, (post) => post.comments)
     @JoinColumn({ name: 'post_id', referencedColumnName: 'id' })
-    post!: Post;
+    post!: Post | null;
 
     // LikeComments 1:N 관계
     @OneToMany((type) => LikeComments, (likecomments) => likecomments.comment)
     likedComments!: LikeComments[];
 
     // Comment 내에서 self join
-    @Field((type) => [Comment])
     @OneToMany((type) => Comment, (comment) => comment.parent)
     children!: Comment[];
 
+    @Field((type) => Number)
+    childrenCount!: number;
+
+    @Field(() => String, { nullable: true })
     @RelationId((comment: Comment) => comment.parent)
     parentId!: string | null;
 
     @ManyToOne((type) => Comment, (comment) => comment.children, { nullable: true }) // null 가능
     @JoinColumn({ name: 'parent_id', referencedColumnName: 'id' })
     parent!: Comment | null;
+
+    public validateCommentOwner(accountId: string): void {
+        if (this.accountId !== accountId) {
+            throw new BaseError(ERROR_CODE.FORBIDDEN);
+        }
+    }
+
+    public validateParentComment(postId: string): void {
+        // parent 가 이미 대댓글이라면 에러
+        if (this.parentId) {
+            throw new BaseError(ERROR_CODE.COMMENT_NOT_PARENT, `부모댓글이 대댓글입니다. parentId: ${this.parentId}`);
+        }
+        // parent post id 가 다른 post id 라면 에러
+        if (this.postId !== postId) {
+            throw new BaseError(
+                ERROR_CODE.INVALID_MATCH_COMMENT_POST,
+                `요청한 postId 와 부모 댓글 postId 가 다릅니다. postId: ${postId}, commentPostId: ${this.postId}`,
+            );
+        }
+    }
 }

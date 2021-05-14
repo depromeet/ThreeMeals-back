@@ -1,4 +1,4 @@
-import { Arg, Args, Ctx, Mutation, Query, Resolver, UseMiddleware } from 'type-graphql';
+import { Arg, Args, Ctx, Mutation, Query, Resolver, Root, UseMiddleware } from 'type-graphql';
 import { Service } from 'typedi';
 import { CommentService } from '../services/CommentService';
 import { Comment } from '../entities/Comment';
@@ -9,6 +9,8 @@ import { CommentConnection } from '../schemas/CommentConnection';
 import { GetCommentsArgument } from './arguments/GetCommentsArgument';
 import BaseError from '../exceptions/BaseError';
 import { ERROR_CODE } from '../exceptions/ErrorCode';
+import { ChildrenCommentConnection } from '../schemas/ChildrenCommentSchema';
+import { GetChildrenCommentsArgument } from './arguments/GetChildrenCommentsArgument';
 
 @Service()
 @Resolver(() => Comment)
@@ -25,7 +27,10 @@ export class CommentResolver {
             throw new BaseError(ERROR_CODE.UNAUTHORIZED);
         }
         const comment = await this.commentService.createComment({
-            ...args,
+            content: args.content,
+            parentId: args.parentId ? args.parentId : null,
+            postId: args.postId,
+            secretType: args.secretType,
             account,
         });
         return comment;
@@ -50,29 +55,28 @@ export class CommentResolver {
         @Args() args: GetCommentsArgument,
         @Ctx('account') account?: Account,
     ): Promise<CommentConnection> {
-        if (!account) {
-            throw new BaseError(ERROR_CODE.UNAUTHORIZED);
-        }
-        const comments = await this.commentService.getCommentsByPostId({
-            accountId: account.id,
+        const comments = await this.commentService.getParentComments({
+            myAccountId: account ? account.id : null,
             postId: args.postId,
             after: args.after ? args.after : null,
             limit: args.first,
         });
         return new CommentConnection(comments, 'id');
     }
-    // @Query((returns) => Comment)
-    // @UseMiddleware(isAuth)
-    // async getComments(@argsToArgsConfig() args: any, @Ctx() { payload });
-    // @Mutation((returns) => Post)
-    // async updatePost(@Arg('id') id: number, @Args() { content, color, secretType }: UpdatePostArgument, @Ctx() ctx: any): Promise<Post> {
-    //     const post = await this.postService.updatePost({ id, content, color, secretType });
-    //     return post;
-    // }
 
-    // @Mutation((returns) => Boolean)
-    // async deletePost(@Arg('id') id: number): Promise<boolean> {
-    //     await this.postService.deletePost({ id });
-    //     return true;
-    // }
+    @Query((returns) => ChildrenCommentConnection)
+    @UseMiddleware(AuthMiddleware)
+    async getChildrenComments(
+        @Args() args: GetChildrenCommentsArgument,
+        @Ctx('account') account?: Account,
+    ): Promise<ChildrenCommentConnection> {
+        const comments = await this.commentService.getChildrenComments({
+            myAccountId: account ? account.id : null,
+            postId: args.postId,
+            parentId: args.parentId,
+            after: args.after ? args.after : null,
+            limit: args.first,
+        });
+        return new ChildrenCommentConnection(comments, 'id');
+    }
 }

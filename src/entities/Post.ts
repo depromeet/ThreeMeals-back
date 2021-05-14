@@ -59,10 +59,10 @@ export class Post {
     fromAccountId!: string;
 
     // Account와 N:1 관계
-    @Field(() => Account, {nullable: true})
+    @Field(() => Account, { nullable: true })
     @ManyToOne((type) => Account, (account) => account.writePosts)
     @JoinColumn({ name: 'from_account_id', referencedColumnName: 'id' })
-    fromAccount?: Account;
+    fromAccount!: Account | null;
 
     @RelationId((post: Post) => post.toAccount)
     toAccountId!: string;
@@ -85,4 +85,7 @@ export class Post {
     // Comment와 1:N관계
     @OneToMany(() => Comment, (comment) => comment.post)
     comments!: Comment[];
+
+    @Field((type) => Number)
+    commentsCount!: number
 }

@@ -20,7 +20,7 @@ import BaseError from '../exceptions/BaseError';
 import { ERROR_CODE } from '../exceptions/ErrorCode';
 import { Comment } from '../entities/Comment';
 import { CommentRepository } from '../repositories/CommentRepository';
-import {PostCommentSchema} from "../schemas/PostCommentSchema";
+import { PostCommentSchema } from '../schemas/PostCommentSchema';
 
 @Service()
 @Resolver(() => Post)
@@ -41,6 +41,7 @@ export class PostResolver {
         }
 
         const posts = await this.postService.getPosts({
+            myAccountId: account.id,
             accountId: account.id,
             hasUsedEmoticons: false,
             after: args.after ? args.after : null,
@@ -54,8 +55,10 @@ export class PostResolver {
     @Query((returns) => [PostConnection])
     async getPosts(
         @Args() args: GetPostsArgument,
+        @Ctx('account') account?: Account,
     ): Promise<PostConnection> {
         const posts = await this.postService.getPosts({
+            myAccountId: account ? account.id : null,
             accountId: args.accountId,
             hasUsedEmoticons: false,
             after: args.after ? args.after : null,

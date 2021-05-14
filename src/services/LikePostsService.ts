@@ -23,7 +23,7 @@ export class LikePostsService {
         const { accountId, postId } = args;
 
         const from = await this.AccountRepository.getAccountId(accountId);
-        const post = await this.PostRepository.getPostById(postId);
+        const post = await this.PostRepository.findOneById(postId);
 
         const newLikePosts = new LikePosts();
         newLikePosts.account = from;
@@ -37,7 +37,7 @@ export class LikePostsService {
     async deleteLikePosts(args: { id: string }): Promise<void> {
         const { id: id } = args;
 
-        const postId = await this.PostRepository.getPostById(id);
+        const postId = await this.PostRepository.findOneById(id);
 
         // postEmoticon 삭제
         await this.LikePostsRepository.delete({ post: postId });

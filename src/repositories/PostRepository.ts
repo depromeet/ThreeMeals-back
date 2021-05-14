@@ -24,7 +24,9 @@ export class PostRepository extends Repository<Post> {
         const { accountId, hasUsedEmoticons, limit, after, postType } = args;
         const post = 'post';
         const queryBuilder = this.createQueryBuilder(post);
-        let builder = queryBuilder;
+        let builder = queryBuilder
+            .leftJoinAndSelect(`${post}.fromAccount`, 'fromAccount')
+            .leftJoinAndSelect(`${post}.toAccount`, 'toAccount');
 
         if (hasUsedEmoticons) {
             builder = builder
@@ -49,9 +51,11 @@ export class PostRepository extends Repository<Post> {
             .getMany();
     }
 
-    async getPostById(postId: string): Promise<Post | undefined> {
+    async findOneById(postId: string): Promise<Post | undefined> {
         const post = 'post';
         return this.createQueryBuilder(post)
+            .leftJoinAndSelect(`${post}.fromAccount`, 'fromAccount')
+            .leftJoinAndSelect(`${post}.toAccount`, 'toAccount')
             .where(`${post}.id = :postId`, { postId })
             .getOne();
     }

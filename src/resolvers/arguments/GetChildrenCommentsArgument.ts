@@ -3,7 +3,7 @@ import { IsNumberString, IsOptional, IsString } from 'class-validator';
 import { PaginatedArgument } from './base/PaginatedArgument';
 
 @ArgsType()
-export class GetCommentsArgument extends PaginatedArgument(String) {
+export class GetChildrenCommentsArgument extends PaginatedArgument(String) {
     @IsString({
         message: 'invalid after argument',
     })
@@ -15,4 +15,10 @@ export class GetCommentsArgument extends PaginatedArgument(String) {
         message: 'invalid postId argument',
     })
     postId!: string;
+
+    @Field(() => String)
+    @IsNumberString({}, {
+        message: 'invalid parentId argument',
+    })
+    parentId!: string;
 }

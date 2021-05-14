@@ -9,7 +9,10 @@ export const ERROR_CODE = {
     INVALID_IMAGE_TYPE: createErrorCode(400, 'E005', 'invalid image type'),
     FORBIDDEN: createErrorCode(403, 'E006', 'Forbidden'),
     POST_NOT_FOUND: createErrorCode(400, 'E007', 'cannot find post'),
-    UNAUTHORIZED_WRITE_COMMENT: createErrorCode(400, 'E008', 'unauthorized write comment'),
+    UNAUTHORIZED_WRITE_COMMENT: createErrorCode(401, 'E008', 'unauthorized write comment'),
     INVALID_OX_COMMENT_CONTENT: createErrorCode(400, 'E009', 'invalid ox comment content'),
     ALREADY_COMMENT_SUBMITTED: createErrorCode(400, 'E010', 'already comment submitted'),
+    COMMENT_NOT_FOUND: createErrorCode(404, 'E011', 'Not Found comment'),
+    COMMENT_NOT_PARENT: createErrorCode(400, 'E012', 'cannot use parent comment'),
+    INVALID_MATCH_COMMENT_POST: createErrorCode(400, 'E013', 'invalid match comment & post'),
 };

@@ -24,6 +24,7 @@ export class PostService {
     ) {}
 
     async getPosts(args: {
+        myAccountId: string | null,
         accountId: string,
         hasUsedEmoticons: boolean,
         postType: PostType | null,
@@ -78,7 +79,7 @@ export class PostService {
     // Post 삭제
     async deletePost(args: { id: string }): Promise<void> {
         const { id: id } = args;
-        const postId = await this.postRepository.getPostById(id);
+        const postId = await this.postRepository.findOneById(id);
 
         // postEmoticon 삭제
         await this.postEmoticonRepository.delete({ post: postId });
