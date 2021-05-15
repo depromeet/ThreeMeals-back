@@ -1,11 +1,10 @@
 import { Service } from 'typedi';
-import { each, flow } from 'lodash/fp';
+import { each, filter, flow, intersectionBy, map, reduce, union, unionBy, values } from 'lodash/fp';
 import { Post } from '../entities/Post';
 import { PostEmoticon } from '../entities/PostEmoticon';
 import { AccountRepository } from '../repositories/AccountRepository';
 import { PostRepository } from '../repositories/PostRepository';
 import { PostEmoticonRepository } from '../repositories/PostEmoticonRepository';
-import { EmoticonRepository } from '../repositories/EmoticonRepository';
 import { LikePostsRepository } from '../repositories/LikePostsRepository';
 import { InjectRepository } from 'typeorm-typedi-extensions';
 import { PostState, PostType, SecretType } from '../entities/Enums';
@@ -35,6 +34,20 @@ export class PostService {
         return flow(
             each<Post>((post) => post.hideFromAccount(args.myAccountId)),
         )(posts);
+    }
+
+    async getNewPostsCounts(args: {
+        accountId: string,
+        postType: PostType | null,
+    }): Promise<{postType: PostType, count: number}[]> {
+        const counts = await this.postRepository.countsGroupByPostType({ ...args });
+
+        return flow(
+            filter((postType) => args.postType ? args.postType === postType : true),
+            map((postType) => ({ postType, count: '0' })),
+            unionBy( 'postType', counts),
+            map((count) => ({ postType: count.postType, count: parseInt(count.count) })),
+        )(values(PostType));
     }
 
     async createPost(args: {

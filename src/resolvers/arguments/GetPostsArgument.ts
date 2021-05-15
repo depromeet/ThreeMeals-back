@@ -11,7 +11,7 @@ export class GetMyPostsArgument extends PaginatedArgument(String) {
     @IsOptional()
     after?: string;
 
-    @Field(() => PostType, {nullable: true})
+    @Field(() => PostType, { nullable: true })
     @IsEnum(PostType, {
         message: 'invalid postType argument',
     })
@@ -28,16 +28,26 @@ export class GetPostsArgument extends PaginatedArgument(String) {
     @IsOptional()
     after?: string;
 
-    @Field(() => PostType, {nullable: true})
+    @Field(() => PostType, { nullable: true })
     @IsEnum(PostType, {
         message: 'invalid postType argument',
     })
     @IsOptional()
-    postType!: PostType;
+    postType?: PostType;
 
     @Field(() => String)
     @IsNumberString({}, {
         message: 'invalid accountId argument',
     })
     accountId!: string;
+}
+
+@ArgsType()
+export class GetMyNewPostCount {
+    @Field(() => PostType, { nullable: true })
+    @IsEnum(PostType, {
+        message: 'invalid postType argument',
+    })
+    @IsOptional()
+    postType?: PostType;
 }

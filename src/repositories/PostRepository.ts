@@ -1,7 +1,7 @@
 import {EntityRepository, Repository} from 'typeorm';
 import {Post} from '../entities/Post';
 import {Service} from 'typedi';
-import {PostType} from '../entities/Enums';
+import {PostState, PostType} from '../entities/Enums';
 
 @Service()
 @EntityRepository(Post)
@@ -10,8 +10,26 @@ export class PostRepository extends Repository<Post> {
         return await this.manager.save(newPost);
     }
 
-    async countNoComments() {
+    async countsGroupByPostType(args: {
+        accountId: string,
+        postType: PostType | null,
+    }): Promise<{postType: PostType, count: string}[]> {
+        const { accountId, postType } = args;
+        const post = 'post';
+        let builder = this.createQueryBuilder(post)
+            .select(`${post}.post_type AS postType`)
+            .addSelect(`COUNT(*) AS count`)
+            .where(`${post}.to_account_id = :accountId`, { accountId })
+            .andWhere(`${post}.post_state = :postState`, { postState: PostState.Submitted });
 
+        builder = postType ?
+            builder.andWhere(`${post}.post_type = :postType`, { postType }) :
+            builder;
+
+        return builder
+            .groupBy(`${post}.postType`)
+            .getRawMany();
+        // to Account id + postState(Submitted) + postType(nullable) 로 갯수를 가져온다.
     }
 
     async listByAccountId(args: {

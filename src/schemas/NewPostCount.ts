@@ -13,5 +13,9 @@ export class PostCount {
 @ObjectType()
 export class NewPostCount {
     @Field(() => [PostCount])
-    postCount!: PostCount;
+    postCount!: PostCount[];
+
+    constructor(postCount: PostCount[]) {
+        this.postCount = postCount;
+    }
 }
