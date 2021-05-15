@@ -53,6 +53,7 @@ export class PostResolver {
 
     // 물어봐
     @Query((returns) => [PostConnection])
+    @UseMiddleware(AuthMiddleware)
     async getPosts(
         @Args() args: GetPostsArgument,
         @Ctx('account') account?: Account,
