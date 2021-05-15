@@ -16,13 +16,3 @@ export class updateAccountInfoArgument {
     @Field({ nullable: true })
     profileUrl!: string;
 }
-
-
-@ArgsType()
-export class updateImageArgument {
-    @IsString({
-        message: 'invalid type',
-    })
-    @Field()
-    providerId!: string;
-}

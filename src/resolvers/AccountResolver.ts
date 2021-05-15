@@ -5,7 +5,7 @@ import { Account } from '../entities/Account';
 import { Token } from '../schemas/TokenSchema';
 import { AuthMiddleware } from '../middleware/typegraphql/auth';
 import { SignInArgument } from './arguments/SignInArgument';
-import { updateAccountInfoArgument, updateImageArgument } from './arguments/AccountArgument';
+import { updateAccountInfoArgument } from './arguments/AccountArgument';
 import { Provider } from '../entities/Enums';
 import { FileUpload, GraphQLUpload } from 'graphql-upload';
 import { Boolean } from 'aws-sdk/clients/batch';

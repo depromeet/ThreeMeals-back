@@ -135,9 +135,9 @@ mutation{
 }
 
 // 프로필 이미지 변경
- // mutation updateImage($file: Upload!) {
-    //     updateImage(file: $file, providerId: "1706701468")
-    // }
+ mutation updateImage($file: Upload!) {
+	updateImage(file: $file)
+	}
 
 {"query":"mutation updateImage($file: Upload!) {\n\tupdateImage(file: $file, providerId: \"1706701468\"){\n    image\n  }\n}"}
 
@@ -150,11 +150,21 @@ authorization          Bearer ~~
 
 [Body]
 key                     value
-operations             {"query":"mutation updateImage($file: Upload!) {\n\tupdateImage(file: $file, providerId: \"1706701468\")\n}"}
+operations             {"query":" mutation updateImage($file: Upload!) {\n\tupdateImage(file: $file)\n\t}"}
 map                    {"0": ["variables.file"]}
 0                      파일추가
 
 // 기본이미지로 사진 변경
 mutation{
   updateImageToBasic
+}
+
+// 문의하기
+mutation{
+  createContact(
+		content: "aaaa"
+  ){
+		id
+    content
+  }
 }

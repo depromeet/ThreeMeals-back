@@ -1,14 +1,15 @@
 import { Stream } from 'stream';
 import * as aws from 'aws-sdk';
-import * as dotenv from 'dotenv';
+import { config } from '../../config';
 
-dotenv.config();
+
 const s3 = new aws.S3();
 
+// 수정 필요
 aws.config.update({
-    secretAccessKey: process.env.AWS_SECRET_KEY,
-    accessKeyId: process.env.AWS_ACCESS_KEY,
-    region: process.env.AWS_REGION,
+    secretAccessKey: config.aws.AWS_SECRET_KEY,
+    accessKeyId: config.aws.AWS_ACCESS_KEY,
+    region: config.aws.AWS_REGION,
 });
 
 export const uploadFileToS3 = (s3: any, path: any, type: any) => {
