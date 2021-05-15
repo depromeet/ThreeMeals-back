@@ -90,7 +90,11 @@ export class Post {
     @Field((type) => Number)
     commentsCount!: number;
 
-    public hideFromAccount(): void {
+    public hideFromAccount(accountId: string | null): void {
+        // 본인의 작성글이라면 null 처리 하지 않음
+        if (accountId && accountId === this.fromAccountId) {
+            return;
+        }
         // secretType == forever 인지 확인
         if (this.secretType === SecretType.Forever) {
             this.fromAccount = null;

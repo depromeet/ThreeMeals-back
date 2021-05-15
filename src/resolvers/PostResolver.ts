@@ -1,58 +1,36 @@
-import { Arg, Args, Ctx, FieldResolver, Mutation, Query, Resolver, Root, UseMiddleware } from 'type-graphql';
-import { getCustomRepository } from 'typeorm';
+import {Arg, Args, Ctx, FieldResolver, Mutation, Query, Resolver, Root, UseMiddleware} from 'type-graphql';
+import {getCustomRepository} from 'typeorm';
 import DataLoader from 'dataloader';
 import * as _ from 'lodash';
-import { Service } from 'typedi';
-import { Loader } from 'type-graphql-dataloader';
-import { Post } from '../entities/Post';
-import { PostEmoticon } from '../entities/PostEmoticon';
-import { PostService } from '../services/PostService';
-import { CreatePostArgument } from './arguments/CreatePostArgument';
-import { AuthMiddleware } from '../middleware/typegraphql/auth';
-import { Account } from '../entities/Account';
-import { PostEmoticonRepository } from '../repositories/PostEmoticonRepository';
-import { PostConnection } from '../schemas/PostConnection';
-import { GetMyPostsArgument, GetPostsArgument } from './arguments/GetPostsArgument';
-import { NewPostCount } from '../schemas/NewPostCount';
-import { PostType } from '../entities/Enums';
-import { CommentService } from '../services/CommentService';
+import {Service} from 'typedi';
+import {Loader} from 'type-graphql-dataloader';
+import {Post} from '../entities/Post';
+import {PostEmoticon} from '../entities/PostEmoticon';
+import {PostService} from '../services/PostService';
+import {CreatePostArgument} from './arguments/CreatePostArgument';
+import {AuthMiddleware} from '../middleware/typegraphql/auth';
+import {Account} from '../entities/Account';
+import {PostEmoticonRepository} from '../repositories/PostEmoticonRepository';
+import {PostConnection} from '../schemas/PostConnection';
+import {GetPostsArgument} from './arguments/GetPostsArgument';
+import {NewPostCount} from '../schemas/NewPostCount';
+import {PostType} from '../entities/Enums';
+import {CommentService} from '../services/CommentService';
 import BaseError from '../exceptions/BaseError';
-import { ERROR_CODE } from '../exceptions/ErrorCode';
-import { Comment } from '../entities/Comment';
-import { CommentRepository } from '../repositories/CommentRepository';
-import { PostCommentSchema } from '../schemas/PostCommentSchema';
+import {ERROR_CODE} from '../exceptions/ErrorCode';
+import {Comment} from '../entities/Comment';
+import {CommentRepository} from '../repositories/CommentRepository';
+import {PostCommentSchema} from '../schemas/PostCommentSchema';
 
 @Service()
 @Resolver(() => Post)
 export class PostResolver {
     constructor(
         private readonly postService: PostService,
-        private readonly commentService: CommentService,
     ) {}
 
-    @Query((returns) => PostConnection)
-    @UseMiddleware(AuthMiddleware)
-    async getMyPosts(
-        @Args() args: GetMyPostsArgument,
-        @Ctx('account') account?: Account,
-    ): Promise<PostConnection> {
-        if (!account) {
-            throw new BaseError(ERROR_CODE.UNAUTHORIZED);
-        }
-
-        const posts = await this.postService.getPosts({
-            myAccountId: account.id,
-            accountId: account.id,
-            hasUsedEmoticons: false,
-            after: args.after ? args.after : null,
-            limit: args.first,
-            postType: args.postType || null,
-        });
-        return new PostConnection(posts, 'id');
-    }
-
     // 물어봐
-    @Query((returns) => [PostConnection])
+    @Query((returns) => PostConnection)
     @UseMiddleware(AuthMiddleware)
     async getPosts(
         @Args() args: GetPostsArgument,

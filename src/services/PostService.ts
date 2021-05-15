@@ -19,7 +19,6 @@ export class PostService {
         @InjectRepository() private readonly accountRepository: AccountRepository,
         @InjectRepository() private readonly postRepository: PostRepository,
         @InjectRepository() private readonly postEmoticonRepository: PostEmoticonRepository,
-        @InjectRepository() private readonly emoticonRepository: EmoticonRepository,
         @InjectRepository() private readonly likePostsRepository: LikePostsRepository,
     ) {}
 
@@ -34,7 +33,7 @@ export class PostService {
         const posts = await this.postRepository.listByAccountId(args);
 
         return flow(
-            each<Post>((post) => post.hideFromAccount()),
+            each<Post>((post) => post.hideFromAccount(args.myAccountId)),
         )(posts);
     }
 
@@ -57,10 +56,18 @@ export class PostService {
 
         // Post 생성
         const newPost = new Post();
-        // from 과 to 가 같은데 답해줘가 아니라면 에러
-        if (from.id == to.id && postType !== PostType.Answer) {
-            console.log(`invalid post type, postType: ${postType}, fromId: ${from.id}, toId: ${to.id}`);
-            throw new BaseError(ERROR_CODE.INVALID_POST_TYPE);
+        if (postType === PostType.Answer) {
+            // from to 가 다른데 답해줘라면 에러
+            if (from.id !== to.id) {
+                console.log(`invalid post type, postType: ${postType}, fromId: ${from.id}, toId: ${to.id}`);
+                throw new BaseError(ERROR_CODE.INVALID_POST_TYPE);
+            }
+        } else {
+            // from 과 to 가 같은데 답해줘가 아니라면 에러
+            if (from.id === to.id) {
+                console.log(`invalid post type, postType: ${postType}, fromId: ${from.id}, toId: ${to.id}`);
+                throw new BaseError(ERROR_CODE.INVALID_POST_TYPE);
+            }
         }
         newPost.content = content;
         newPost.color = color;

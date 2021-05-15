@@ -1,16 +1,16 @@
 import * as _ from 'lodash';
-import { map, filter, flow, uniq } from 'lodash/fp';
-import { PostRepository } from '../repositories/PostRepository';
-import { Service } from 'typedi';
-import { InjectRepository } from 'typeorm-typedi-extensions';
-import { isEnum } from 'class-validator';
-import { Comment } from '../entities/Comment';
-import { CommentRepository } from '../repositories/CommentRepository';
-import { Account } from '../entities/Account';
-import { DeleteResult } from 'typeorm';
+import {filter, flow, map, uniq} from 'lodash/fp';
+import {PostRepository} from '../repositories/PostRepository';
+import {Service} from 'typedi';
+import {InjectRepository} from 'typeorm-typedi-extensions';
+import {isEnum} from 'class-validator';
+import {Comment} from '../entities/Comment';
+import {CommentRepository} from '../repositories/CommentRepository';
+import {Account} from '../entities/Account';
+import {DeleteResult} from 'typeorm';
 import BaseError from '../exceptions/BaseError';
-import { ERROR_CODE } from '../exceptions/ErrorCode';
-import { CommentState, OXComment, PostState, PostType, SecretType } from '../entities/Enums';
+import {ERROR_CODE} from '../exceptions/ErrorCode';
+import {CommentState, OXComment, PostState, PostType, SecretType} from '../entities/Enums';
 
 @Service()
 export class CommentService {
@@ -33,6 +33,12 @@ export class CommentService {
         if (!post) {
             console.error(`Post 찾을 수 없음 postId: ${postId}`);
             throw new BaseError(ERROR_CODE.POST_NOT_FOUND);
+        }
+
+        // post 가 삭제된 상태인 경우 에러
+        if (post.postState === PostState.Deleted) {
+            console.error(`삭제된 Post 임: ${postId}`);
+            throw new BaseError(ERROR_CODE.POST_NOT_FOUND, 'DELETED POST');
         }
 
         // postType 이 답해줘인 경우
