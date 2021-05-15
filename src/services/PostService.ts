@@ -1,5 +1,5 @@
 import { Service } from 'typedi';
-import { each, filter, flow, intersectionBy, map, reduce, union, unionBy, values } from 'lodash/fp';
+import { each, filter, flow, map, unionBy, values } from 'lodash/fp';
 import { Post } from '../entities/Post';
 import { PostEmoticon } from '../entities/PostEmoticon';
 import { AccountRepository } from '../repositories/AccountRepository';
@@ -26,10 +26,11 @@ export class PostService {
         accountId: string,
         hasUsedEmoticons: boolean,
         postType: PostType | null,
+        postState: PostState | null,
         limit: number,
         after: string | null
     }): Promise<Post[]> {
-        const posts = await this.postRepository.listByAccountId(args);
+        const posts = await this.postRepository.listByAccountId({ ...args });
 
         return flow(
             each<Post>((post) => post.hideFromAccount(args.myAccountId)),
@@ -40,7 +41,7 @@ export class PostService {
         accountId: string,
         postType: PostType | null,
     }): Promise<{postType: PostType, count: number}[]> {
-        const counts = await this.postRepository.countsGroupByPostType({ ...args });
+        const counts = await this.postRepository.countsGroupByPostType({ ...args, postState: PostState.Submitted });
 
         return flow(
             filter((postType) => args.postType ? args.postType === postType : true),

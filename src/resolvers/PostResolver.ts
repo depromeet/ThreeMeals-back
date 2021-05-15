@@ -42,6 +42,7 @@ export class PostResolver {
             after: args.after ? args.after : null,
             limit: args.first,
             postType: args.postType || null,
+            postState: args.postState || null,
         });
         return new PostConnection(posts, 'id');
     }

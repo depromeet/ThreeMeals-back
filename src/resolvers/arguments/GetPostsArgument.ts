@@ -1,24 +1,7 @@
 import { ArgsType, Field } from 'type-graphql';
 import { IsEnum, IsNumberString, IsOptional, IsString } from 'class-validator';
 import { PaginatedArgument } from './base/PaginatedArgument';
-import { PostType } from '../../entities/Enums';
-
-@ArgsType()
-export class GetMyPostsArgument extends PaginatedArgument(String) {
-    @IsString({
-        message: 'invalid after argument',
-    })
-    @IsOptional()
-    after?: string;
-
-    @Field(() => PostType, { nullable: true })
-    @IsEnum(PostType, {
-        message: 'invalid postType argument',
-    })
-    @IsOptional()
-    postType!: PostType;
-}
-
+import {PostState, PostType} from '../../entities/Enums';
 
 @ArgsType()
 export class GetPostsArgument extends PaginatedArgument(String) {
@@ -34,6 +17,13 @@ export class GetPostsArgument extends PaginatedArgument(String) {
     })
     @IsOptional()
     postType?: PostType;
+
+    @Field(() => PostState, { nullable: true })
+    @IsEnum(PostState, {
+        message: 'invalid postState argument',
+    })
+    @IsOptional()
+    postState?: PostState;
 
     @Field(() => String)
     @IsNumberString({}, {

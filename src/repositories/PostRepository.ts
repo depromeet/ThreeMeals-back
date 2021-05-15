@@ -12,15 +12,19 @@ export class PostRepository extends Repository<Post> {
 
     async countsGroupByPostType(args: {
         accountId: string,
+        postState: PostState | null,
         postType: PostType | null,
     }): Promise<{postType: PostType, count: string}[]> {
-        const { accountId, postType } = args;
+        const { accountId, postType, postState } = args;
         const post = 'post';
         let builder = this.createQueryBuilder(post)
             .select(`${post}.post_type AS postType`)
             .addSelect(`COUNT(*) AS count`)
-            .where(`${post}.to_account_id = :accountId`, { accountId })
-            .andWhere(`${post}.post_state = :postState`, { postState: PostState.Submitted });
+            .where(`${post}.to_account_id = :accountId`, { accountId });
+
+        builder = postState ?
+            builder.andWhere(`${post}.post_state = :postState`, { postState }) :
+            builder;
 
         builder = postType ?
             builder.andWhere(`${post}.post_type = :postType`, { postType }) :
@@ -35,11 +39,12 @@ export class PostRepository extends Repository<Post> {
     async listByAccountId(args: {
         accountId: string,
         postType: PostType | null,
+        postState: PostState | null,
         hasUsedEmoticons: boolean,
         limit: number,
         after: string | null
     }): Promise<Post[]> {
-        const { accountId, hasUsedEmoticons, limit, after, postType } = args;
+        const { accountId, hasUsedEmoticons, limit, after, postType, postState } = args;
         const post = 'post';
         const queryBuilder = this.createQueryBuilder(post);
         let builder = queryBuilder
@@ -57,6 +62,10 @@ export class PostRepository extends Repository<Post> {
 
         builder = after ?
             builder.andWhere(`${post}.id < :after`, { after }) :
+            builder;
+
+        builder = postState ?
+            builder.andWhere(`${post}.post_state = :postState`, { postState }) :
             builder;
 
         builder = postType ?

@@ -1,4 +1,3 @@
-/* eslint-disable camelcase */
 import { Arg, Args, Ctx, Mutation, Resolver, UseMiddleware } from 'type-graphql';
 import { Service } from 'typedi';
 import { LikePosts } from '../entities/LikePosts';
@@ -6,8 +5,8 @@ import { LikePostsService } from '../services/LikePostsService';
 import { LikePostsArgument } from './arguments/LikePostsArgument';
 import { AuthContext } from '../middleware/express/AuthContext';
 import { AuthMiddleware } from '../middleware/typegraphql/auth';
-import BaseError from "../exceptions/BaseError";
-import {ERROR_CODE} from "../exceptions/ErrorCode";
+import BaseError from '../exceptions/BaseError';
+import { ERROR_CODE } from '../exceptions/ErrorCode';
 
 @Service()
 @Resolver(() => LikePosts)
