@@ -8,6 +8,7 @@ import {
     PrimaryGeneratedColumn, RelationId,
     UpdateDateColumn,
 } from 'typeorm';
+import * as dayjs from 'dayjs';
 import { Field, ID, ObjectType } from 'type-graphql';
 import { IsHexColor } from 'class-validator';
 import { Account } from './Account';
@@ -87,5 +88,22 @@ export class Post {
     comments!: Comment[];
 
     @Field((type) => Number)
-    commentsCount!: number
+    commentsCount!: number;
+
+    public hideFromAccount(): void {
+        // secretType == forever 인지 확인
+        if (this.secretType === SecretType.Forever) {
+            this.fromAccount = null;
+        }
+
+        // ~ 24 시간이면 null
+        if (dayjs(this.createdAt).add(1, 'day').isAfter(dayjs(Date.now()))) {
+            this.fromAccount = null;
+        }
+
+        // 48 ~ 시간이면 null
+        if (dayjs(this.createdAt).add(2, 'day').isBefore(dayjs(Date.now()))) {
+            this.fromAccount = null;
+        }
+    }
 }

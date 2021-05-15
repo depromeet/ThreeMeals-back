@@ -51,7 +51,7 @@ export class CommentResolver {
 
     @Query((returns) => CommentConnection)
     @UseMiddleware(AuthMiddleware)
-    async getComments(
+    async getParentComments(
         @Args() args: GetCommentsArgument,
         @Ctx('account') account?: Account,
     ): Promise<CommentConnection> {

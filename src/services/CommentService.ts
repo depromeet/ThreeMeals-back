@@ -1,4 +1,5 @@
 import * as _ from 'lodash';
+import { map, filter, flow, uniq } from 'lodash/fp';
 import { PostRepository } from '../repositories/PostRepository';
 import { Service } from 'typedi';
 import { InjectRepository } from 'typeorm-typedi-extensions';
@@ -127,26 +128,28 @@ export class CommentService {
             limit: args.limit,
             after: args.after,
         });
-        const parentCommentIds = _.chain(comments)
-            .filter((comment) => comment.parentId === null)
-            .map((comment) => comment.id as string)
-            .uniq()
-            .value() || [];
 
-        const childrenCounts = parentCommentIds.length > 0 ?
-            await this.commentRepository.getChildrenCountCommentsByIds(parentCommentIds) :
-            [];
+        const childrenCounts = await flow(
+            filter<Comment>((comment) => comment.parentId === null),
+            map((comment) => comment.id as string),
+            uniq,
+            (parentCommentIds) => parentCommentIds.length > 0 ?
+                this.commentRepository.getChildrenCountCommentsByIds(parentCommentIds) :
+                Promise.resolve([]),
+        )(comments);
 
-        const result= _.chain(comments).map((comment) => {
-            comment.childrenCount =_.map(childrenCounts)
-                .filter((count) => count.parentId === comment.id)
-                .map((count) => parseInt(count.childrenCount))
-                .pop() || 0;
-            return comment;
-        }).map((comment) => {
-            if (![post.toAccountId, args.myAccountId].includes(comment.accountId)) comment.account = null;
-            return comment;
-        }).value();
+        const result = _.chain(comments)
+            .map((comment) => {
+                comment.childrenCount = _.chain(childrenCounts)
+                    .filter((count) => count.parentId === comment.id)
+                    .map((count) => parseInt(count.childrenCount))
+                    .reduce((prev, curr) => prev + curr, 0)
+                    .value();
+                return comment;
+            }).map((comment) => {
+                if (![post.toAccountId, args.myAccountId].includes(comment.accountId)) comment.account = null;
+                return comment;
+            }).value();
         return result;
     }
 

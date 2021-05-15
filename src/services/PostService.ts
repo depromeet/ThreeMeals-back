@@ -1,4 +1,5 @@
 import { Service } from 'typedi';
+import { each, flow } from 'lodash/fp';
 import { Post } from '../entities/Post';
 import { PostEmoticon } from '../entities/PostEmoticon';
 import { AccountRepository } from '../repositories/AccountRepository';
@@ -10,7 +11,6 @@ import { InjectRepository } from 'typeorm-typedi-extensions';
 import { PostState, PostType, SecretType } from '../entities/Enums';
 import BaseError from '../exceptions/BaseError';
 import { ERROR_CODE } from '../exceptions/ErrorCode';
-import { toString } from 'lodash';
 import { Account } from '../entities/Account';
 
 @Service()
@@ -31,7 +31,11 @@ export class PostService {
         limit: number,
         after: string | null
     }): Promise<Post[]> {
-        return this.postRepository.listByAccountId(args);
+        const posts = await this.postRepository.listByAccountId(args);
+
+        return flow(
+            each<Post>((post) => post.hideFromAccount()),
+        )(posts);
     }
 
     async createPost(args: {
