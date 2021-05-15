@@ -38,6 +38,17 @@ export class AccountService {
         return account;
     }
 
+    async getAccountInfo(args: {
+        accountId: string,
+    }): Promise<Account> {
+        const account = await this.accountRepository.findOneById(args.accountId);
+        if (!account) {
+            console.log(`cannot find account by id, ${account}`);
+            throw new Error('Not authenticated');
+        }
+        return account;
+    }
+
     async signIn({ accessToken, provider }: SignInArgument): Promise<string> {
         const userData = await this.fetchUserData({ accessToken, provider });
         if (userData) {
@@ -76,31 +87,20 @@ export class AccountService {
 
     // 프로필 변경
     async updateAccountInfo(args: {
-        // nickname: string;
-        providerId: string;
         content: string;
         profileUrl: string;
-        fromAccount: Account;
+        accountId: string;
     }): Promise<Account> {
-        const { providerId, content, profileUrl, fromAccount: from } = args;
+        const { content, profileUrl, accountId } = args;
 
-        const originInfo = await this.accountRepository.getAccount(providerId);
-        const updateInfo = await this.accountRepository.findOneById(from.id);
+
+        const updateInfo = await this.accountRepository.findOneById(accountId);
 
         console.log(updateInfo);
 
-        if (!originInfo) {
-            throw new BaseError(ERROR_CODE.USER_NOT_FOUND);
-        }
         if (!updateInfo) {
             throw new BaseError(ERROR_CODE.USER_NOT_FOUND);
         }
-        console.log(providerId);
-        console.log(originInfo);
-        if (originInfo.id !== updateInfo.id) {
-            throw new BaseError(ERROR_CODE.FORBIDDEN);
-        }
-
 
         // updateInfo!.nickname = nickname;
         // updateInfo!.image = image;
@@ -114,21 +114,15 @@ export class AccountService {
 
     // 이미지 변경
     async updateImage(args: {
-        fromAccount: Account;
+        accountId: string;
         file: FileUpload;
-        providerId: string;
     }): Promise<Account> {
-        const { fromAccount: from, file, providerId } = args;
+        const { accountId, file } = args;
         const { createReadStream, filename, mimetype, encoding } = file;
 
-        const updateInfo = await this.accountRepository.findOneById(from.id);
+        const updateInfo = await this.accountRepository.findOneById(accountId);
         if (!updateInfo) {
             throw new BaseError(ERROR_CODE.USER_NOT_FOUND);
-        }
-
-        const originInfo = await this.accountRepository.getAccount(providerId);
-        if (originInfo?.id !== updateInfo?.id) {
-            throw new BaseError(ERROR_CODE.FORBIDDEN);
         }
 
         if (mimetype !== 'image/jpg' && mimetype !== 'image/jpeg' && mimetype !== 'image/png' && mimetype !== 'image/gif') {
@@ -154,19 +148,13 @@ export class AccountService {
 
     // 기본이미지로 변경
     async updateImageToBasic(args: {
-        fromAccount: Account;
-        providerId: string;
+        accountId: string;
     }): Promise<Account> {
-        const { fromAccount: from, providerId } = args;
+        const { accountId } = args;
 
-        const updateInfo = await this.accountRepository.findOneById(from.id);
+        const updateInfo = await this.accountRepository.findOneById(accountId);
         if (!updateInfo) {
             throw new BaseError(ERROR_CODE.USER_NOT_FOUND);
-        }
-
-        const originInfo = await this.accountRepository.getAccount(providerId);
-        if (originInfo?.id !== updateInfo?.id) {
-            throw new BaseError(ERROR_CODE.FORBIDDEN);
         }
 
         updateInfo!.image = 'https://threemeals-back.s3.ap-northeast-2.amazonaws.com/basic.PNG';

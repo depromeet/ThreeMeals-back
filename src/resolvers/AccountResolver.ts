@@ -22,6 +22,20 @@ export class AccountResolver {
         return 'hello';
     }
 
+    // 사용자 정보 가져오기
+    @Query((returns) => Account)
+    @UseMiddleware(AuthMiddleware)
+    async getAccountInfo(
+        @Ctx('account') account?: Account,
+    ): Promise<Account> {
+        if (!account) {
+            throw new BaseError(ERROR_CODE.UNAUTHORIZED);
+        }
+        const accountInfo = await this.accountService.getAccountInfo({ accountId: account.id });
+
+        return accountInfo;
+    }
+
     // jwtnewAccount
     @Mutation((returns) => Token)
     async signIn(@Args() { accessToken, provider }: SignInArgument, @Ctx() ctx: any): Promise<Token> {
@@ -33,7 +47,7 @@ export class AccountResolver {
     @Mutation((returns) => Account)
     @UseMiddleware(AuthMiddleware)
     async updateAccountInfo(
-        @Args() { providerId, content, profileUrl }: updateAccountInfoArgument,
+        @Args() { content, profileUrl }: updateAccountInfoArgument,
         @Ctx('account') account?: Account,
     ): Promise<Account> {
         if (!account) {
@@ -41,10 +55,9 @@ export class AccountResolver {
         }
 
         const accountInfo = await this.accountService.updateAccountInfo({
-            providerId,
             content,
             profileUrl,
-            fromAccount: account,
+            accountId: account.id,
         });
 
         return accountInfo;
@@ -56,13 +69,15 @@ export class AccountResolver {
     @UseMiddleware(AuthMiddleware)
     async updateImage(
         @Arg('file', () => GraphQLUpload) file: FileUpload,
-        @Args() { providerId }: updateImageArgument,
         @Ctx('account') account?: Account,
     ): Promise<boolean> {
         if (!account) {
             throw new BaseError(ERROR_CODE.UNAUTHORIZED);
         }
-        await this.accountService.updateImage({ fromAccount: account, file, providerId });
+        await this.accountService.updateImage({
+            accountId: account.id,
+            file,
+        });
 
         return true;
     }
@@ -86,17 +101,18 @@ export class AccountResolver {
     // curl: // {"query":"mutation updateImage($file: Upload!) {\n\tupdateImage(file: $file, providerId: \"1706701468\")\n}"}
 
     // 프로필 수정 - 사진 추가
-    @Mutation((returns) => Account)
+    @Mutation((returns) => Boolean)
     @UseMiddleware(AuthMiddleware)
     async updateImageToBasic(
-        @Args() { providerId }: updateImageArgument,
         @Ctx('account') account?: Account,
-    ): Promise<Account> {
+    ): Promise<boolean> {
         if (!account) {
             throw new BaseError(ERROR_CODE.UNAUTHORIZED);
         }
-        const accountBasicImage = await this.accountService.updateImageToBasic({ fromAccount: account, providerId });
+        await this.accountService.updateImageToBasic({
+            accountId: account.id,
+        });
 
-        return accountBasicImage;
+        return true;
     }
 }

@@ -1,5 +1,14 @@
 //graphQL 명령어 test
 
+query {
+	getAccountInfo{
+    id
+    nickname
+    image
+	}
+}
+
+
 // 이모티콘 전체
 query {
 	getAllEmoticons{
@@ -147,10 +156,5 @@ map                    {"0": ["variables.file"]}
 
 // 기본이미지로 사진 변경
 mutation{
-  updateImageToBasic(
-    providerId: "1706701468"
-  )
-  {
-    image
-  }
+  updateImageToBasic
 }
