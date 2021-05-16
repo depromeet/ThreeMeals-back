@@ -40,6 +40,12 @@ export interface IConfig {
         expiresIn: string;
         iss: string;
     };
+
+    aws: {
+        AWS_SECRET_KEY: string;
+        AWS_ACCESS_KEY: string;
+        AWS_REGION: string;
+    };
 }
 
 export const config: IConfig = {
@@ -79,5 +85,11 @@ export const config: IConfig = {
         secret: process.env.JWT_SECRET || '',
         expiresIn: process.env.JWT_EXPIRATION || '7d',
         iss: process.env.JWT_ISS || 'accounts.depromeet.com',
+    },
+
+    aws: {
+        AWS_SECRET_KEY: process.env.AWS_SECRET_KEY || '',
+        AWS_ACCESS_KEY: process.env.AWS_ACCESS_KEY || '',
+        AWS_REGION: process.env.AWS_REGION || '',
     },
 };

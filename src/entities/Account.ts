@@ -1,6 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
 import { ObjectType, Field, Int, ID } from 'type-graphql';
 import { length } from 'class-validator';
+import { Contact } from './Contact';
 import { Post } from './Post';
 import { Comment } from './Comment';
 import { LikePosts } from './LikePosts';
@@ -51,6 +52,10 @@ export class Account {
     @Field()
     @UpdateDateColumn({ name: 'updated_at' })
     updatedAt!: Date;
+
+    // Contact와 1:N 관계
+    @OneToMany((type) => Contact, (contact) => contact.sender)
+    writeContacts!: Post[];
 
     // Post와 1:N 관계
     @OneToMany((type) => Post, (post) => post.fromAccount)

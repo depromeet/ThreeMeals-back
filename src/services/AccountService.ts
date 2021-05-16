@@ -1,3 +1,5 @@
+/* eslint-disable prefer-promise-reject-errors */
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { Inject, Service } from 'typedi';
 import { v4 as uuid } from 'uuid';
 import BaseError from '../exceptions/BaseError';
@@ -15,6 +17,11 @@ import * as jwt from 'jsonwebtoken';
 import axios from 'axios';
 import { classToPlain } from 'class-transformer';
 import { config } from '../config';
+import { GraphQLUpload, FileUpload } from 'graphql-upload';
+import { assertNamedType, GraphQLScalarType } from 'graphql';
+import { createWriteStream } from 'fs';
+import { uploadFileToS3 } from '../middleware/typegraphql/uploadS3';
+import * as AWS from 'aws-sdk';
 
 @Service()
 export class AccountService {
@@ -26,6 +33,17 @@ export class AccountService {
         const account = await this.accountRepository.findOneById(id);
         if (!account) {
             console.log(`cannot find account by id, ${id}`);
+            throw new Error('Not authenticated');
+        }
+        return account;
+    }
+
+    async getAccountInfo(args: {
+        accountId: string,
+    }): Promise<Account> {
+        const account = await this.accountRepository.findOneById(args.accountId);
+        if (!account) {
+            console.log(`cannot find account by id, ${account}`);
             throw new Error('Not authenticated');
         }
         return account;
@@ -65,5 +83,83 @@ export class AccountService {
             },
         });
         return userData;
+    }
+
+    // 프로필 변경
+    async updateAccountInfo(args: {
+        content: string;
+        profileUrl: string;
+        accountId: string;
+    }): Promise<Account> {
+        const { content, profileUrl, accountId } = args;
+
+
+        const updateInfo = await this.accountRepository.findOneById(accountId);
+
+        console.log(updateInfo);
+
+        if (!updateInfo) {
+            throw new BaseError(ERROR_CODE.USER_NOT_FOUND);
+        }
+
+        // updateInfo!.nickname = nickname;
+        // updateInfo!.image = image;
+        updateInfo!.content = content;
+        updateInfo!.profileUrl = profileUrl;
+        updateInfo!.content = content;
+
+        const accountInfo = await this.accountRepository.save(updateInfo);
+        return accountInfo;
+    }
+
+    // 이미지 변경
+    async updateImage(args: {
+        accountId: string;
+        file: FileUpload;
+    }): Promise<Account> {
+        const { accountId, file } = args;
+        const { createReadStream, filename, mimetype, encoding } = file;
+
+        const updateInfo = await this.accountRepository.findOneById(accountId);
+        if (!updateInfo) {
+            throw new BaseError(ERROR_CODE.USER_NOT_FOUND);
+        }
+
+        if (mimetype !== 'image/jpg' && mimetype !== 'image/jpeg' && mimetype !== 'image/png' && mimetype !== 'image/gif') {
+            throw new BaseError(ERROR_CODE.INVALID_IMAGE_TYPE);
+        }
+
+        console.log(filename);
+
+        const S3: AWS.S3 = new AWS.S3();
+        const url: boolean = await new Promise((res, rej) => {
+            createReadStream()
+                .pipe(uploadFileToS3(S3, `${updateInfo.id}/${filename}`, mimetype))
+                .on('finish', () => res(true))
+                .on('error', () => rej(false));
+        });
+        const newFilename = `https://threemeals-back.s3.ap-northeast-2.amazonaws.com/${updateInfo.id}/${filename}`;
+        updateInfo!.image = newFilename;
+        const accountInfo = await this.accountRepository.save(updateInfo);
+
+        return accountInfo;
+    }
+
+
+    // 기본이미지로 변경
+    async updateImageToBasic(args: {
+        accountId: string;
+    }): Promise<Account> {
+        const { accountId } = args;
+
+        const updateInfo = await this.accountRepository.findOneById(accountId);
+        if (!updateInfo) {
+            throw new BaseError(ERROR_CODE.USER_NOT_FOUND);
+        }
+
+        updateInfo!.image = 'https://threemeals-back.s3.ap-northeast-2.amazonaws.com/basic.PNG';
+        const accountInfo = await this.accountRepository.save(updateInfo);
+
+        return accountInfo;
     }
 }

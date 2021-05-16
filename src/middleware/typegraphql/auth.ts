@@ -1,29 +1,38 @@
 import { MiddlewareInterface, NextFn, ResolverData } from 'type-graphql';
 import { verify } from 'jsonwebtoken';
+import { Service } from 'typedi';
 import { AuthContext, isAuthPayload } from '../express/AuthContext';
 import { config } from '../../config';
-import { AccountService } from '../../services/AccountService';
-import { Service } from 'typedi';
+import { InjectRepository } from 'typeorm-typedi-extensions';
+import { AccountRepository } from '../../repositories/AccountRepository';
 
 @Service()
 export class AuthMiddleware implements MiddlewareInterface<AuthContext> {
-    constructor(private readonly accountService: AccountService) {}
+    constructor(
+        @InjectRepository() private readonly accountRepository: AccountRepository,
+    ) {}
 
     async use({ context, info }: ResolverData<AuthContext>, next: NextFn) {
         try {
             // production 이 아니라면 테스트를 위해 jwt 없이 진행 가능
             if (config.server.env !== 'production' && context.req.headers['account-id']) {
                 const id = context.req.headers['account-id'] as string;
-                context.account = await this.accountService.getAccount(id);
+                const account = await this.accountRepository.findOneById(id);
+                if (!account) {
+                    console.log(`cannot find account by id, ${id}`);
+                    throw new Error('Not authenticated');
+                }
+                context.account = account;
                 return next();
             }
 
+            // authorization 헤더가 없다면 그냥 넘김
             const authorization = context.req.headers['authorization'];
             if (!authorization) {
-                console.log('has not authorization header');
-                throw new Error('Not authenticated');
+                return next();
             }
 
+            // authorization 헤더가 있다면 account 를 체크함
             const isBearer = authorization.split(' ')[0] === 'Bearer';
             if (!isBearer) {
                 console.log('Not Bearer');
@@ -37,7 +46,12 @@ export class AuthMiddleware implements MiddlewareInterface<AuthContext> {
                 throw new Error('Not authenticated');
             }
 
-            context.account = await this.accountService.getAccount(payload.id);
+            const account = await this.accountRepository.findOneById(payload.id);
+            if (!account) {
+                console.log(`cannot find account by id, ${payload.id}`);
+                throw new Error('Not authenticated');
+            }
+            context.account = account;
             return next();
         } catch (err) {
             console.log(err);
@@ -45,4 +59,3 @@ export class AuthMiddleware implements MiddlewareInterface<AuthContext> {
         }
     }
 }
-

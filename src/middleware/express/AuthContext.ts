@@ -14,5 +14,5 @@ export const isAuthPayload = (payload: any): payload is AuthPayload => {
 export interface AuthContext {
     req: Request;
     res: Response;
-    account: Account;
+    account?: Account;
 }

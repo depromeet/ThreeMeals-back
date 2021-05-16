@@ -1,63 +1,80 @@
 import { Arg, Args, Ctx, FieldResolver, Mutation, Query, Resolver, Root, UseMiddleware } from 'type-graphql';
+import { getCustomRepository } from 'typeorm';
+import DataLoader from 'dataloader';
+import * as _ from 'lodash';
 import { Service } from 'typedi';
+import { Loader } from 'type-graphql-dataloader';
 import { Post } from '../entities/Post';
 import { PostEmoticon } from '../entities/PostEmoticon';
 import { PostService } from '../services/PostService';
-import { PostEmoticonService } from '../services/PostEmoticonService';
-import { EmoticonService } from '../services/EmoticonService';
 import { CreatePostArgument } from './arguments/CreatePostArgument';
 import { AuthMiddleware } from '../middleware/typegraphql/auth';
 import { Account } from '../entities/Account';
+import { PostEmoticonRepository } from '../repositories/PostEmoticonRepository';
+import { PostConnection } from '../schemas/PostConnection';
+import {GetMyNewPostCount, GetPostsArgument} from './arguments/GetPostsArgument';
+import { NewPostCount } from '../schemas/NewPostCount';
+import { PostType } from '../entities/Enums';
+import BaseError from '../exceptions/BaseError';
+import { ERROR_CODE } from '../exceptions/ErrorCode';
+import { Comment } from '../entities/Comment';
+import { CommentRepository } from '../repositories/CommentRepository';
+import { PostCommentSchema } from '../schemas/PostCommentSchema';
 
 @Service()
 @Resolver(() => Post)
 export class PostResolver {
     constructor(
         private readonly postService: PostService,
-        private readonly postEmoticonService: PostEmoticonService,
-        private readonly emoticonService: EmoticonService,
     ) {}
 
-    @Query((returns) => [Post])
-    async posts(
-        @Arg('userId') id: number,
-    ): Promise<Post[]> {
-        const emoticons = await this.postService.getAskPosts({ id });
-        // console.log(emoticons)
-        return emoticons;
-    }
-
     // 물어봐
-    // userId는 jwt토큰에서 accoundId 즉, Account테이블에서 index기준으로 가져옴
-    @Query((returns) => [Post])
-    async getAskPosts(
-        @Arg('userId') id: number,
-    ): Promise<Post[]> {
-        const emoticons = await this.postService.getAskPosts({ id });
-        // console.log(emoticons)
-        return emoticons;
+    @Query((returns) => PostConnection)
+    @UseMiddleware(AuthMiddleware)
+    async getPosts(
+        @Args() args: GetPostsArgument,
+        @Ctx('account') account?: Account,
+    ): Promise<PostConnection> {
+        const posts = await this.postService.getPosts({
+            myAccountId: account ? account.id : null,
+            accountId: args.accountId,
+            hasUsedEmoticons: false,
+            after: args.after ? args.after : null,
+            limit: args.first,
+            postType: args.postType || null,
+            postState: args.postState || null,
+        });
+        return new PostConnection(posts, 'id');
     }
 
-    // 답해줘
-    // userId는 jwt토큰에서 accoundId 즉, Account테이블에서 index기준으로 가져옴
-    @Query((returns) => [Post])
-    async getAnswerPosts(
-        @Arg('userId') id: number,
-    ): Promise<Post[]> {
-        const emoticons = await this.postService.getAnswerPosts({ id });
-        // console.log(emoticons)
-        return emoticons;
+    @Query((returns) => NewPostCount)
+    @UseMiddleware(AuthMiddleware)
+    async getMyNewPostCount(
+        @Args() args: GetMyNewPostCount,
+        @Ctx('account') account?: Account,
+    ): Promise<NewPostCount> {
+        if (!account) {
+            throw new BaseError(ERROR_CODE.UNAUTHORIZED);
+        }
+
+        const postCounts = await this.postService.getNewPostsCounts({
+            accountId: account.id,
+            postType: args.postType || null,
+        });
+
+        return new NewPostCount(postCounts);
     }
 
     // Post 생성
-    // payload는 jwt토큰에서 accoundId 즉, Account테이블에서 index기준으로 가져옴
-    // emoticon은 선택 할 수도, 안 할 수도 있어서 nullable
     @Mutation((returns) => Post)
     @UseMiddleware(AuthMiddleware)
     async createPost(
         @Args() { content, color, secretType, postType, toAccountId, emoticons }: CreatePostArgument,
-        @Ctx('account') account: Account,
+        @Ctx('account') account?: Account,
     ): Promise<Post> {
+        if (!account) {
+            throw new BaseError(ERROR_CODE.UNAUTHORIZED);
+        }
         const post = await this.postService.createPost({
             content,
             color,
@@ -81,11 +98,35 @@ export class PostResolver {
     }
 
     @FieldResolver((returns) => [PostEmoticon])
+    @Loader<string, PostEmoticon[]>(async (ids, { context }) => { // batchLoadFn
+        const postEmoticons = await getCustomRepository(PostEmoticonRepository)
+            .listPostEmoticonByPostIds([...ids]);
+        const emoticonsById = _.groupBy(postEmoticons, 'postId');
+        return ids.map((id) => emoticonsById[id] ?? []);
+    })
     async usedEmoticons(
         @Root() post: Post,
-    ): Promise<PostEmoticon[]> {
-        const postemoticons = await this.postEmoticonService.findPostEmoticon(post.id);
-        return postemoticons;
+    ) {
+        return (dataLoader: DataLoader<string, PostEmoticon[]>) => dataLoader.load(post.id);
+    }
+
+    @FieldResolver((returns) => [PostCommentSchema])
+    @Loader<Post, Comment[]>(async (posts, { context }) => { // batchLoadFn
+        const commentRepository = getCustomRepository(CommentRepository);
+        const onlyOneCommentPostIds = posts
+            .filter((post) => (post.postType === PostType.Quiz || post.postType === PostType.Ask))
+            .map((post) => post.id);
+        let comments: Comment[] = [];
+        if (onlyOneCommentPostIds.length > 0) {
+            comments = await commentRepository.listByPostIds([...onlyOneCommentPostIds]);
+        }
+        const commentsById = _.groupBy(comments, 'postId');
+        return posts.map((post) => commentsById[post.id] ?? []);
+    })
+    async comments(
+        @Root() post: Post,
+    ) {
+        return (dataLoader: DataLoader<Post, Comment[]>) => dataLoader.load(post);
     }
 }
 

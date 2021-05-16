@@ -59,3 +59,24 @@ registerEnumType(NotiType, {
     name: 'NotiType',
     description: '알림 타입',
 });
+
+//  Post - postState
+export enum CommentState {
+    Submitted = 'Submitted',
+    Deleted = 'Deleted',
+}
+
+registerEnumType(CommentState, {
+    name: 'CommentState',
+    description: 'Comment 상태',
+});
+
+export enum OXComment {
+    O = 'O',
+    X = 'X',
+}
+
+registerEnumType(OXComment, {
+    name: 'OXComment',
+    description: 'OX 답변내용',
+});

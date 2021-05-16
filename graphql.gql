@@ -1,5 +1,14 @@
 //graphQL 명령어 test
 
+query {
+	getAccountInfo{
+    id
+    nickname
+    image
+	}
+}
+
+
 // 이모티콘 전체
 query {
 	getAllEmoticons{
@@ -47,7 +56,7 @@ query {
 
 // 로그인
 mutation{
-  signIn(provider:"Kakao", accessToken:"zY_IT6gJf3bLHOZodCB-u67z048_xyTfV7P_ugopyV4AAAF5JwkBnQ"){
+  signIn(provider:"Kakao", accessToken:"mREcZ6cFDdEKDv8y0jjJabNv4H3VAesdI7YMDgo9dVoAAAF5Og8SDA"){
     token
   }
 }
@@ -98,4 +107,64 @@ mutation{
   deleteLikePosts(
     postId: 1,
   )
+}
+
+# 코멘트 생성
+mutation {
+  createComment(postId:"1",content:"asdfasdfsad") {
+    id
+    content
+    post{
+      content
+    }
+  }
+}
+
+// 프로필 수정
+mutation{
+  updateAccountInfo(
+    nickname:"ddddd", 
+    providerId: "1706701468"
+		content: "aaaa"
+  ){
+    nickname
+    image
+    content
+    profileUrl
+  }
+}
+
+// 프로필 이미지 변경
+ mutation updateImage($file: Upload!) {
+	updateImage(file: $file)
+	}
+
+{"query":"mutation updateImage($file: Upload!) {\n\tupdateImage(file: $file, providerId: \"1706701468\"){\n    image\n  }\n}"}
+
+// curl: // {"query":"mutation updateImage($file: Upload!) {\n\tupdateImage(file: $file, providerId: \"1706701468\")\n}"}
+postman에서 실행
+
+[Headers]
+key                    value
+authorization          Bearer ~~
+
+[Body]
+key                     value
+operations             {"query":" mutation updateImage($file: Upload!) {\n\tupdateImage(file: $file)\n\t}"}
+map                    {"0": ["variables.file"]}
+0                      파일추가
+
+// 기본이미지로 사진 변경
+mutation{
+  updateImageToBasic
+}
+
+// 문의하기
+mutation{
+  createContact(
+		content: "aaaa"
+  ){
+		id
+    content
+  }
 }

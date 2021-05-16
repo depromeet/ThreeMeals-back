@@ -6,8 +6,6 @@ import { Service } from 'typedi';
 @Service()
 @EntityRepository(Account)
 export class AccountRepository extends Repository<Account> {
-
-
     async createAccount(newAccount: Account): Promise<Account> {
         return await this.manager.save(newAccount);
     }
@@ -19,7 +17,7 @@ export class AccountRepository extends Repository<Account> {
     }
 
     async findOneById(id: string): Promise<Account | undefined> {
-        const account = await this.findOne({ id } );
+        const account = await this.findOne({ id: id });
         return account;
     }
 
