@@ -17,13 +17,13 @@ export class NotificationService {
         return await this.notificationRepository.getNotifications(account);
     }
 
-    async createNotification(args: CreateNotificationArgs) {
+    createNotification(args: CreateNotificationArgs) {
         const newNoti = new Notification();
         newNoti.account = args.account;
         newNoti.otherAccount = args.otherAccount;
         newNoti.relatedPost = args.relatedPost;
         newNoti.notificationType = args.notiType;
 
-        return await this.notificationRepository.save(newNoti);
+        return this.notificationRepository.save(newNoti);
     }
 }

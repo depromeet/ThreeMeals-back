@@ -19,7 +19,7 @@ export class CreateNotificationArgs {
     @IsEnum(NotiType, {
         message: 'invalid Noti type',
     })
-    @Field((type) => String)
+    @Field((type) => NotiType)
     notiType!: NotiType;
 
     // @IsEnum(PostType, {

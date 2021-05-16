@@ -11,4 +11,8 @@ export class NotificationRepository extends Repository<Notification> {
         const notifications = await this.find({ account: account });
         return notifications;
     }
+
+    createNotification(noti: Notification) {
+        return this.manager.save(noti);
+    }
 }
