@@ -22,13 +22,13 @@ export class PostService {
     ) {}
 
     async getPosts(args: {
-        myAccountId: string | null,
-        accountId: string,
-        hasUsedEmoticons: boolean,
-        postType: PostType | null,
-        postState: PostState | null,
-        limit: number,
-        after: string | null
+        myAccountId: string | null;
+        accountId: string;
+        hasUsedEmoticons: boolean;
+        postType: PostType | null;
+        postState: PostState | null;
+        limit: number;
+        after: string | null;
     }): Promise<Post[]> {
         const posts = await this.postRepository.listByAccountId({ ...args });
 
@@ -37,16 +37,13 @@ export class PostService {
         )(posts);
     }
 
-    async getNewPostsCounts(args: {
-        accountId: string,
-        postType: PostType | null,
-    }): Promise<{postType: PostType, count: number}[]> {
+    async getNewPostsCounts(args: { accountId: string; postType: PostType | null }): Promise<{ postType: PostType; count: number }[]> {
         const counts = await this.postRepository.countsGroupByPostType({ ...args, postState: PostState.Submitted });
 
         return flow(
-            filter((postType) => args.postType ? args.postType === postType : true),
+            filter((postType) => (args.postType ? args.postType === postType : true)),
             map((postType) => ({ postType, count: '0' })),
-            unionBy( 'postType', counts),
+            unionBy('postType', counts),
             map((count) => ({ postType: count.postType, count: parseInt(count.count) })),
         )(values(PostType));
     }

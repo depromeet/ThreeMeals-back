@@ -1,5 +1,15 @@
 // eslint-disable-next-line max-len
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany, ManyToOne, JoinColumn } from 'typeorm';
+import {
+    Entity,
+    PrimaryGeneratedColumn,
+    Column,
+    CreateDateColumn,
+    UpdateDateColumn,
+    OneToMany,
+    ManyToOne,
+    JoinColumn,
+    RelationId,
+} from 'typeorm';
 import { ObjectType, Field, Int, ID } from 'type-graphql';
 import { Account } from './Account';
 import { Post } from './Post';
@@ -26,6 +36,9 @@ export class Notification {
     @JoinColumn({ name: 'account_id', referencedColumnName: 'id' })
     account!: Account;
 
+    @RelationId((notification: Notification) => notification.otherAccount)
+    otherAccountId!: string;
+
     @Field(() => Account, { nullable: true })
     @JoinColumn({ name: 'other_account_id', referencedColumnName: 'id' })
     otherAccount?: Account;
@@ -38,7 +51,7 @@ export class Notification {
     @Column('varchar', { length: 15 })
     notificationType!: string;
 
-    @Field((type) => PostType)
-    @Column('varchar', { name: 'post_type' })
-    postType!: PostType;
+    // @Field((type) => PostType)
+    // @Column('varchar', { name: 'post_type' })
+    // postType!: PostType;
 }
