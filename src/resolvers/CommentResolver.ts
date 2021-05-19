@@ -11,6 +11,7 @@ import BaseError from '../exceptions/BaseError';
 import { ERROR_CODE } from '../exceptions/ErrorCode';
 import { ChildrenCommentConnection } from '../schemas/ChildrenCommentSchema';
 import { GetChildrenCommentsArgument } from './arguments/GetChildrenCommentsArgument';
+import {MutationResult} from "../schemas/base/MutationResult";
 
 @Service()
 @Resolver(() => Comment)
@@ -36,17 +37,17 @@ export class CommentResolver {
         return comment;
     }
 
-    @Mutation((returns) => String)
+    @Mutation((returns) => MutationResult)
     @UseMiddleware(AuthMiddleware)
     async deleteComment(
         @Arg('commentId') commentId: string,
         @Ctx('account') account?: Account,
-    ): Promise<string> {
+    ): Promise<MutationResult> {
         if (!account) {
             throw new BaseError(ERROR_CODE.UNAUTHORIZED);
         }
-        const result = await this.commentService.deleteComment(commentId, account);
-        return '' + result;
+        await this.commentService.deleteComment(commentId, account);
+        return MutationResult.fromSuccessResult();
     }
 
     @Query((returns) => CommentConnection)

@@ -1,6 +1,7 @@
-import { DeleteResult, EntityRepository, Repository } from 'typeorm';
+import {DeleteResult, EntityRepository, Not, Repository} from 'typeorm';
 import { Service } from 'typedi';
 import { Comment } from '../entities/Comment';
+import {CommentState, PostState} from "../entities/Enums";
 
 @Service()
 @EntityRepository(Comment)
@@ -32,6 +33,7 @@ export class CommentRepository extends Repository<Comment> {
             builder;
 
         return builder
+            .andWhere(`${comment}.comment_state != :commentState`, { commentState: CommentState.Deleted })
             .orderBy(`${comment}.id`, 'ASC')
             .limit(limit)
             .getMany();
@@ -56,6 +58,7 @@ export class CommentRepository extends Repository<Comment> {
             builder;
 
         return builder
+            .andWhere(`${comment}.comment_state != :commentState`, { commentState: CommentState.Deleted })
             .orderBy(`${comment}.id`, 'ASC')
             .limit(limit)
             .getMany();
@@ -67,16 +70,12 @@ export class CommentRepository extends Repository<Comment> {
         return queryBuilder
             .leftJoinAndSelect(`${comment}.account`, 'account')
             .where(`${comment}.post_id IN (:...postIds)`, { postIds })
+            .andWhere(`${comment}.comment_state != :commentState`, { commentState: CommentState.Deleted })
             .getMany();
     }
 
-    async deleteOneById(commentId: string): Promise<DeleteResult> {
-        const result = await this.delete({ id: commentId });
-        return result;
-    }
-
     async findOneById(commentId: string): Promise<Comment | undefined> {
-        return this.findOne({ id: commentId }, { relations: ['account'] });
+        return this.findOne({ id: commentId, commentState: Not(CommentState.Deleted) }, { relations: ['account'] });
     }
 
     async getChildrenCountCommentsByIds(commentIds: string[]): Promise<{parentId: string, childrenCount: string}[]> {

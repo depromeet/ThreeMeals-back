@@ -5,7 +5,8 @@ import {
     JoinColumn,
     ManyToOne,
     OneToMany,
-    PrimaryGeneratedColumn, RelationId,
+    PrimaryGeneratedColumn,
+    RelationId,
     UpdateDateColumn,
 } from 'typeorm';
 import * as dayjs from 'dayjs';
@@ -16,6 +17,8 @@ import { Comment } from './Comment';
 import { PostEmoticon } from './PostEmoticon';
 import { LikePosts } from './LikePosts';
 import { PostState, PostType, SecretType } from './Enums';
+import BaseError from '../exceptions/BaseError';
+import { ERROR_CODE } from '../exceptions/ErrorCode';
 
 @ObjectType()
 @Entity()
@@ -56,7 +59,11 @@ export class Post {
     @UpdateDateColumn({ name: 'updated_at' })
     updatedAt!: Date;
 
-    @RelationId((post: Post) => post.fromAccount)
+    @Field((type) => Number)
+    @Column('integer', { name: 'comments_count', default: 0 })
+    commentsCount!: number;
+
+    @Column({ name: 'from_account_id', type: 'bigint', unsigned: true })
     fromAccountId!: string;
 
     // Account와 N:1 관계
@@ -65,7 +72,7 @@ export class Post {
     @JoinColumn({ name: 'from_account_id', referencedColumnName: 'id' })
     fromAccount!: Account | null;
 
-    @RelationId((post: Post) => post.toAccount)
+    @Column({ name: 'to_account_id', type: 'bigint', unsigned: true })
     toAccountId!: string;
 
     @Field(() => Account)
@@ -87,9 +94,6 @@ export class Post {
     @OneToMany(() => Comment, (comment) => comment.post)
     comments!: Comment[];
 
-    @Field((type) => Number)
-    commentsCount!: number;
-
     public hideFromAccount(accountId: string | null): void {
         // 본인의 작성글이라면 null 처리 하지 않음
         if (accountId && accountId === this.fromAccountId) {
@@ -109,5 +113,12 @@ export class Post {
         if (dayjs(this.createdAt).add(2, 'day').isBefore(dayjs(Date.now()))) {
             this.fromAccount = null;
         }
+    }
+
+    public delete(removerId: string): void {
+        if (![this.toAccountId, this.fromAccountId].includes(removerId)) {
+            throw new BaseError(ERROR_CODE.UNAUTHORIZED, `unauthorized delete post with this removerId: ${removerId}`);
+        }
+        this.postState = PostState.Deleted;
     }
 }

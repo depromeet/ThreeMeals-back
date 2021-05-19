@@ -88,7 +88,7 @@ export class PostService {
         newPost.postState = PostState.Submitted;
         newPost.secretType = secretType;
         newPost.postType = postType;
-        newPost.fromAccount = from;
+        newPost.fromAccountId = from.id;
         newPost.toAccount = to;
 
         if (postType !== PostType.Quiz && postEmoticons.length > 0) {
@@ -102,17 +102,15 @@ export class PostService {
     }
 
     // Post 삭제
-    async deletePost(args: { id: string }): Promise<void> {
-        const { id: id } = args;
-        const postId = await this.postRepository.findOneById(id);
+    async deletePost(args: { account: Account, postId: string }): Promise<void> {
+        const { account, postId } = args;
+        const post = await this.postRepository.findOneById(postId);
+        if (!post) {
+            console.error(`Post 찾을 수 없음 postId: ${args.postId}`);
+            throw new BaseError(ERROR_CODE.POST_NOT_FOUND);
+        }
+        post.delete(account.id);
 
-        // postEmoticon 삭제
-        await this.postEmoticonRepository.delete({ post: postId });
-
-        // LikePosts 삭제
-        await this.likePostsRepository.delete({ post: postId });
-
-        // post 삭제
-        await this.postRepository.delete({ id: id });
+        await this.postRepository.save(post);
     }
 }

@@ -7,15 +7,15 @@ import {
     OneToMany,
     PrimaryGeneratedColumn,
     RelationId,
-    UpdateDateColumn,
+    UpdateDateColumn, VersionColumn,
 } from 'typeorm';
-import { Field, ID, ObjectType } from 'type-graphql';
-import { Account } from './Account';
-import { Post } from './Post';
-import { LikeComments } from './LikeComments';
-import { CommentState, SecretType } from './Enums';
+import {Field, ID, ObjectType} from 'type-graphql';
+import {Account} from './Account';
+import {Post} from './Post';
+import {LikeComments} from './LikeComments';
+import {CommentState, SecretType} from './Enums';
 import BaseError from '../exceptions/BaseError';
-import { ERROR_CODE } from '../exceptions/ErrorCode';
+import {ERROR_CODE} from '../exceptions/ErrorCode';
 
 @ObjectType()
 @Entity()
@@ -29,7 +29,7 @@ export class Comment {
     content!: string;
 
     @Field((type) => SecretType)
-    @Column('varchar', { name: 'secret_type' })
+    @Column('varchar', { name: 'secret_type', default: SecretType.Forever })
     secretType!: SecretType;
 
     @Field((type) => CommentState)
@@ -44,7 +44,8 @@ export class Comment {
     @UpdateDateColumn({ name: 'updated_at' })
     updatedAt!: Date;
 
-    @RelationId((comment: Comment) => comment.account)
+    @Column({ name: 'account_id', type: 'bigint', unsigned: true })
+    // @RelationId((comment: Comment) => comment.account)
     accountId!: string;
 
     // Account와 N:1 관계
@@ -81,10 +82,12 @@ export class Comment {
     @JoinColumn({ name: 'parent_id', referencedColumnName: 'id' })
     parent!: Comment | null;
 
-    public validateCommentOwner(accountId: string): void {
-        if (this.accountId !== accountId) {
+    public delete(removerId: string): void {
+        if (this.accountId !== removerId) {
             throw new BaseError(ERROR_CODE.FORBIDDEN);
         }
+
+        this.commentState = CommentState.Deleted;
     }
 
     public validateParentComment(postId: string): void {

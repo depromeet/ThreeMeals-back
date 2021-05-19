@@ -15,6 +15,7 @@ export const getDefaultDBOrmConfig = (config: IConfig): ConnectionOptions => {
         password: config.db.default.password,
         entities: [`${__dirname}/**/entities/**/*{.ts,.js}`],
         connectTimeout: config.db.default.connectionTimeout,
+        subscribers: [`${__dirname}/**/pubsub/**/*{.ts,.js}`],
         extra: {
             charset: 'utf8mb4_general_ci',
             connectionLimit: config.db.default.maximumPoolSize,

@@ -12,14 +12,15 @@ import { AuthMiddleware } from '../middleware/typegraphql/auth';
 import { Account } from '../entities/Account';
 import { PostEmoticonRepository } from '../repositories/PostEmoticonRepository';
 import { PostConnection } from '../schemas/PostConnection';
-import {GetMyNewPostCount, GetPostsArgument} from './arguments/GetPostsArgument';
+import { GetMyNewPostCount, GetPostsArgument } from './arguments/GetPostsArgument';
 import { NewPostCount } from '../schemas/NewPostCount';
-import { PostType } from '../entities/Enums';
+import { PostState, PostType } from '../entities/Enums';
 import BaseError from '../exceptions/BaseError';
 import { ERROR_CODE } from '../exceptions/ErrorCode';
 import { Comment } from '../entities/Comment';
 import { CommentRepository } from '../repositories/CommentRepository';
 import { PostCommentSchema } from '../schemas/PostCommentSchema';
+import {MutationResult} from "../schemas/base/MutationResult";
 
 @Service()
 @Resolver(() => Post)
@@ -35,6 +36,11 @@ export class PostResolver {
         @Args() args: GetPostsArgument,
         @Ctx('account') account?: Account,
     ): Promise<PostConnection> {
+        if (args.postState && args.postState === PostState.Deleted) {
+            console.error('post state cannot be deleted');
+            throw new BaseError(ERROR_CODE.INVALID_POST_STATE);
+        }
+
         const posts = await this.postService.getPosts({
             myAccountId: account ? account.id : null,
             accountId: args.accountId,
@@ -89,12 +95,17 @@ export class PostResolver {
     }
 
     // Post 삭제
-    @Mutation((returns) => Boolean)
+    @Mutation((returns) => MutationResult)
+    @UseMiddleware(AuthMiddleware)
     async deletePost(
-        @Arg('postId') id: string,
-    ): Promise<boolean> {
-        await this.postService.deletePost({ id });
-        return true;
+        @Arg('postId') postId: string,
+        @Ctx('account') account?: Account,
+    ): Promise<MutationResult> {
+        if (!account) {
+            throw new BaseError(ERROR_CODE.UNAUTHORIZED);
+        }
+        await this.postService.deletePost({ postId, account });
+        return MutationResult.fromSuccessResult();
     }
 
     @FieldResolver((returns) => [PostEmoticon])

@@ -1,16 +1,15 @@
 import * as _ from 'lodash';
-import {filter, flow, map, uniq} from 'lodash/fp';
-import {PostRepository} from '../repositories/PostRepository';
-import {Service} from 'typedi';
-import {InjectRepository} from 'typeorm-typedi-extensions';
-import {isEnum} from 'class-validator';
-import {Comment} from '../entities/Comment';
-import {CommentRepository} from '../repositories/CommentRepository';
-import {Account} from '../entities/Account';
-import {DeleteResult} from 'typeorm';
+import { filter, flow, map, uniq } from 'lodash/fp';
+import { PostRepository } from '../repositories/PostRepository';
+import { Service } from 'typedi';
+import { InjectRepository } from 'typeorm-typedi-extensions';
+import { isEnum } from 'class-validator';
+import { Comment } from '../entities/Comment';
+import { CommentRepository } from '../repositories/CommentRepository';
+import { Account } from '../entities/Account';
 import BaseError from '../exceptions/BaseError';
-import {ERROR_CODE} from '../exceptions/ErrorCode';
-import {CommentState, OXComment, PostState, PostType, SecretType} from '../entities/Enums';
+import { ERROR_CODE } from '../exceptions/ErrorCode';
+import { CommentState, OXComment, PostState, PostType, SecretType } from '../entities/Enums';
 
 @Service()
 export class CommentService {
@@ -186,14 +185,14 @@ export class CommentService {
         return comments;
     }
 
-    async deleteComment(commentId: string, account: Account): Promise<DeleteResult> {
+    async deleteComment(commentId: string, account: Account): Promise<void> {
         const comment = await this.commentRepository.findOneById(commentId);
         if (!comment) {
             throw new BaseError(ERROR_CODE.NOT_FOUND);
         }
 
-        comment.validateCommentOwner(account.id);
+        comment.delete(account.id);
 
-        return await this.commentRepository.deleteOneById(commentId);
+        await this.commentRepository.save(comment);
     }
 }

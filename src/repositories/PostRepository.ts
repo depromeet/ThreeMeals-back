@@ -1,7 +1,7 @@
-import {EntityRepository, Repository} from 'typeorm';
-import {Post} from '../entities/Post';
-import {Service} from 'typedi';
-import {PostState, PostType} from '../entities/Enums';
+import { EntityRepository, Repository } from 'typeorm';
+import { Post } from '../entities/Post';
+import { Service } from 'typedi';
+import { PostState, PostType } from '../entities/Enums';
 
 @Service()
 @EntityRepository(Post)
@@ -73,6 +73,7 @@ export class PostRepository extends Repository<Post> {
             builder;
 
         return builder
+            .andWhere(`${post}.post_state != :postState`, { postState: PostState.Deleted })
             .orderBy(`${post}.id`, 'DESC')
             .limit(limit)
             .getMany();
@@ -84,6 +85,7 @@ export class PostRepository extends Repository<Post> {
             .leftJoinAndSelect(`${post}.fromAccount`, 'fromAccount')
             .leftJoinAndSelect(`${post}.toAccount`, 'toAccount')
             .where(`${post}.id = :postId`, { postId })
+            .andWhere(`${post}.post_state != :postState`, { postState: PostState.Deleted })
             .getOne();
     }
 }

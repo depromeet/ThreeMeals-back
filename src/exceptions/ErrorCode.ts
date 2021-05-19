@@ -5,7 +5,6 @@ export const ERROR_CODE = {
     UNAUTHORIZED: createErrorCode(401, 'E002', 'Unauthorized'),
     NOT_FOUND: createErrorCode(404, 'E003', 'Not Found'),
     USER_NOT_FOUND: createErrorCode(400, 'E004', 'cannot find user'),
-    INVALID_POST_TYPE: createErrorCode(400, 'E005', 'invalid post type'),
     INVALID_IMAGE_TYPE: createErrorCode(400, 'E005', 'invalid image type'),
     FORBIDDEN: createErrorCode(403, 'E006', 'Forbidden'),
     POST_NOT_FOUND: createErrorCode(400, 'E007', 'cannot find post'),
@@ -15,4 +14,6 @@ export const ERROR_CODE = {
     COMMENT_NOT_FOUND: createErrorCode(404, 'E011', 'Not Found comment'),
     COMMENT_NOT_PARENT: createErrorCode(400, 'E012', 'cannot use parent comment'),
     INVALID_MATCH_COMMENT_POST: createErrorCode(400, 'E013', 'invalid match comment & post'),
+    INVALID_POST_TYPE: createErrorCode(400, 'E014', 'invalid post type'),
+    INVALID_POST_STATE: createErrorCode(400, 'E015', 'invalid post state'),
 };
