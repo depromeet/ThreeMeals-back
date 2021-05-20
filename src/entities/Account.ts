@@ -6,6 +6,7 @@ import { Post } from './Post';
 import { Comment } from './Comment';
 import { LikePosts } from './LikePosts';
 import { LikeComments } from './LikeComments';
+import { Notification } from './Notification';
 import { Provider } from './Enums';
 
 @ObjectType()
@@ -74,4 +75,8 @@ export class Account {
     // LikeComments 1:N 관계
     @OneToMany((type) => LikeComments, (likecomments) => likecomments.account)
     likeComments!: LikeComments[];
+
+    @Field(() => Notification)
+    @OneToMany((type) => Notification, (notification) => notification.account)
+    notifications!: Notification[];
 }
