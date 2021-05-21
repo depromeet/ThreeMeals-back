@@ -3,6 +3,7 @@ import * as express from 'express';
 import apolloLoader from '../loaders/apollo';
 import expressLoader, { loadHandleError } from '../loaders/express';
 import eventEmitterLoader from '../loaders/event-emitter';
+import commandLoader from '../loaders/command';
 import dbConnection from '../loaders/typeorm';
 import { logger } from '../logger/winston';
 import { config } from '../config';
@@ -14,6 +15,7 @@ const startApiServer = async () => {
     await apolloLoader({ app });
     await dbConnection();
     await eventEmitterLoader();
+    await commandLoader();
     loadHandleError({ app });
 
     app.listen(config.server.port, () => {

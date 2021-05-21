@@ -9,16 +9,21 @@ import { updateAccountInfoArgument } from './arguments/AccountArgument';
 import { FileUpload, GraphQLUpload } from 'graphql-upload';
 import BaseError from '../exceptions/BaseError';
 import { ERROR_CODE } from '../exceptions/ErrorCode';
+import { CommandBus } from '../common/Command';
+import { HelloCommand } from '../command/hello/HelloCommand';
 
 @Service()
 @Resolver(() => Account)
 export class AccountResolver {
     constructor(
         private readonly accountService: AccountService,
+        private readonly commandBus: CommandBus,
     ) {}
 
     @Query((returns) => String)
     async helloWorld(): Promise<string> {
+        const a = await this.commandBus.send<HelloCommand, string>(new HelloCommand('1', 'hello world'));
+        console.log(a);
         return 'hello';
     }
 
