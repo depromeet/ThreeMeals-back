@@ -2,14 +2,18 @@ import 'reflect-metadata';
 import * as express from 'express';
 import apolloLoader from '../loaders/apollo';
 import expressLoader, { loadHandleError } from '../loaders/express';
+import eventEmitterLoader from '../loaders/event-emitter';
 import dbConnection from '../loaders/typeorm';
 import { logger } from '../logger/winston';
 import { config } from '../config';
+
 const startApiServer = async () => {
+
     const app = express();
     expressLoader({ app });
     await apolloLoader({ app });
     await dbConnection();
+    await eventEmitterLoader();
     loadHandleError({ app });
 
     app.listen(config.server.port, () => {

@@ -6,18 +6,18 @@ import { Token } from '../schemas/TokenSchema';
 import { AuthMiddleware } from '../middleware/typegraphql/auth';
 import { SignInArgument } from './arguments/SignInArgument';
 import { updateAccountInfoArgument } from './arguments/AccountArgument';
-import { Provider } from '../entities/Enums';
 import { FileUpload, GraphQLUpload } from 'graphql-upload';
-import { Boolean } from 'aws-sdk/clients/batch';
 import BaseError from '../exceptions/BaseError';
 import { ERROR_CODE } from '../exceptions/ErrorCode';
 
 @Service()
 @Resolver(() => Account)
 export class AccountResolver {
-    constructor(private readonly accountService: AccountService) {}
+    constructor(
+        private readonly accountService: AccountService,
+    ) {}
 
-    @Query((returns) => Provider)
+    @Query((returns) => String)
     async helloWorld(): Promise<string> {
         return 'hello';
     }

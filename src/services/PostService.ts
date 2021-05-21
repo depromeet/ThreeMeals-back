@@ -1,6 +1,6 @@
 import { Service } from 'typedi';
 import { each, filter, flow, map, unionBy, values } from 'lodash/fp';
-import { Post } from '../entities/Post';
+import {Post, PostCreatedEvent} from '../entities/Post';
 import { PostEmoticon } from '../entities/PostEmoticon';
 import { AccountRepository } from '../repositories/AccountRepository';
 import { PostRepository } from '../repositories/PostRepository';
@@ -11,6 +11,7 @@ import { PostState, PostType, SecretType } from '../entities/Enums';
 import BaseError from '../exceptions/BaseError';
 import { ERROR_CODE } from '../exceptions/ErrorCode';
 import { Account } from '../entities/Account';
+import { EventPublisher } from '../EventPublisher';
 
 @Service()
 export class PostService {
@@ -19,16 +20,17 @@ export class PostService {
         @InjectRepository() private readonly postRepository: PostRepository,
         @InjectRepository() private readonly postEmoticonRepository: PostEmoticonRepository,
         @InjectRepository() private readonly likePostsRepository: LikePostsRepository,
+        private readonly eventPublisher: EventPublisher,
     ) {}
 
     async getPosts(args: {
-        myAccountId: string | null,
-        accountId: string,
-        hasUsedEmoticons: boolean,
-        postType: PostType | null,
-        postState: PostState | null,
-        limit: number,
-        after: string | null
+        myAccountId: string | null;
+        accountId: string;
+        hasUsedEmoticons: boolean;
+        postType: PostType | null;
+        postState: PostState | null;
+        limit: number;
+        after: string | null;
     }): Promise<Post[]> {
         const posts = await this.postRepository.listByAccountId({ ...args });
 
@@ -37,16 +39,13 @@ export class PostService {
         )(posts);
     }
 
-    async getNewPostsCounts(args: {
-        accountId: string,
-        postType: PostType | null,
-    }): Promise<{postType: PostType, count: number}[]> {
+    async getNewPostsCounts(args: { accountId: string; postType: PostType | null }): Promise<{ postType: PostType; count: number }[]> {
         const counts = await this.postRepository.countsGroupByPostType({ ...args, postState: PostState.Submitted });
 
         return flow(
-            filter((postType) => args.postType ? args.postType === postType : true),
+            filter((postType) => (args.postType ? args.postType === postType : true)),
             map((postType) => ({ postType, count: '0' })),
-            unionBy( 'postType', counts),
+            unionBy('postType', counts),
             map((count) => ({ postType: count.postType, count: parseInt(count.count) })),
         )(values(PostType));
     }
@@ -97,6 +96,9 @@ export class PostService {
 
         // // PostEmotion 생성
         const savedPost = await this.postRepository.createPost(newPost);
+
+        // post 생성 이벤트 발송
+        await this.eventPublisher.publishAsync(new PostCreatedEvent(savedPost));
 
         return savedPost;
     }

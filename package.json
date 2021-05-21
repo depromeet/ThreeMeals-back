@@ -26,6 +26,7 @@
     "dataloader": "2.0.0",
     "dayjs": "1.10.4",
     "dotenv": "^8.2.0",
+    "eventemitter2": "6.4.4",
     "express": "^4.17.1",
     "express-session": "^1.17.1",
     "faker": "5.5.3",

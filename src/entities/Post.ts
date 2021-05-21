@@ -19,6 +19,7 @@ import { LikePosts } from './LikePosts';
 import { PostState, PostType, SecretType } from './Enums';
 import BaseError from '../exceptions/BaseError';
 import { ERROR_CODE } from '../exceptions/ErrorCode';
+import {IDomainEvent} from "../common/IDomainEvent";
 
 @ObjectType()
 @Entity()
@@ -120,5 +121,15 @@ export class Post {
             throw new BaseError(ERROR_CODE.UNAUTHORIZED, `unauthorized delete post with this removerId: ${removerId}`);
         }
         this.postState = PostState.Deleted;
+    }
+}
+
+export class PostCreatedEvent implements IDomainEvent<Post> {
+    data: Post;
+    eventName: string;
+
+    constructor(data: Post) {
+        this.data = data;
+        this.eventName = PostCreatedEvent.name;
     }
 }

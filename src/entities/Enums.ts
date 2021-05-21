@@ -14,7 +14,7 @@ registerEnumType(Provider, {
 export enum PostType {
     Ask = 'Ask',
     Answer = 'Answer',
-    Quiz = 'Quiz'
+    Quiz = 'Quiz',
 }
 
 registerEnumType(PostType, {
@@ -34,7 +34,6 @@ registerEnumType(PostState, {
     description: 'Post 상태',
 });
 
-
 //  Post - secretType
 export enum SecretType {
     Temp = 'Temp',
@@ -44,6 +43,21 @@ export enum SecretType {
 registerEnumType(SecretType, {
     name: 'SecretType',
     description: '익명 여부',
+});
+
+export enum NotiType {
+    LikeToMine = 'LikeToMine',
+    AnswerToMine = 'AnswerToMine',
+    PostToMe = 'PostToMe',
+    CommentToMe = 'CommentToMe',
+}
+// 남이 내 글에 좋아요
+// 남이 내 글에 댓글
+// 남이 나한테 물어봐
+// 남이 나한테 ox
+registerEnumType(NotiType, {
+    name: 'NotiType',
+    description: '알림 타입',
 });
 
 //  Post - postState

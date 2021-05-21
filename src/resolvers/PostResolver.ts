@@ -20,7 +20,7 @@ import { ERROR_CODE } from '../exceptions/ErrorCode';
 import { Comment } from '../entities/Comment';
 import { CommentRepository } from '../repositories/CommentRepository';
 import { PostCommentSchema } from '../schemas/PostCommentSchema';
-import {MutationResult} from "../schemas/base/MutationResult";
+import { MutationResult } from '../schemas/base/MutationResult';
 
 @Service()
 @Resolver(() => Post)
