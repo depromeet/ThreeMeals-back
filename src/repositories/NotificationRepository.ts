@@ -8,7 +8,7 @@ import { Account } from '../entities/Account';
 @EntityRepository(Notification)
 export class NotificationRepository extends Repository<Notification> {
     async getNotifications(account: Account) {
-        const notifications = await this.find({ account: account });
+        const notifications = await this.find({ accountId: account.id });
         return notifications;
     }
 

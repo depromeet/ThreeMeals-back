@@ -1,4 +1,3 @@
-// eslint-disable-next-line max-len
 import {
     Entity,
     PrimaryGeneratedColumn,
@@ -31,17 +30,23 @@ export class Notification {
     @UpdateDateColumn({ name: 'updated_at' })
     updatedAt!: Date;
 
+    @Column({ name: 'account_id', type: 'bigint', unsigned: true })
+    accountId!: string;
+
     @Field(() => Account)
     @ManyToOne((type) => Account, (account) => account.notifications)
     @JoinColumn({ name: 'account_id', referencedColumnName: 'id' })
-    account!: Account;
+    account!: Account | null;
 
-    @RelationId((notification: Notification) => notification.otherAccount)
+    @Column({ name: 'other_account_id', type: 'bigint', unsigned: true })
     otherAccountId!: string;
 
     @Field(() => Account, { nullable: true })
     @JoinColumn({ name: 'other_account_id', referencedColumnName: 'id' })
-    otherAccount?: Account;
+    otherAccount!: Account | null;
+
+    @Column({ name: 'related_post_id', type: 'bigint', unsigned: true })
+    relatedPostId!: string;
 
     @Field(() => Post)
     @JoinColumn({ name: 'related_post_id', referencedColumnName: 'id' })
@@ -50,8 +55,4 @@ export class Notification {
     @Field()
     @Column('varchar', { length: 15 })
     notificationType!: string;
-
-    // @Field((type) => PostType)
-    // @Column('varchar', { name: 'post_type' })
-    // postType!: PostType;
 }

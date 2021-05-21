@@ -1,6 +1,6 @@
 import { Service } from 'typedi';
 import { each, filter, flow, map, unionBy, values } from 'lodash/fp';
-import { Post } from '../entities/Post';
+import {Post, PostCreatedEvent} from '../entities/Post';
 import { PostEmoticon } from '../entities/PostEmoticon';
 import { AccountRepository } from '../repositories/AccountRepository';
 import { PostRepository } from '../repositories/PostRepository';
@@ -11,9 +11,8 @@ import { PostState, PostType, SecretType } from '../entities/Enums';
 import BaseError from '../exceptions/BaseError';
 import { ERROR_CODE } from '../exceptions/ErrorCode';
 import { Account } from '../entities/Account';
-import { NotificationRepository } from '../repositories/NotificationRepository';
-import { NotificationService } from './NotificationService';
-import { NotiType } from '../entities/Enums';
+import { EventPublisher } from '../EventPublisher';
+
 @Service()
 export class PostService {
     constructor(
@@ -21,7 +20,7 @@ export class PostService {
         @InjectRepository() private readonly postRepository: PostRepository,
         @InjectRepository() private readonly postEmoticonRepository: PostEmoticonRepository,
         @InjectRepository() private readonly likePostsRepository: LikePostsRepository,
-        private readonly notificationService: NotificationService,
+        private readonly eventPublisher: EventPublisher,
     ) {}
 
     async getPosts(args: {
@@ -98,15 +97,9 @@ export class PostService {
         // // PostEmotion 생성
         const savedPost = await this.postRepository.createPost(newPost);
 
-        // 글 생성하고 알림 db 생성 await을 해야될까?
-        if (savedPost && from.id !== to.id) {
-            this.notificationService.createNotification({
-                account: to,
-                relatedPost: savedPost,
-                otherAccount: from,
-                notiType: NotiType.PostToMe,
-            });
-        }
+        // post 생성 이벤트 발송
+        await this.eventPublisher.publishAsync(new PostCreatedEvent(savedPost));
+
         return savedPost;
     }
 

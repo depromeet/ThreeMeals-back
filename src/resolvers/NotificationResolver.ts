@@ -1,24 +1,23 @@
-import { Arg, Args, Ctx, FieldResolver, Mutation, Query, Resolver, Root } from 'type-graphql';
+import { Ctx, Query, Resolver, UseMiddleware } from 'type-graphql';
 import { Service } from 'typedi';
-import { Request } from 'express';
-import { AccountService } from '../services/AccountService';
 import { Account } from '../entities/Account';
-
-import { Token } from '../schemas/TokenSchema';
-import axios from 'axios';
-import { logger } from '../logger/winston';
-import { SignInArgument } from './arguments/SignInArgument';
-import { Provider } from '../entities/Enums';
 import { Notification } from '../entities/Notification';
-import { NotificationService } from 'src/services/NotificationService';
+import { AuthMiddleware } from '../middleware/typegraphql/auth';
+import { NotificationService } from '../services/NotificationService';
+
 @Service()
 @Resolver(() => Notification)
 export class NotificationResolver {
-    constructor(private readonly notificationService: NotificationService) {}
+    constructor(
+        private readonly notificationService: NotificationService,
+    ) {}
 
-    @Query((returns) => Provider)
-    async getNotifications(@Ctx('account') account: Account): Promise<Notification[] | undefined> {
-        const notifications = this.notificationService.getNotificationsByUser(account);
+    @Query((returns) => [Notification])
+    @UseMiddleware(AuthMiddleware)
+    async getNotifications(
+        @Ctx('account') account: Account,
+    ): Promise<Notification[]> {
+        const notifications = await this.notificationService.getNotificationsByUser(account);
         return notifications;
     }
 }
