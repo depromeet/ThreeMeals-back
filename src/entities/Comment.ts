@@ -16,6 +16,7 @@ import {LikeComments} from './LikeComments';
 import {CommentState, SecretType} from './Enums';
 import BaseError from '../exceptions/BaseError';
 import {ERROR_CODE} from '../exceptions/ErrorCode';
+import {IDomainEvent} from "../common/IDomainEvent";
 
 @ObjectType()
 @Entity()
@@ -44,8 +45,8 @@ export class Comment {
     @UpdateDateColumn({ name: 'updated_at' })
     updatedAt!: Date;
 
-    @Column({ name: 'account_id', type: 'bigint', unsigned: true })
-    // @RelationId((comment: Comment) => comment.account)
+    // @Column({ name: 'account_id', type: 'bigint', unsigned: true })
+    @RelationId((comment: Comment) => comment.account)
     accountId!: string;
 
     // Account와 N:1 관계
@@ -55,7 +56,8 @@ export class Comment {
     account!: Account | null;
 
     @Field()
-    @RelationId((comment: Comment) => comment.post)
+    // @RelationId((comment: Comment) => comment.post)
+    @Column({ name: 'post_id', type: 'bigint', unsigned: true })
     postId!: string;
 
     // Post와 N:1 관계

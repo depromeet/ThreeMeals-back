@@ -11,15 +11,15 @@ import {
 } from 'typeorm';
 import * as dayjs from 'dayjs';
 import { Field, ID, ObjectType } from 'type-graphql';
-import { IsHexColor } from 'class-validator';
+import { isEnum, IsHexColor } from 'class-validator';
 import { Account } from './Account';
 import { Comment } from './Comment';
 import { PostEmoticon } from './PostEmoticon';
 import { LikePosts } from './LikePosts';
-import { PostState, PostType, SecretType } from './Enums';
+import { OXComment, PostState, PostType, SecretType } from './Enums';
 import BaseError from '../exceptions/BaseError';
 import { ERROR_CODE } from '../exceptions/ErrorCode';
-import {IDomainEvent} from "../common/IDomainEvent";
+import { IDomainEvent } from '../common/IDomainEvent';
 
 @ObjectType()
 @Entity()
@@ -121,6 +121,55 @@ export class Post {
             throw new BaseError(ERROR_CODE.UNAUTHORIZED, `unauthorized delete post with this removerId: ${removerId}`);
         }
         this.postState = PostState.Deleted;
+    }
+
+    public answer(answererId: string, commentContent: string, isUniqueComment: boolean): void {
+        // post 가 삭제된 상태인 경우 에러
+        if (this.postState === PostState.Deleted) {
+            throw new BaseError(ERROR_CODE.POST_NOT_FOUND, 'DELETED POST');
+        }
+
+        // postType 이 답해줘인 경우
+        if (this.postType === PostType.Answer) {
+            // 답변 다는 사람이 나라면 에러
+            if (answererId === this.toAccountId) {
+                throw new BaseError(ERROR_CODE.UNAUTHORIZED_WRITE_COMMENT, '답해줘에는 내가 쓸 수 없음');
+            }
+        }
+
+        // postType 이 물어봐인경우
+        if (this.postType === PostType.Ask) {
+            // 답변 다는 사람이 내가 아니라면 에러
+            if (answererId !== this.toAccountId) {
+                throw new BaseError(ERROR_CODE.UNAUTHORIZED_WRITE_COMMENT, '물어봐에는 내가 아닌사람이 쓸 수 없음');
+            }
+
+            // comment 를 이미 달았다면 에러
+            if (!isUniqueComment) {
+                console.error(``);
+                throw new BaseError(ERROR_CODE.ALREADY_COMMENT_SUBMITTED, `이미 답변 달음, postId: ${this.id}`);
+            }
+        }
+
+        // postType 이 OX 인 경우
+        if (this.postType === PostType.Quiz) {
+            // 답변 다는 사람이 내가 아니라면 에러
+            if (answererId !== this.toAccountId) {
+                throw new BaseError(ERROR_CODE.UNAUTHORIZED_WRITE_COMMENT, `OX 에는 다른사람이 쓸 수 없음`);
+            }
+
+            // 답변이 O,X 가 아니라면 에러
+            if (!isEnum(commentContent, OXComment)) {
+                throw new BaseError(ERROR_CODE.INVALID_OX_COMMENT_CONTENT, `OX 에는 OX 만이 들어갈 수 있음, content: ${commentContent}`);
+            }
+
+            // comment 를 이미 달았다면 에러
+            if (!isUniqueComment) {
+                throw new BaseError(ERROR_CODE.ALREADY_COMMENT_SUBMITTED, `이미 답변 달음, postId: ${this.id}`);
+            }
+        }
+
+        this.postState = PostState.Completed;
     }
 }
 
