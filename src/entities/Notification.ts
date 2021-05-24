@@ -13,7 +13,7 @@ import { ObjectType, Field, Int, ID } from 'type-graphql';
 import { Account } from './Account';
 import { Post } from './Post';
 import { LikeComments } from './LikeComments';
-import { PostType } from './Enums';
+import { PostType, NotiType } from './Enums';
 
 @ObjectType()
 @Entity()
@@ -54,5 +54,5 @@ export class Notification {
 
     @Field()
     @Column('varchar', { length: 15 })
-    notificationType!: string;
+    notificationType!: NotiType;
 }
