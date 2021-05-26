@@ -1,13 +1,13 @@
-import { Repository, EntityRepository } from 'typeorm';
+import { EntityRepository } from 'typeorm';
 import { Account } from '../entities/Account';
-import { Provider } from '../entities/Enums';
 import { Service } from 'typedi';
+import { BaseRepository } from './BaseRepository';
 
 @Service()
 @EntityRepository(Account)
-export class AccountRepository extends Repository<Account> {
-    async createAccount(newAccount: Account): Promise<Account> {
-        return await this.manager.save(newAccount);
+export class AccountRepository extends BaseRepository<Account> {
+    async saveAccount(newAccount: Account): Promise<Account> {
+        return await this.entityManager.save(newAccount);
     }
 
     async getAccount(providerId: string): Promise<Account | undefined> {

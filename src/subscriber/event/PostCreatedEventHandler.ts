@@ -1,8 +1,8 @@
 import { Service } from 'typedi';
 import { EventHandler } from '../../common/EventHandler';
-import { PostCreatedEvent } from '../../entities/Post';
 import { NotificationService } from '../../services/NotificationService';
 import { NotiType } from '../../entities/Enums';
+import { PostCreatedEvent } from '../../services/event/PostCreatedEvent';
 
 @Service()
 export class PostCreatedEventHandler extends EventHandler<PostCreatedEvent> {
@@ -17,12 +17,12 @@ export class PostCreatedEventHandler extends EventHandler<PostCreatedEvent> {
     }
 
     async handle(event: PostCreatedEvent): Promise<void> {
-        const { data: post } = event;
-        if (post.fromAccountId !== post.toAccountId) {
+        const { fromAccountId, toAccountId, id: postId } = event.data;
+        if (fromAccountId !== toAccountId) {
             await this.notificationService.createNotification({
-                accountId: post.toAccountId,
-                relatedPostId: post.id,
-                otherAccountId: post.fromAccountId,
+                accountId: toAccountId,
+                relatedPostId: postId,
+                otherAccountId: fromAccountId,
                 notiType: NotiType.PostToMe,
             });
         }

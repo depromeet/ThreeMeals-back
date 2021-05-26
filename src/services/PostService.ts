@@ -1,6 +1,6 @@
-import { Service } from 'typedi';
+import { Inject, Service } from 'typedi';
 import { each, filter, flow, map, unionBy, values } from 'lodash/fp';
-import {Post, PostCreatedEvent} from '../entities/Post';
+import { Post } from '../entities/Post';
 import { PostEmoticon } from '../entities/PostEmoticon';
 import { AccountRepository } from '../repositories/AccountRepository';
 import { PostRepository } from '../repositories/PostRepository';
@@ -11,7 +11,7 @@ import { PostState, PostType, SecretType } from '../entities/Enums';
 import BaseError from '../exceptions/BaseError';
 import { ERROR_CODE } from '../exceptions/ErrorCode';
 import { Account } from '../entities/Account';
-import { EventPublisher } from '../EventPublisher';
+import { IUnitOfWork, UNIT_OF_WORK } from '../common/IUnitOfWork';
 
 @Service()
 export class PostService {
@@ -20,7 +20,7 @@ export class PostService {
         @InjectRepository() private readonly postRepository: PostRepository,
         @InjectRepository() private readonly postEmoticonRepository: PostEmoticonRepository,
         @InjectRepository() private readonly likePostsRepository: LikePostsRepository,
-        private readonly eventPublisher: EventPublisher,
+        @Inject(UNIT_OF_WORK) private readonly unitOfWork: IUnitOfWork,
     ) {}
 
     async getPosts(args: {
@@ -59,48 +59,48 @@ export class PostService {
         postType: PostType;
         postEmoticons: PostEmoticon[];
     }): Promise<Post> {
-        // console.log(args);
-        const { fromAccount: from, toAccountId, content, color, secretType, postType, postEmoticons } = args;
+        return this.unitOfWork.withTransaction(async () => {
+            const { fromAccount: from, toAccountId, content, color, secretType, postType, postEmoticons } = args;
 
-        const to = await this.accountRepository.getAccountId(toAccountId);
-        if (!to) {
-            throw new BaseError(ERROR_CODE.USER_NOT_FOUND);
-        }
-
-        // Post 생성
-        const newPost = new Post();
-        if (postType === PostType.Answer) {
-            // from to 가 다른데 답해줘라면 에러
-            if (from.id !== to.id) {
-                console.log(`invalid post type, postType: ${postType}, fromId: ${from.id}, toId: ${to.id}`);
-                throw new BaseError(ERROR_CODE.INVALID_POST_TYPE);
+            const to = await this.accountRepository.getAccountId(toAccountId);
+            if (!to) {
+                throw new BaseError(ERROR_CODE.USER_NOT_FOUND);
             }
-        } else {
-            // from 과 to 가 같은데 답해줘가 아니라면 에러
-            if (from.id === to.id) {
-                console.log(`invalid post type, postType: ${postType}, fromId: ${from.id}, toId: ${to.id}`);
-                throw new BaseError(ERROR_CODE.INVALID_POST_TYPE);
+
+            // Post 생성
+            if (postType === PostType.Answer) {
+                // from to 가 다른데 답해줘라면 에러
+                if (from.id !== to.id) {
+                    console.log(`invalid post type, postType: ${postType}, fromId: ${from.id}, toId: ${to.id}`);
+                    throw new BaseError(ERROR_CODE.INVALID_POST_TYPE);
+                }
+            } else {
+                // from 과 to 가 같은데 답해줘가 아니라면 에러
+                if (from.id === to.id) {
+                    console.log(`invalid post type, postType: ${postType}, fromId: ${from.id}, toId: ${to.id}`);
+                    throw new BaseError(ERROR_CODE.INVALID_POST_TYPE);
+                }
             }
-        }
-        newPost.content = content;
-        newPost.color = color;
-        newPost.postState = PostState.Submitted;
-        newPost.secretType = secretType;
-        newPost.postType = postType;
-        newPost.fromAccountId = from.id;
-        newPost.toAccount = to;
+            const newPost = Post.create({
+                color: color,
+                content: content,
+                fromAccountId: from.id,
+                toAccountId: to.id,
+                postType: postType,
+                secretType: secretType,
+            });
 
-        if (postType !== PostType.Quiz && postEmoticons.length > 0) {
-            newPost.usedEmoticons = await this.postEmoticonRepository.save(postEmoticons);
-        }
+            if (postType !== PostType.Quiz && postEmoticons.length > 0) {
+                // PostEmotion 생성
+                newPost.addEmoticons(await this.postEmoticonRepository.savePostEmoticons(postEmoticons));
+            }
 
-        // // PostEmotion 생성
-        const savedPost = await this.postRepository.createPost(newPost);
+            // Post 생성
+            const savedPost = await this.postRepository.savePost(newPost);
+            savedPost.addCreatedEvent();
 
-        // post 생성 이벤트 발송
-        await this.eventPublisher.publishAsync(new PostCreatedEvent(savedPost));
-
-        return savedPost;
+            return savedPost;
+        });
     }
 
     // Post 삭제

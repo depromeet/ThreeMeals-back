@@ -1,7 +1,7 @@
 import { ArgsType, Field } from 'type-graphql';
 import { IsEnum, IsNumberString, IsOptional, IsString } from 'class-validator';
 import { PaginatedArgument } from './base/PaginatedArgument';
-import {PostState, PostType} from '../../entities/Enums';
+import { PostState, PostType } from '../../entities/Enums';
 
 @ArgsType()
 export class GetPostsArgument extends PaginatedArgument(String) {

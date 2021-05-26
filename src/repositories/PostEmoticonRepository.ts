@@ -1,13 +1,18 @@
-import { Repository, EntityRepository } from 'typeorm';
+import {Repository, EntityRepository, SaveOptions, DeepPartial} from 'typeorm';
 import { PostEmoticon } from '../entities/PostEmoticon';
 import { Service } from 'typedi';
+import { BaseRepository } from './BaseRepository';
 
 
 @Service()
 @EntityRepository(PostEmoticon)
-export class PostEmoticonRepository extends Repository<PostEmoticon> {
-    async createPostEmoticon(newPostEmoticon: PostEmoticon): Promise<PostEmoticon> {
-        return await this.manager.save(newPostEmoticon);
+export class PostEmoticonRepository extends BaseRepository<PostEmoticon> {
+    async savePostEmoticon(newPostEmoticon: PostEmoticon): Promise<PostEmoticon> {
+        return await this.entityManager.save(newPostEmoticon);
+    }
+
+    async savePostEmoticons(newPostEmoticons: PostEmoticon[]): Promise<PostEmoticon[]> {
+        return await this.entityManager.save(newPostEmoticons);
     }
 
     async listPostEmoticonByPostIds(postIds: string[]): Promise<PostEmoticon[]> {

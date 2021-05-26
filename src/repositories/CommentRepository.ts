@@ -1,13 +1,14 @@
-import {DeleteResult, EntityRepository, Not, Repository} from 'typeorm';
+import { DeleteResult, EntityRepository, Not, Repository } from 'typeorm';
 import { Service } from 'typedi';
 import { Comment } from '../entities/Comment';
-import {CommentState, PostState} from "../entities/Enums";
+import { CommentState, PostState } from '../entities/Enums';
+import { BaseRepository } from './BaseRepository';
 
 @Service()
 @EntityRepository(Comment)
-export class CommentRepository extends Repository<Comment> {
-    async createComment(newComment: Comment): Promise<Comment> {
-        return await this.manager.save(newComment);
+export class CommentRepository extends BaseRepository<Comment> {
+    async saveComment(newComment: Comment): Promise<Comment> {
+        return await this.entityManager.save(newComment);
     }
 
     async findOneByPostId(postId: string): Promise<Comment | undefined> {

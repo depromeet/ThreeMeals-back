@@ -6,7 +6,6 @@ import {
     ManyToOne,
     OneToMany,
     PrimaryGeneratedColumn,
-    RelationId,
     UpdateDateColumn,
 } from 'typeorm';
 import * as dayjs from 'dayjs';
@@ -15,15 +14,17 @@ import { isEnum, IsHexColor } from 'class-validator';
 import { Account } from './Account';
 import { Comment } from './Comment';
 import { PostEmoticon } from './PostEmoticon';
-import { LikePosts } from './LikePosts';
+import { LikePost } from './LikePost';
 import { OXComment, PostState, PostType, SecretType } from './Enums';
 import BaseError from '../exceptions/BaseError';
 import { ERROR_CODE } from '../exceptions/ErrorCode';
-import { IDomainEvent } from '../common/IDomainEvent';
+import { DomainEntity } from '../common/DomainEntity';
+import { IAggregateRoot } from '../common/IAggregateRoot';
+import { PostCreatedEvent } from '../services/event/PostCreatedEvent';
 
 @ObjectType()
 @Entity()
-export class Post {
+export class Post extends DomainEntity implements IAggregateRoot {
     @Field(() => ID)
     @PrimaryGeneratedColumn({ type: 'bigint', unsigned: true })
     id!: string;
@@ -82,9 +83,9 @@ export class Post {
     toAccount!: Account | null;
 
     // LikePosts 1:N 관계
-    @Field(() => Post)
-    @OneToMany((type) => LikePosts, (likeposts) => likeposts.post)
-    likedPosts!: Post[];
+    @Field(() => LikePost)
+    @OneToMany((type) => LikePost, (likeposts) => likeposts.post)
+    likedPosts!: LikePost[];
 
     // PostEmoticon과 1:N
     @Field(() => [PostEmoticon])
@@ -94,6 +95,43 @@ export class Post {
     // Comment와 1:N관계
     @OneToMany(() => Comment, (comment) => comment.post)
     comments!: Comment[];
+
+
+    static create(args: {
+        content: string,
+        color: string,
+        secretType: SecretType,
+        postType: PostType,
+        fromAccountId: string,
+        toAccountId: string,
+    }): Post {
+        const post = new Post();
+        post.content = args.content;
+        post.color = args.color;
+        post.postState = PostState.Submitted;
+        post.secretType = args.secretType;
+        post.postType = args.postType;
+        post.fromAccountId = args.fromAccountId;
+        post.toAccountId = args.toAccountId;
+        return post;
+    }
+
+    // id 를 save 이후에 알 수 있어 create event 의 경우 따로 등록해준다.
+    addCreatedEvent(): void {
+        this.addEvent(new PostCreatedEvent({
+            id: this.id,
+            content: this.content,
+            fromAccountId: this.fromAccountId,
+            postState: this.postState,
+            postType: this.postType,
+            toAccountId: this.toAccountId,
+        }));
+    }
+
+    addEmoticons(postEmoticons: PostEmoticon[]): void {
+        if (!this.usedEmoticons) this.usedEmoticons = [];
+        this.usedEmoticons.push(...postEmoticons);
+    }
 
     public hideFromAccount(accountId: string | null): void {
         // 본인의 작성글이라면 null 처리 하지 않음
@@ -146,7 +184,6 @@ export class Post {
 
             // comment 를 이미 달았다면 에러
             if (!isUniqueComment) {
-                console.error(``);
                 throw new BaseError(ERROR_CODE.ALREADY_COMMENT_SUBMITTED, `이미 답변 달음, postId: ${this.id}`);
             }
         }
@@ -170,15 +207,5 @@ export class Post {
         }
 
         this.postState = PostState.Completed;
-    }
-}
-
-export class PostCreatedEvent implements IDomainEvent<Post> {
-    data: Post;
-    eventName: string;
-
-    constructor(data: Post) {
-        this.data = data;
-        this.eventName = PostCreatedEvent.name;
     }
 }

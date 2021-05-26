@@ -4,8 +4,8 @@ import { length } from 'class-validator';
 import { Contact } from './Contact';
 import { Post } from './Post';
 import { Comment } from './Comment';
-import { LikePosts } from './LikePosts';
-import { LikeComments } from './LikeComments';
+import { LikePost } from './LikePost';
+import { LikeComment } from './LikeComment';
 import { Notification } from './Notification';
 import { Provider } from './Enums';
 
@@ -69,12 +69,12 @@ export class Account {
     writeComments!: Comment[];
 
     // LikePosts 1:N 관계
-    @OneToMany((type) => LikePosts, (likeposts) => likeposts.account)
-    likePosts!: LikePosts[];
+    @OneToMany((type) => LikePost, (likeposts) => likeposts.account)
+    likePosts!: LikePost[];
 
     // LikeComments 1:N 관계
-    @OneToMany((type) => LikeComments, (likecomments) => likecomments.account)
-    likeComments!: LikeComments[];
+    @OneToMany((type) => LikeComment, (likecomments) => likecomments.account)
+    likeComments!: LikeComment[];
 
     @Field(() => Notification)
     @OneToMany((type) => Notification, (notification) => notification.account)

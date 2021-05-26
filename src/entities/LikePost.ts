@@ -6,7 +6,7 @@ import { Post } from './Post';
 
 @ObjectType()
 @Entity()
-export class LikePosts {
+export class LikePost {
     @Field(() => ID)
     @PrimaryGeneratedColumn({ type: 'bigint', unsigned: true })
     id!: string;
