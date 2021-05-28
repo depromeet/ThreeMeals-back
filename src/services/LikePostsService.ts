@@ -8,18 +8,17 @@ import { InjectRepository } from 'typeorm-typedi-extensions';
 import BaseError from '../exceptions/BaseError';
 import { ERROR_CODE } from '../exceptions/ErrorCode';
 import { logger } from 'src/logger/winston';
-
+import { EventPublisher } from '../EventPublisher';
+import { LikeCreatedEvent } from './event/LikeCreatedEvent';
 @Service()
 export class LikePostsService {
     constructor(
         @InjectRepository() private readonly likePostsRepository: LikePostsRepository,
         @InjectRepository() private readonly postRepository: PostRepository,
         @InjectRepository() private readonly accountRepository: AccountRepository,
+        private readonly eventPublisher: EventPublisher,
     ) {}
-    async createLikePosts(args: {
-        accountId: string,
-        postId: string,
-    }): Promise<LikePost> {
+    async createLikePosts(args: { accountId: string; postId: string }): Promise<LikePost> {
         const { accountId, postId } = args;
 
         const from = await this.accountRepository.getAccountId(accountId);
@@ -31,6 +30,13 @@ export class LikePostsService {
 
         await this.likePostsRepository.saveLike(newLikePost);
 
+        // await this.eventPublisher.publishAsync(
+        //     new LikeCreatedEvent({
+        //         postId: postId,
+        //         accountId: accountId,
+        //         otherAccountId: post.toAccountId,
+        //     }),
+        // );
         return newLikePost;
     }
 
