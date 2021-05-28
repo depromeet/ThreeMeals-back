@@ -24,19 +24,23 @@ export class LikePostsService {
         const from = await this.accountRepository.getAccountId(accountId);
         const post = await this.postRepository.findOneById(postId);
 
+        if (!post) {
+            throw new BaseError(ERROR_CODE.POST_NOT_FOUND);
+        }
+
         const newLikePost = new LikePost();
         newLikePost.account = from;
         newLikePost.post = post;
 
         await this.likePostsRepository.saveLike(newLikePost);
 
-        // await this.eventPublisher.publishAsync(
-        //     new LikeCreatedEvent({
-        //         postId: postId,
-        //         accountId: accountId,
-        //         otherAccountId: post.toAccountId,
-        //     }),
-        // );
+        await this.eventPublisher.publishAsync(
+            new LikeCreatedEvent({
+                postId: postId,
+                accountId: accountId,
+                otherAccountId: post.toAccountId,
+            }),
+        );
         return newLikePost;
     }
 
