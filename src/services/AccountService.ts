@@ -60,7 +60,7 @@ export class AccountService {
                 newAccount.status = 'active';
                 newAccount.image = userData.data.properties.profile_image;
                 newAccount.provider = provider;
-                accountData = await this.accountRepository.createAccount(newAccount);
+                accountData = await this.accountRepository.saveAccount(newAccount);
             }
             // 필요한 정보 담아야 하는걸로 수정필요
 
@@ -93,10 +93,7 @@ export class AccountService {
     }): Promise<Account> {
         const { content, profileUrl, accountId } = args;
 
-
         const updateInfo = await this.accountRepository.findOneById(accountId);
-
-        console.log(updateInfo);
 
         if (!updateInfo) {
             throw new BaseError(ERROR_CODE.USER_NOT_FOUND);

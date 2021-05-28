@@ -60,7 +60,7 @@ export class CommentService {
             isUniqueComment: !existedComment,
         }));
 
-        const result = await this.commentRepository.createComment(newComment);
+        const result = await this.commentRepository.saveComment(newComment);
 
         return result;
     }

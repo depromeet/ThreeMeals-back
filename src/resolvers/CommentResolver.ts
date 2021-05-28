@@ -11,7 +11,7 @@ import BaseError from '../exceptions/BaseError';
 import { ERROR_CODE } from '../exceptions/ErrorCode';
 import { ChildrenCommentConnection } from '../schemas/ChildrenCommentSchema';
 import { GetChildrenCommentsArgument } from './arguments/GetChildrenCommentsArgument';
-import {MutationResult} from "../schemas/base/MutationResult";
+import { MutationResult } from '../schemas/base/MutationResult';
 
 @Service()
 @Resolver(() => Comment)

@@ -34,7 +34,7 @@ export class ContactService {
         newContact.content = content;
 
         console.log(newContact);
-        await this.ContactRepository.createContact(newContact);
+        await this.ContactRepository.saveContact(newContact);
 
         return newContact;
     }
