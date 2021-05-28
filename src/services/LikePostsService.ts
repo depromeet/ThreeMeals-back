@@ -1,6 +1,6 @@
 /* eslint-disable camelcase */
 import { Inject, Service } from 'typedi';
-import { LikePosts } from '../entities/LikePosts';
+import { LikePost } from '../entities/LikePost';
 import { LikePostsRepository } from '../repositories/LikePostsRepository';
 import { PostRepository } from '../repositories/PostRepository';
 import { AccountRepository } from '../repositories/AccountRepository';
@@ -12,34 +12,38 @@ import { logger } from 'src/logger/winston';
 @Service()
 export class LikePostsService {
     constructor(
-        @InjectRepository() private readonly LikePostsRepository: LikePostsRepository,
-        @InjectRepository() private readonly PostRepository: PostRepository,
-        @InjectRepository() private readonly AccountRepository: AccountRepository,
+        @InjectRepository() private readonly likePostsRepository: LikePostsRepository,
+        @InjectRepository() private readonly postRepository: PostRepository,
+        @InjectRepository() private readonly accountRepository: AccountRepository,
     ) {}
     async createLikePosts(args: {
         accountId: string,
         postId: string,
-    }): Promise<LikePosts> {
+    }): Promise<LikePost> {
         const { accountId, postId } = args;
 
-        const from = await this.AccountRepository.getAccountId(accountId);
-        const post = await this.PostRepository.findOneById(postId);
+        const from = await this.accountRepository.getAccountId(accountId);
+        const post = await this.postRepository.findOneById(postId);
 
-        const newLikePosts = new LikePosts();
-        newLikePosts.account = from;
-        newLikePosts.post = post;
+        const newLikePost = new LikePost();
+        newLikePost.account = from;
+        newLikePost.post = post;
 
-        await this.LikePostsRepository.save(newLikePosts);
+        await this.likePostsRepository.saveLike(newLikePost);
 
-        return newLikePosts;
+        return newLikePost;
     }
 
     async deleteLikePosts(args: { id: string }): Promise<void> {
         const { id: id } = args;
 
-        const postId = await this.PostRepository.findOneById(id);
+        const post = await this.postRepository.findOneById(id);
+        if (!post) {
+            console.log(`cannot find post , postId: ${id}`);
+            throw new BaseError(ERROR_CODE.POST_NOT_FOUND);
+        }
 
         // postEmoticon 삭제
-        await this.LikePostsRepository.delete({ post: postId });
+        await this.likePostsRepository.deleteLikes(post);
     }
 }

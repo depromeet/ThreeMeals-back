@@ -12,7 +12,7 @@ import {
 import { ObjectType, Field, Int, ID } from 'type-graphql';
 import { Account } from './Account';
 import { Post } from './Post';
-import { LikeComments } from './LikeComments';
+import { LikeComment } from './LikeComment';
 import { PostType, NotiType } from './Enums';
 
 @ObjectType()

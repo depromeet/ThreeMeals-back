@@ -1,6 +1,6 @@
 import { Arg, Args, Ctx, Mutation, Resolver, UseMiddleware } from 'type-graphql';
 import { Service } from 'typedi';
-import { LikePosts } from '../entities/LikePosts';
+import { LikePost } from '../entities/LikePost';
 import { LikePostsService } from '../services/LikePostsService';
 import { LikePostsArgument } from './arguments/LikePostsArgument';
 import { AuthContext } from '../middleware/express/AuthContext';
@@ -9,17 +9,17 @@ import BaseError from '../exceptions/BaseError';
 import { ERROR_CODE } from '../exceptions/ErrorCode';
 
 @Service()
-@Resolver(() => LikePosts)
+@Resolver(() => LikePost)
 export class LikePostsResolver {
     constructor(private readonly likePostsService: LikePostsService) {}
 
 
-    @Mutation((returns) => LikePosts)
+    @Mutation((returns) => LikePost)
     @UseMiddleware(AuthMiddleware)
     async createLikePosts(
         @Args() { postId }: LikePostsArgument,
         @Ctx() { account }: AuthContext,
-    ): Promise<LikePosts> {
+    ): Promise<LikePost> {
         if (!account) {
             throw new BaseError(ERROR_CODE.UNAUTHORIZED);
         }

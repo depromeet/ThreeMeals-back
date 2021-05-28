@@ -9,14 +9,14 @@ import {
     RelationId,
     UpdateDateColumn, VersionColumn,
 } from 'typeorm';
-import {Field, ID, ObjectType} from 'type-graphql';
-import {Account} from './Account';
-import {Post} from './Post';
-import {LikeComments} from './LikeComments';
-import {CommentState, SecretType} from './Enums';
+import { Field, ID, ObjectType } from 'type-graphql';
+import { Account } from './Account';
+import { Post } from './Post';
+import { LikeComment } from './LikeComment';
+import { CommentState, SecretType } from './Enums';
 import BaseError from '../exceptions/BaseError';
-import {ERROR_CODE} from '../exceptions/ErrorCode';
-import {IDomainEvent} from "../common/IDomainEvent";
+import { ERROR_CODE } from '../exceptions/ErrorCode';
+import { IDomainEvent } from '../common/IDomainEvent';
 
 @ObjectType()
 @Entity()
@@ -66,8 +66,8 @@ export class Comment {
     post!: Post | null;
 
     // LikeComments 1:N 관계
-    @OneToMany((type) => LikeComments, (likecomments) => likecomments.comment)
-    likedComments!: LikeComments[];
+    @OneToMany((type) => LikeComment, (likecomments) => likecomments.comment)
+    likedComments!: LikeComment[];
 
     // Comment 내에서 self join
     @OneToMany((type) => Comment, (comment) => comment.parent)

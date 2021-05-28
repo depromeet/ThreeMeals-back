@@ -1,13 +1,16 @@
-import { EntityRepository, Repository } from 'typeorm';
+import { EntityRepository } from 'typeorm';
 import { Post } from '../entities/Post';
 import { Service } from 'typedi';
 import { PostState, PostType } from '../entities/Enums';
+import { BaseRepository } from './BaseRepository';
 
 @Service()
 @EntityRepository(Post)
-export class PostRepository extends Repository<Post> {
-    async createPost(newPost: Post): Promise<Post> {
-        return await this.manager.save(newPost);
+export class PostRepository extends BaseRepository<Post> {
+    async savePost(post: Post): Promise<Post> {
+        const newPost = await this.entityManager.save(post);
+        this.dbContext ? this.dbContext.addDomainEntity(newPost) : '';
+        return newPost;
     }
 
     async countsGroupByPostType(args: {

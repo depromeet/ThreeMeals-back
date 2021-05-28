@@ -27,6 +27,6 @@ export class NotificationService {
         newNoti.relatedPostId = args.relatedPostId;
         newNoti.notificationType = args.notiType;
 
-        await this.notificationRepository.save(newNoti);
+        await this.notificationRepository.saveNotification(newNoti);
     }
 }

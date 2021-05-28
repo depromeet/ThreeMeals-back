@@ -1,5 +1,6 @@
 import * as express from 'express';
 import * as cors from 'cors';
+import { graphqlUploadExpress } from 'graphql-upload';
 import * as cookieParser from 'cookie-parser';
 import * as morgan from 'morgan';
 import * as helmet from 'helmet';
@@ -8,7 +9,7 @@ import { handleUserAgent } from '../middleware/express/user-agent';
 import { logger } from '../logger/winston';
 import { handle404Error, handleError } from '../middleware/express/error';
 import router from '../routers';
-import { graphqlUploadExpress } from 'graphql-upload';
+import { DBContext } from '../infrastructure/DBContext';
 
 export default ({ app }: { app: express.Application }) => {
     app.set('etag', false);
@@ -33,6 +34,9 @@ export default ({ app }: { app: express.Application }) => {
         }),
     );
     app.use(handleUserAgent);
+    // app.use((req, res, next) => {
+    //     DBContext.create([req, res], next);
+    // });
 
     app.get('/ping', (req, res, next) => {
         return res.status(200).end('pong');

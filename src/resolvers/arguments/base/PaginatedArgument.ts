@@ -1,4 +1,4 @@
-import {IsNumber, IsOptional, IsString} from 'class-validator';
+import { IsNumber, IsOptional, IsString } from 'class-validator';
 import { ArgsType, ClassType, Field } from 'type-graphql';
 
 export function PaginatedArgument<T>(afterType: ClassType<T>) {
