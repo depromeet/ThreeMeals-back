@@ -25,7 +25,7 @@ export default ({ app }: { app: express.Application }) => {
     app.use(express.urlencoded({ extended: true }));
     app.use(
         morgan('combined', {
-            skip: function(req, res) {
+            skip: function (req, res) {
                 return req.path === '/ping';
             },
             stream: {
@@ -34,9 +34,9 @@ export default ({ app }: { app: express.Application }) => {
         }),
     );
     app.use(handleUserAgent);
-    // app.use((req, res, next) => {
-    //     DBContext.create([req, res], next);
-    // });
+    app.use((req, res, next) => {
+        DBContext.create([req, res], next);
+    });
 
     app.get('/ping', (req, res, next) => {
         return res.status(200).end('pong');

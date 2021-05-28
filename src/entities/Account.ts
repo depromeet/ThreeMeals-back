@@ -17,7 +17,7 @@ export class Account {
     id!: string;
 
     @Field()
-    @Column('varchar', { length: 8 })
+    @Column('varchar', { length: 100 })
     nickname!: string;
 
     // Enum
@@ -33,9 +33,9 @@ export class Account {
     @Column('varchar', { length: 10 })
     status!: string;
 
-    @Field()
+    @Field({ nullable: true })
     @Column('text')
-    image!: string;
+    image?: string;
 
     @Field({ nullable: true })
     @Column('varchar', { length: 50, nullable: true })
