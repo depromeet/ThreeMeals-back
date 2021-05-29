@@ -51,7 +51,7 @@ export class AccountResolver {
     // 프로필 수정
     @Mutation((returns) => Account)
     @UseMiddleware(AuthMiddleware)
-    async updateAccountInfo(
+    async createAccountInfo(
         @Args() { content }: updateAccountInfoArgument,
         @Ctx('account') account?: Account,
     ): Promise<Account> {
@@ -59,7 +59,7 @@ export class AccountResolver {
             throw new BaseError(ERROR_CODE.UNAUTHORIZED);
         }
 
-        const accountInfo = await this.accountService.updateAccountInfo({
+        const accountInfo = await this.accountService.createAccountInfo({
             content,
             accountId: account.id,
         });
@@ -71,7 +71,7 @@ export class AccountResolver {
     // 인스타그램 아이디 연동
     @Mutation((returns) => Account)
     @UseMiddleware(AuthMiddleware)
-    async updateInstagramId(
+    async createInstagramId(
         @Args() { profileUrl }: updateAccountInstaArgument,
         @Ctx('account') account?: Account,
     ): Promise<Account> {
@@ -79,7 +79,7 @@ export class AccountResolver {
             throw new BaseError(ERROR_CODE.UNAUTHORIZED);
         }
 
-        const accountInfo = await this.accountService.updateInstagramId({
+        const accountInfo = await this.accountService.createInstagramId({
             profileUrl,
             accountId: account.id,
         });

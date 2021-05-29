@@ -86,7 +86,7 @@ export class AccountService {
     }
 
     // 프로필 변경
-    async updateAccountInfo(args: {
+    async createAccountInfo(args: {
         content: string;
         accountId: string;
     }): Promise<Account> {
@@ -108,7 +108,7 @@ export class AccountService {
 
 
     // 인스타그램 아이디 연동
-    async updateInstagramId(args: {
+    async createInstagramId(args: {
         profileUrl: string;
         accountId: string;
     }): Promise<Account> {
