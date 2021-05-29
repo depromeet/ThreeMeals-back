@@ -39,6 +39,7 @@ export class LikePostsService {
                 postId: postId,
                 accountId: accountId,
                 otherAccountId: post.fromAccountId,
+                postType: post.postType,
             }),
         );
         return newLikePost;

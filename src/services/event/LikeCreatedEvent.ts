@@ -14,4 +14,5 @@ export interface LikeCreatedEventData {
     postId: string;
     accountId: string;
     otherAccountId: string;
+    postType: string;
 }
