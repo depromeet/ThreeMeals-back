@@ -88,10 +88,9 @@ export class AccountService {
     // 프로필 변경
     async updateAccountInfo(args: {
         content: string;
-        profileUrl: string;
         accountId: string;
     }): Promise<Account> {
-        const { content, profileUrl, accountId } = args;
+        const { content, accountId } = args;
 
         const updateInfo = await this.accountRepository.findOneById(accountId);
 
@@ -102,12 +101,33 @@ export class AccountService {
         // updateInfo!.nickname = nickname;
         // updateInfo!.image = image;
         updateInfo!.content = content;
-        updateInfo!.profileUrl = profileUrl;
-        updateInfo!.content = content;
 
         const accountInfo = await this.accountRepository.save(updateInfo);
         return accountInfo;
     }
+
+
+    // 인스타그램 아이디 연동
+    async updateInstagramId(args: {
+        profileUrl: string;
+        accountId: string;
+    }): Promise<Account> {
+        const { profileUrl, accountId } = args;
+
+        const updateInfo = await this.accountRepository.findOneById(accountId);
+
+        if (!updateInfo) {
+            throw new BaseError(ERROR_CODE.USER_NOT_FOUND);
+        }
+
+        // updateInfo!.nickname = nickname;
+        // updateInfo!.image = image;
+        updateInfo!.profileUrl = `https://www.instagram.com/${profileUrl}`;
+
+        const accountInfo = await this.accountRepository.save(updateInfo);
+        return accountInfo;
+    }
+
 
     // 이미지 변경
     async updateImage(args: {
