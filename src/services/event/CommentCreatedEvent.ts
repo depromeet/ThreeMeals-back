@@ -11,8 +11,10 @@ export class CommentCreatedEvent implements IDomainEvent<CommentCreatedEventData
 }
 
 export interface CommentCreatedEventData {
-    postId: string,
-    content: string,
-    accountId: string,
-    isUniqueComment: boolean,
+    postId: string;
+    content: string;
+    accountId: string; // 댓글 쓴사람
+    otherAccountId: string;
+    postType: string;
+    isUniqueComment: boolean;
 }

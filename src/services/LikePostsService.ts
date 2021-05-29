@@ -38,7 +38,7 @@ export class LikePostsService {
             new LikeCreatedEvent({
                 postId: postId,
                 accountId: accountId,
-                otherAccountId: post.toAccountId,
+                otherAccountId: post.fromAccountId,
             }),
         );
         return newLikePost;

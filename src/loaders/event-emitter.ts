@@ -3,6 +3,8 @@ import { EventEmitter2 } from 'eventemitter2';
 import { EventPublisher, IEventPublisher } from '../EventPublisher';
 import { PostCreatedEventHandler } from '../subscriber/event/PostCreatedEventHandler';
 import { CommentCreatedEventHandler } from '../subscriber/event/CommentCreatedEventHandler';
+import { CreateNotiWhenCommentCreatedEventHandler } from '../subscriber/event/CreateNotiWhenCommentCreatedEventHandler';
+import { CreateNotiWhenLikePostEventHandler } from '../subscriber/event/CreateNotiWhenLikePostEventHandler';
 
 export default async (): Promise<void> => {
     const emitter = new EventEmitter2({ wildcard: true, delimiter: '.' });
@@ -10,6 +12,8 @@ export default async (): Promise<void> => {
     const handlers = [
         Container.get(PostCreatedEventHandler),
         Container.get(CommentCreatedEventHandler),
+        Container.get(CreateNotiWhenLikePostEventHandler),
+        Container.get(CreateNotiWhenCommentCreatedEventHandler),
     ];
 
     for (const handler of handlers) {

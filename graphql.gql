@@ -111,12 +111,10 @@ mutation{
 
 # 코멘트 생성
 mutation {
-  createComment(postId:"1",content:"asdfasdfsad") {
+  createComment(postId:"1", content:"댓글테스트", secretType:"Forever") {
     id
     content
-    post{
-      content
-    }
+    
   }
 }
 

@@ -46,9 +46,9 @@ registerEnumType(SecretType, {
 });
 
 export enum NotiType {
-    LikeToMine = 'LikeToMine',
+    LikeToMine = 'LikeToMine', //함
     AnswerToMine = 'AnswerToMine',
-    PostToMe = 'PostToMe',
+    PostToMe = 'PostToMe', //함
     CommentToMe = 'CommentToMe',
 }
 // 남이 내 글에 좋아요

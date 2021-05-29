@@ -8,9 +8,7 @@ import { InjectRepository } from 'typeorm-typedi-extensions';
 
 @Service()
 export class CommentCreatedEventHandler extends EventHandler<CommentCreatedEvent> {
-    constructor(
-        @InjectRepository() private readonly postRepository: PostRepository,
-    ) {
+    constructor(@InjectRepository() private readonly postRepository: PostRepository) {
         super();
     }
 
@@ -19,6 +17,7 @@ export class CommentCreatedEventHandler extends EventHandler<CommentCreatedEvent
     }
 
     async handle(event: CommentCreatedEvent): Promise<void> {
+        console.log('!!!!!!!!!!!!');
         const { postId, content, accountId, isUniqueComment } = event.data;
         const post = await this.postRepository.findOneById(postId);
         if (!post) {

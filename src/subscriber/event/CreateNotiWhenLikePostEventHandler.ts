@@ -15,6 +15,7 @@ export class CreateNotiWhenLikePostEventHandler extends EventHandler<LikeCreated
     }
 
     async handle(event: LikeCreatedEvent): Promise<void> {
+        console.log('!!!!!when like');
         const { accountId, postId, otherAccountId } = event.data;
         if (otherAccountId !== accountId) {
             await this.notificationService.createNotification({

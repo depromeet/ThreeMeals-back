@@ -24,11 +24,11 @@ export class CommentService {
     ) {}
 
     async createComment(args: {
-        content: string,
-        postId: string,
-        parentId: string | null,
-        secretType: SecretType,
-        account: Account
+        content: string;
+        postId: string;
+        parentId: string | null;
+        secretType: SecretType;
+        account: Account;
     }): Promise<Comment> {
         const { content, postId, parentId, secretType, account } = args;
 
@@ -52,25 +52,31 @@ export class CommentService {
         newComment.account = account;
         newComment.parent = parent;
 
+        const post = await this.postRepository.findOneById(postId);
+        if (!post) {
+            console.error(`Post 찾을 수 없음 postId: ${args.postId}`);
+            throw new BaseError(ERROR_CODE.POST_NOT_FOUND);
+        }
+
         const existedComment = await this.commentRepository.findOneByPostId(postId);
-        await this.eventPublisher.publishAsync(new CommentCreatedEvent({
-            postId: postId,
-            content: content,
-            accountId: account.id,
-            isUniqueComment: !existedComment,
-        }));
+
+        await this.eventPublisher.publishAsync(
+            new CommentCreatedEvent({
+                postId: postId,
+                content: content,
+                accountId: account.id,
+                otherAccountId: post.fromAccountId,
+                postType: post.postType,
+                isUniqueComment: !existedComment,
+            }),
+        );
 
         const result = await this.commentRepository.saveComment(newComment);
 
         return result;
     }
 
-    async getParentComments(args: {
-        myAccountId: string | null,
-        postId: string,
-        limit: number,
-        after: string | null
-    }): Promise<Comment[]> {
+    async getParentComments(args: { myAccountId: string | null; postId: string; limit: number; after: string | null }): Promise<Comment[]> {
         const post = await this.postRepository.findOneById(args.postId);
         if (!post) {
             console.error(`Post 찾을 수 없음 postId: ${args.postId}`);
@@ -87,9 +93,8 @@ export class CommentService {
             filter<Comment>((comment) => comment.parentId === null),
             map((comment) => comment.id as string),
             uniq,
-            (parentCommentIds) => parentCommentIds.length > 0 ?
-                this.commentRepository.getChildrenCountCommentsByIds(parentCommentIds) :
-                Promise.resolve([]),
+            (parentCommentIds) =>
+                parentCommentIds.length > 0 ? this.commentRepository.getChildrenCountCommentsByIds(parentCommentIds) : Promise.resolve([]),
         )(comments);
 
         const result = _.chain(comments)
@@ -100,19 +105,21 @@ export class CommentService {
                     .reduce((prev, curr) => prev + curr, 0)
                     .value();
                 return comment;
-            }).map((comment) => {
+            })
+            .map((comment) => {
                 if (![post.toAccountId, args.myAccountId].includes(comment.accountId)) comment.account = null;
                 return comment;
-            }).value();
+            })
+            .value();
         return result;
     }
 
     async getChildrenComments(args: {
-        myAccountId: string | null,
-        postId: string,
-        parentId: string,
-        limit: number,
-        after: string | null
+        myAccountId: string | null;
+        postId: string;
+        parentId: string;
+        limit: number;
+        after: string | null;
     }): Promise<Comment[]> {
         const post = await this.postRepository.findOneById(args.postId);
         if (!post) {
