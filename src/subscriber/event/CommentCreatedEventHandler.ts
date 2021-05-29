@@ -4,11 +4,12 @@ import { CommentCreatedEvent } from '../../services/event/CommentCreatedEvent';
 import { PostRepository } from '../../repositories/PostRepository';
 import BaseError from '../../exceptions/BaseError';
 import { ERROR_CODE } from '../../exceptions/ErrorCode';
+import { InjectRepository } from 'typeorm-typedi-extensions';
 
 @Service()
 export class CommentCreatedEventHandler extends EventHandler<CommentCreatedEvent> {
     constructor(
-        private readonly postRepository: PostRepository,
+        @InjectRepository() private readonly postRepository: PostRepository,
     ) {
         super();
     }

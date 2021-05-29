@@ -1,12 +1,12 @@
-import { Entity, PrimaryGeneratedColumn, JoinColumn, CreateDateColumn, ManyToOne } from 'typeorm';
-import { ObjectType, Field, ID } from 'type-graphql';
-import { length } from 'class-validator';
+import { CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Field, ID, ObjectType } from 'type-graphql';
 import { Account } from './Account';
 import { Post } from './Post';
+import { DomainEntity } from '../common/DomainEntity';
 
 @ObjectType()
 @Entity()
-export class LikePost {
+export class LikePost extends DomainEntity {
     @Field(() => ID)
     @PrimaryGeneratedColumn({ type: 'bigint', unsigned: true })
     id!: string;
