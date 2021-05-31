@@ -55,10 +55,15 @@ export class AccountService {
             let accountData = await this.accountRepository.getAccount(userData.data.id);
             if (!accountData) {
                 const newAccount = new Account();
+
                 newAccount.nickname = userData.data.properties.nickname;
                 newAccount.providerId = userData.data.id;
                 newAccount.status = 'active';
-                newAccount.image = userData.data.properties.profile_image;
+                if (!userData.data.properties.profile_image) {
+                    newAccount.image = 'https://threemeals-back.s3.ap-northeast-2.amazonaws.com/basic.PNG';
+                } else {
+                    newAccount.image = userData.data.properties.profile_image;
+                }
                 newAccount.provider = provider;
                 accountData = await this.accountRepository.saveAccount(newAccount);
             }
@@ -86,33 +91,13 @@ export class AccountService {
     }
 
     // 프로필 변경
-    async createAccountInfo(args: {
+    async updateAccountInfo(args: {
+        nickname: string;
         content: string;
-        accountId: string;
-    }): Promise<Account> {
-        const { content, accountId } = args;
-
-        const updateInfo = await this.accountRepository.findOneById(accountId);
-
-        if (!updateInfo) {
-            throw new BaseError(ERROR_CODE.USER_NOT_FOUND);
-        }
-
-        // updateInfo!.nickname = nickname;
-        // updateInfo!.image = image;
-        updateInfo!.content = content;
-
-        const accountInfo = await this.accountRepository.save(updateInfo);
-        return accountInfo;
-    }
-
-
-    // 인스타그램 아이디 연동
-    async createInstagramId(args: {
         profileUrl: string;
         accountId: string;
     }): Promise<Account> {
-        const { profileUrl, accountId } = args;
+        const { nickname, content, accountId, profileUrl } = args;
 
         const updateInfo = await this.accountRepository.findOneById(accountId);
 
@@ -122,12 +107,14 @@ export class AccountService {
 
         // updateInfo!.nickname = nickname;
         // updateInfo!.image = image;
+        updateInfo!.nickname = nickname;
+        updateInfo!.content = content;
         updateInfo!.profileUrl = `https://www.instagram.com/${profileUrl}`;
+
 
         const accountInfo = await this.accountRepository.save(updateInfo);
         return accountInfo;
     }
-
 
     // 이미지 변경
     async updateImage(args: {

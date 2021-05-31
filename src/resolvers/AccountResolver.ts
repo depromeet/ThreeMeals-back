@@ -5,7 +5,7 @@ import { Account } from '../entities/Account';
 import { Token } from '../schemas/TokenSchema';
 import { AuthMiddleware } from '../middleware/typegraphql/auth';
 import { SignInArgument } from './arguments/SignInArgument';
-import { updateAccountInfoArgument, updateAccountInstaArgument } from './arguments/AccountArgument';
+import { updateAccountInfoArgument } from './arguments/AccountArgument';
 import { FileUpload, GraphQLUpload } from 'graphql-upload';
 import BaseError from '../exceptions/BaseError';
 import { ERROR_CODE } from '../exceptions/ErrorCode';
@@ -51,35 +51,17 @@ export class AccountResolver {
     // 프로필 수정
     @Mutation((returns) => Account)
     @UseMiddleware(AuthMiddleware)
-    async createAccountInfo(
-        @Args() { content }: updateAccountInfoArgument,
+    async updateAccountInfo(
+        @Args() { nickname, content, profileUrl }: updateAccountInfoArgument,
         @Ctx('account') account?: Account,
     ): Promise<Account> {
         if (!account) {
             throw new BaseError(ERROR_CODE.UNAUTHORIZED);
         }
 
-        const accountInfo = await this.accountService.createAccountInfo({
+        const accountInfo = await this.accountService.updateAccountInfo({
+            nickname,
             content,
-            accountId: account.id,
-        });
-
-        return accountInfo;
-    }
-
-
-    // 인스타그램 아이디 연동
-    @Mutation((returns) => Account)
-    @UseMiddleware(AuthMiddleware)
-    async createInstagramId(
-        @Args() { profileUrl }: updateAccountInstaArgument,
-        @Ctx('account') account?: Account,
-    ): Promise<Account> {
-        if (!account) {
-            throw new BaseError(ERROR_CODE.UNAUTHORIZED);
-        }
-
-        const accountInfo = await this.accountService.createInstagramId({
             profileUrl,
             accountId: account.id,
         });

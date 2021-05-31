@@ -8,12 +8,14 @@ export class updateAccountInfoArgument {
         message: 'invalid type',
     })
     @Field({ nullable: true })
+    nickname!: string;
+
+    @IsString({
+        message: 'invalid type',
+    })
+    @Field({ nullable: true })
     content!: string;
-}
 
-
-@ArgsType()
-export class updateAccountInstaArgument {
     @IsString({
         message: 'invalid type',
     })
