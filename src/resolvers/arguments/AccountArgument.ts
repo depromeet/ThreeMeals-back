@@ -7,7 +7,7 @@ export class updateAccountInfoArgument {
     @IsString({
         message: 'invalid type',
     })
-    @Field({ nullable: true })
+    @Field()
     nickname!: string;
 
     @IsString({
