@@ -109,7 +109,7 @@ export class AccountService {
         // updateInfo!.image = image;
         updateInfo!.nickname = nickname;
         updateInfo!.content = content;
-        updateInfo!.profileUrl = `https://www.instagram.com/${profileUrl}`;
+        updateInfo!.profileUrl = profileUrl;
 
 
         const accountInfo = await this.accountRepository.save(updateInfo);
