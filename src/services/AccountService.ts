@@ -43,8 +43,7 @@ export class AccountService {
     }): Promise<Account> {
         const account = await this.accountRepository.findOneById(args.accountId);
         if (!account) {
-            console.log(`cannot find account by id, ${account}`);
-            throw new Error('Not authenticated');
+            throw new BaseError(ERROR_CODE.USER_NOT_FOUND);
         }
         return account;
     }
