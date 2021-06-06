@@ -56,7 +56,7 @@ query {
 
 // 로그인
 mutation{
-  signIn(provider:"Kakao", accessToken:"NLdlO-7b5Yfj5XWkiM4xDWqkWGXDY8SWDQgHJwopyNgAAAF5wJAxBw"){
+  signIn(provider:"Kakao", accessToken:"V4ySwaJXNWtQyqbt8NGwPWz2r1sbo83GHx022QorDKYAAAF54JdzUg"){
     token
   }
 }

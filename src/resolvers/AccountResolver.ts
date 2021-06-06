@@ -27,13 +27,31 @@ export class AccountResolver {
         return 'hello';
     }
 
-    // 사용자 정보 가져오기
+    // 다른 사용자 정보 가져오기
     @Query((returns) => Account)
     @UseMiddleware(AuthMiddleware)
     async getAccountInfo(
         @Arg('accountId') accountId: string,
+        @Ctx('account') account?: Account,
     ): Promise<Account> {
+        if (!account) {
+            throw new BaseError(ERROR_CODE.UNAUTHORIZED);
+        }
         const accountInfo = await this.accountService.getAccountInfo({ accountId: accountId });
+
+        return accountInfo;
+    }
+
+    // 내 정보 가져오기
+    @Query((returns) => Account)
+    @UseMiddleware(AuthMiddleware)
+    async getMyAccountInfo(
+        @Ctx('account') account?: Account,
+    ): Promise<Account> {
+        if (!account) {
+            throw new BaseError(ERROR_CODE.UNAUTHORIZED);
+        }
+        const accountInfo = await this.accountService.getAccountInfo({ accountId: account.id });
 
         return accountInfo;
     }
