@@ -31,12 +31,9 @@ export class AccountResolver {
     @Query((returns) => Account)
     @UseMiddleware(AuthMiddleware)
     async getAccountInfo(
-        @Ctx('account') account?: Account,
+        @Arg('accountId') accountId: string,
     ): Promise<Account> {
-        if (!account) {
-            throw new BaseError(ERROR_CODE.UNAUTHORIZED);
-        }
-        const accountInfo = await this.accountService.getAccountInfo({ accountId: account.id });
+        const accountInfo = await this.accountService.getAccountInfo({ accountId: accountId });
 
         return accountInfo;
     }
