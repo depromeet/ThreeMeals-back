@@ -93,6 +93,7 @@ export class PostService {
             if (postType !== PostType.Quiz && postEmoticons.length > 0) {
                 // PostEmotion 생성
                 newPost.addEmoticons(await this.postEmoticonRepository.savePostEmoticons(postEmoticons));
+                // newPost.addEmoticons(postEmoticons);
             }
 
             // Post 생성

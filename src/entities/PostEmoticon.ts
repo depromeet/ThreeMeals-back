@@ -3,6 +3,7 @@ import { ObjectType, Field, Int, ID } from 'type-graphql';
 import { length } from 'class-validator';
 import { Post } from './Post';
 import { Emoticon } from './Emoticon';
+import { EmoticonPosition } from './EmoticonPosition';
 
 
 @ObjectType()
@@ -12,13 +13,17 @@ export class PostEmoticon {
     @PrimaryGeneratedColumn({ type: 'bigint', unsigned: true })
     id!: string;
 
-    @Field()
-    @Column('float', { precision: 8, scale: 2 })
-    positionX!: number;
+    @Field(() => EmoticonPosition)
+    @Column((type) => EmoticonPosition, { prefix: false })
+    position!: EmoticonPosition;
 
-    @Field()
-    @Column('float', { precision: 8, scale: 2 })
-    positionY!: number;
+    // @Field()
+    // @Column('float', { precision: 8, scale: 2 })
+    // positionX!: number;
+    //
+    // @Field()
+    // @Column('float', { precision: 8, scale: 2 })
+    // positionY!: number;
 
     @Field()
     @Column('float', { precision: 8, scale: 2 })
@@ -33,8 +38,14 @@ export class PostEmoticon {
     postId!: string;
 
     // Emoticon과 N:1
-    @Field(() => Emoticon)
+    // @Field(() => Emoticon)
     @ManyToOne((type) => Emoticon, (emoticon) => emoticon.usedEmoticons)
     @JoinColumn({ name: 'emoticon_id', referencedColumnName: 'id' })
     emoticon!: Emoticon | null;
+
+    @Field(() => String)
+    fileUrl!: string | null;
+
+    @Field(() => String)
+    name!: string | null;
 }

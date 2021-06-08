@@ -4,6 +4,7 @@ import { Builder } from 'builder-pattern';
 import { Emoticon } from '../../entities/Emoticon';
 import { IsString } from 'class-validator';
 import { Post } from '../../entities/Post';
+import { EmoticonPosition } from "../../entities/EmoticonPosition";
 
 @ArgsType()
 @InputType('emoticons')
@@ -25,8 +26,12 @@ export class CreateEmoticonArgument {
 
     toPostEmoticon(): PostEmoticon {
         return Builder(PostEmoticon)
-            .positionX(this.positionX || 0)
-            .positionY(this.positionY || 0)
+            .position(Builder(EmoticonPosition)
+                .positionX(this.positionX || 0)
+                .positionY(this.positionY || 0)
+                .build())
+            // .positionX(this.positionX || 0)
+            // .positionY(this.positionY || 0)
             .rotate(this.rotate || 0)
             .emoticon(Builder(Emoticon).id(this.emoticonId).build())
             .build();
