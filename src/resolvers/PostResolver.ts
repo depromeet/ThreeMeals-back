@@ -72,16 +72,16 @@ export class PostResolver {
     }
 
     // Post 생성
-    @Mutation((returns) => Post)
+    @Mutation((returns) => MutationResult)
     @UseMiddleware(AuthMiddleware)
     async createPost(
         @Args() { content, color, secretType, postType, toAccountId, emoticons }: CreatePostArgument,
         @Ctx('account') account?: Account,
-    ): Promise<Post> {
+    ): Promise<MutationResult> {
         if (!account) {
             throw new BaseError(ERROR_CODE.UNAUTHORIZED);
         }
-        const post = await this.postService.createPost({
+        await this.postService.createPost({
             content,
             color,
             secretType,
@@ -91,7 +91,7 @@ export class PostResolver {
             postEmoticons: emoticons.map((m) => m.toPostEmoticon()),
         });
 
-        return post;
+        return MutationResult.fromSuccessResult();
     }
 
     // Post 삭제
