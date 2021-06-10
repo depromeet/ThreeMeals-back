@@ -3,8 +3,18 @@ import { PostEmoticon } from '../../entities/PostEmoticon';
 import { Builder } from 'builder-pattern';
 import { Emoticon } from '../../entities/Emoticon';
 import { IsString } from 'class-validator';
-import { Post } from '../../entities/Post';
-import { EmoticonPosition } from "../../entities/EmoticonPosition";
+import { EmoticonPosition } from '../../entities/EmoticonPosition';
+
+@ArgsType()
+@InputType('position')
+class PositionArgument {
+    @Field({ nullable: true, defaultValue: 0 })
+    positionX?: number;
+
+    @Field({ nullable: true, defaultValue: 0 })
+    positionY?: number;
+}
+
 
 @ArgsType()
 @InputType('emoticons')
@@ -15,11 +25,8 @@ export class CreateEmoticonArgument {
     })
     emoticonId!: string;
 
-    @Field({ nullable: true, defaultValue: 0 })
-    positionX?: number;
-
-    @Field({ nullable: true, defaultValue: 0 })
-    positionY?: number;
+    @Field(() => PositionArgument)
+    position!: PositionArgument;
 
     @Field({ nullable: true, defaultValue: 0 })
     rotate?: number;
@@ -27,8 +34,8 @@ export class CreateEmoticonArgument {
     toPostEmoticon(): PostEmoticon {
         return Builder(PostEmoticon)
             .position(Builder(EmoticonPosition)
-                .positionX(this.positionX || 0)
-                .positionY(this.positionY || 0)
+                .positionX(this.position.positionX || 0)
+                .positionY(this.position.positionY || 0)
                 .build())
             // .positionX(this.positionX || 0)
             // .positionY(this.positionY || 0)
