@@ -29,7 +29,18 @@ export class PostResolver {
         private readonly postService: PostService,
     ) {}
 
-    // 물어봐
+    @Query((returns) => Post)
+    @UseMiddleware(AuthMiddleware)
+    async getPost(
+        @Arg('postId') postId: string,
+        @Ctx('account') account?: Account,
+    ): Promise<Post> {
+        return this.postService.getPost({
+            postId,
+            myAccountId: account ? account.id : null,
+        });
+    }
+
     @Query((returns) => PostConnection)
     @UseMiddleware(AuthMiddleware)
     async getPosts(

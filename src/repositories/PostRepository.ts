@@ -82,11 +82,17 @@ export class PostRepository extends BaseRepository<Post> {
             .getMany();
     }
 
-    async findOneById(postId: string): Promise<Post | undefined> {
+    async findOneById(postId: string, hasEmoticon = false): Promise<Post | undefined> {
         const post = 'post';
-        return this.createQueryBuilder(post)
+        let builder = this.createQueryBuilder(post)
             .leftJoinAndSelect(`${post}.fromAccount`, 'fromAccount')
             .leftJoinAndSelect(`${post}.toAccount`, 'toAccount')
+        if (hasEmoticon) {
+            builder = builder
+                .leftJoinAndSelect(`${post}.usedEmoticons`, 'usedEmoticons')
+                .leftJoinAndSelect(`usedEmoticons.emoticon`, 'emoticon');
+        }
+        return builder
             .where(`${post}.id = :postId`, { postId })
             .andWhere(`${post}.post_state != :postState`, { postState: PostState.Deleted })
             .getOne();

@@ -23,6 +23,20 @@ export class PostService {
         @Inject(UNIT_OF_WORK) private readonly unitOfWork: IUnitOfWork,
     ) {}
 
+    async getPost(args: {
+        postId: string,
+        myAccountId: string | null;
+    }): Promise<Post> {
+        const {postId, myAccountId} = args;
+        const post = await this.postRepository.findOneById(postId, true);
+        if (!post) {
+            console.error(`Post 찾을 수 없음 postId: ${args.postId}`);
+            throw new BaseError(ERROR_CODE.POST_NOT_FOUND);
+        }
+        post.hideFromAccount(myAccountId);
+        return post;
+    }
+
     async getPosts(args: {
         myAccountId: string | null;
         accountId: string;
