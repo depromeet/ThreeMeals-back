@@ -167,14 +167,6 @@ export class Post extends DomainEntity implements IAggregateRoot {
             throw new BaseError(ERROR_CODE.POST_NOT_FOUND, 'DELETED POST');
         }
 
-        // postType 이 답해줘인 경우
-        if (this.postType === PostType.Answer) {
-            // 답변 다는 사람이 나라면 에러
-            if (answererId === this.toAccountId) {
-                throw new BaseError(ERROR_CODE.UNAUTHORIZED_WRITE_COMMENT, '답해줘에는 내가 쓸 수 없음');
-            }
-        }
-
         // postType 이 물어봐인경우
         if (this.postType === PostType.Ask) {
             // 답변 다는 사람이 내가 아니라면 에러
