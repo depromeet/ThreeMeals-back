@@ -8,16 +8,13 @@ import { NotificationService } from '../services/NotificationService';
 @Service()
 @Resolver(() => Notification)
 export class NotificationResolver {
-    constructor(
-        private readonly notificationService: NotificationService,
-    ) {}
+    constructor(private readonly notificationService: NotificationService) {}
 
     @Query((returns) => [Notification])
     @UseMiddleware(AuthMiddleware)
-    async getNotifications(
-        @Ctx('account') account: Account,
-    ): Promise<Notification[]> {
+    async getNotifications(@Ctx('account') account: Account): Promise<Notification[]> {
         const notifications = await this.notificationService.getNotificationsByUser(account);
+        console.log(notifications);
         return notifications;
     }
 }

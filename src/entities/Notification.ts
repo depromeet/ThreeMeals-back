@@ -8,6 +8,7 @@ import {
     ManyToOne,
     JoinColumn,
     RelationId,
+    OneToOne,
 } from 'typeorm';
 import { ObjectType, Field, Int, ID } from 'type-graphql';
 import { Account } from './Account';
@@ -42,6 +43,7 @@ export class Notification {
     otherAccountId!: string;
 
     @Field(() => Account, { nullable: true })
+    @OneToOne(() => Account)
     @JoinColumn({ name: 'other_account_id', referencedColumnName: 'id' })
     otherAccount!: Account | null;
 
@@ -49,6 +51,7 @@ export class Notification {
     relatedPostId!: string;
 
     @Field(() => Post)
+    @OneToOne(() => Post)
     @JoinColumn({ name: 'related_post_id', referencedColumnName: 'id' })
     relatedPost!: Post;
 
