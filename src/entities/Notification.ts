@@ -58,4 +58,8 @@ export class Notification {
     @Field()
     @Column('varchar', { length: 15 })
     notificationType!: NotiType;
+
+    @Field({ defaultValue: true })
+    @Column('boolean')
+    read!: Boolean;
 }

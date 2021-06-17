@@ -166,3 +166,19 @@ mutation{
     content
   }
 }
+
+# 노티 가져오는거
+query {
+  getNotifications{
+    id
+    notificationType
+    relatedPost{
+      id
+      postType 
+    }
+    otherAccount{
+      nickname   
+    }
+    createdAt
+  }
+}
