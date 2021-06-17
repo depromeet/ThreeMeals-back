@@ -75,11 +75,7 @@ mutation{
       }
     ]
   ){
-    content
-    postType
-    color
-    postState
-    secretType
+    message
   }
 }
 

@@ -7,12 +7,12 @@ import { NotiType } from '../entities/Enums';
 
 @Service()
 export class NotificationService {
-    constructor(
-        @InjectRepository() private readonly notificationRepository: NotificationRepository,
-    ) {}
+    constructor(@InjectRepository() private readonly notificationRepository: NotificationRepository) {}
 
     async getNotificationsByUser(account: Account): Promise<Notification[]> {
-        return await this.notificationRepository.getNotifications(account);
+        const notifications = await this.notificationRepository.getNotifications(account);
+        this.readAllNotifications(account);
+        return notifications;
     }
 
     async createNotification(args: {
@@ -28,5 +28,9 @@ export class NotificationService {
         newNoti.notificationType = args.notiType;
 
         await this.notificationRepository.saveNotification(newNoti);
+    }
+
+    async readAllNotifications(account: Account): Promise<void> {
+        await this.notificationRepository.updateReadAll(account.id);
     }
 }

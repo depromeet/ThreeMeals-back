@@ -19,9 +19,9 @@ export class CreateNotiWhenLikePostEventHandler extends EventHandler<LikeCreated
         const { accountId, postId, otherAccountId } = event.data;
         if (otherAccountId !== accountId) {
             await this.notificationService.createNotification({
-                accountId: accountId,
+                accountId: otherAccountId,
                 relatedPostId: postId,
-                otherAccountId: otherAccountId,
+                otherAccountId: accountId,
                 notiType: NotiType.LikeToMine,
             });
         }

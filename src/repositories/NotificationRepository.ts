@@ -11,7 +11,7 @@ export class NotificationRepository extends BaseRepository<Notification> {
         return this.entityManager.save(noti);
     }
 
-    async getNotifications(account: Account) {
+    async getNotifications(account: Account): Promise<Notification[]> {
         // const notifications = await this.find({ accountId: account.id });
         // return notifications;
 
@@ -22,5 +22,9 @@ export class NotificationRepository extends BaseRepository<Notification> {
             .leftJoinAndSelect(`${notification}.relatedPost`, 'relatedPost')
             .leftJoinAndSelect(`${notification}.otherAccount`, 'otherAccount');
         return builder.getMany();
+    }
+
+    async updateReadAll(accountId: string) {
+        const notifications = this.update({ accountId: accountId }, { read: true });
     }
 }

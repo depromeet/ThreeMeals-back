@@ -43,7 +43,7 @@ export class Notification {
     otherAccountId!: string;
 
     @Field(() => Account, { nullable: true })
-    @OneToOne(() => Account)
+    @ManyToOne(() => Account)
     @JoinColumn({ name: 'other_account_id', referencedColumnName: 'id' })
     otherAccount!: Account | null;
 
@@ -51,7 +51,7 @@ export class Notification {
     relatedPostId!: string;
 
     @Field(() => Post)
-    @OneToOne(() => Post)
+    @ManyToOne(() => Post)
     @JoinColumn({ name: 'related_post_id', referencedColumnName: 'id' })
     relatedPost!: Post;
 
@@ -59,7 +59,7 @@ export class Notification {
     @Column('varchar', { length: 15 })
     notificationType!: NotiType;
 
-    @Field({ defaultValue: true })
-    @Column('boolean')
+    @Field({ defaultValue: 0 })
+    @Column('boolean', { default: 0 })
     read!: Boolean;
 }
