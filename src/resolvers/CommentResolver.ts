@@ -12,6 +12,10 @@ import { ERROR_CODE } from '../exceptions/ErrorCode';
 import { ChildrenCommentConnection } from '../schemas/ChildrenCommentSchema';
 import { GetChildrenCommentsArgument } from './arguments/GetChildrenCommentsArgument';
 import { MutationResult } from '../schemas/base/MutationResult';
+import { LikePostsService } from "../services/LikePostsService";
+import { LikePost } from "../entities/LikePost";
+import { LikePostsArgument } from "./arguments/LikePostsArgument";
+import { AuthContext } from "../middleware/express/AuthContext";
 
 @Service()
 @Resolver(() => Comment)
@@ -80,4 +84,19 @@ export class CommentResolver {
         });
         return new ChildrenCommentConnection(comments, 'id');
     }
+
+
+    // @Mutation((returns) => LikePost)
+    // @UseMiddleware(AuthMiddleware)
+    // async createLikePosts(
+    //     @Args() { postId }: LikePostsArgument,
+    //     @Ctx() { account }: AuthContext,
+    // ): Promise<LikePost> {
+    //     if (!account) {
+    //         throw new BaseError(ERROR_CODE.UNAUTHORIZED);
+    //     }
+    //     const accountId = account.id;
+    //     const post = await this.likePostsService.createLikePosts({ accountId, postId });
+    //     return post;
+    // }
 }

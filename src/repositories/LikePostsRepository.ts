@@ -4,7 +4,6 @@ import { Service } from 'typedi';
 import { BaseRepository } from './BaseRepository';
 import { Post } from '../entities/Post';
 
-
 @Service()
 @EntityRepository(LikePost)
 export class LikePostsRepository extends BaseRepository<LikePost> {

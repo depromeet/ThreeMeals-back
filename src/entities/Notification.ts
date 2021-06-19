@@ -61,5 +61,5 @@ export class Notification {
 
     @Field({ defaultValue: 0 })
     @Column('boolean', { default: 0 })
-    read!: Boolean;
+    read!: boolean;
 }

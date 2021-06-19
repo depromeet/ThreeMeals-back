@@ -1,4 +1,3 @@
-/* eslint-disable camelcase */
 import { Inject, Service } from 'typedi';
 import { LikePost } from '../entities/LikePost';
 import { LikePostsRepository } from '../repositories/LikePostsRepository';
@@ -7,9 +6,9 @@ import { AccountRepository } from '../repositories/AccountRepository';
 import { InjectRepository } from 'typeorm-typedi-extensions';
 import BaseError from '../exceptions/BaseError';
 import { ERROR_CODE } from '../exceptions/ErrorCode';
-import { logger } from 'src/logger/winston';
 import { EventPublisher } from '../EventPublisher';
 import { LikeCreatedEvent } from './event/LikeCreatedEvent';
+
 @Service()
 export class LikePostsService {
     constructor(
@@ -23,9 +22,12 @@ export class LikePostsService {
 
         const from = await this.accountRepository.getAccountId(accountId);
         const post = await this.postRepository.findOneById(postId);
-
         if (!post) {
             throw new BaseError(ERROR_CODE.POST_NOT_FOUND);
+        }
+
+        if (accountId !== post.fromAccountId) {
+            throw new BaseError(ERROR_CODE.UNAUTHORIZED_LIKE_POST);
         }
 
         const newLikePost = new LikePost();
@@ -45,13 +47,17 @@ export class LikePostsService {
         return newLikePost;
     }
 
-    async deleteLikePosts(args: { id: string }): Promise<void> {
-        const { id: id } = args;
+    async deleteLikePosts(args: { accountId: string, id: string }): Promise<void> {
+        const { accountId, id } = args;
 
         const post = await this.postRepository.findOneById(id);
         if (!post) {
             console.log(`cannot find post , postId: ${id}`);
             throw new BaseError(ERROR_CODE.POST_NOT_FOUND);
+        }
+
+        if (accountId !== post.fromAccountId) {
+            throw new BaseError(ERROR_CODE.UNAUTHORIZED_LIKE_POST);
         }
 
         // postEmoticon 삭제

@@ -17,7 +17,7 @@ export class NotificationRepository extends BaseRepository<Notification> {
 
         const notification = 'notification';
 
-        let builder = this.createQueryBuilder(notification)
+        const builder = this.createQueryBuilder(notification)
             .where(`${notification}.accountId = :accountId`, { accountId: account.id })
             .leftJoinAndSelect(`${notification}.relatedPost`, 'relatedPost')
             .leftJoinAndSelect(`${notification}.otherAccount`, 'otherAccount');

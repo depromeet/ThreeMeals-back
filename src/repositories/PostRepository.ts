@@ -13,6 +13,22 @@ export class PostRepository extends BaseRepository<Post> {
         return newPost;
     }
 
+    async increaseCommentCount(postId: string): Promise<void> {
+        this.manager.createQueryBuilder()
+            .update(Post)
+            .set({ commentsCount: () => 'comments_count + 1' })
+            .where('id = :postId', { postId })
+            .execute();
+    }
+
+    async decreaseCommentCount(postId: string): Promise<void> {
+        this.manager.createQueryBuilder()
+            .update(Post)
+            .set({ commentsCount: () => 'comments_count - 1' })
+            .where('id = :postId', { postId })
+            .execute();
+    }
+
     async countsGroupByPostType(args: {
         accountId: string,
         postState: PostState | null,
@@ -86,7 +102,7 @@ export class PostRepository extends BaseRepository<Post> {
         const post = 'post';
         let builder = this.createQueryBuilder(post)
             .leftJoinAndSelect(`${post}.fromAccount`, 'fromAccount')
-            .leftJoinAndSelect(`${post}.toAccount`, 'toAccount')
+            .leftJoinAndSelect(`${post}.toAccount`, 'toAccount');
         if (hasEmoticon) {
             builder = builder
                 .leftJoinAndSelect(`${post}.usedEmoticons`, 'usedEmoticons')

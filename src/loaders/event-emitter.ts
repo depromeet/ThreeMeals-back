@@ -5,6 +5,7 @@ import { PostCreatedEventHandler } from '../subscriber/event/PostCreatedEventHan
 import { CommentCreatedEventHandler } from '../subscriber/event/CommentCreatedEventHandler';
 import { CreateNotiWhenCommentCreatedEventHandler } from '../subscriber/event/CreateNotiWhenCommentCreatedEventHandler';
 import { CreateNotiWhenLikePostEventHandler } from '../subscriber/event/CreateNotiWhenLikePostEventHandler';
+import { CommentDeletedEventHandler } from "../subscriber/event/CommentDeletedEventHandler";
 
 export default async (): Promise<void> => {
     const emitter = new EventEmitter2({ wildcard: true, delimiter: '.' });
@@ -14,6 +15,7 @@ export default async (): Promise<void> => {
         Container.get(CommentCreatedEventHandler),
         Container.get(CreateNotiWhenLikePostEventHandler),
         Container.get(CreateNotiWhenCommentCreatedEventHandler),
+        Container.get(CommentDeletedEventHandler),
     ];
 
     for (const handler of handlers) {

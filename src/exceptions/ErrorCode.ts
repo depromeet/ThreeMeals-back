@@ -16,4 +16,5 @@ export const ERROR_CODE = {
     INVALID_MATCH_COMMENT_POST: createErrorCode(400, 'E013', 'invalid match comment & post'),
     INVALID_POST_TYPE: createErrorCode(400, 'E014', 'invalid post type'),
     INVALID_POST_STATE: createErrorCode(400, 'E015', 'invalid post state'),
+    UNAUTHORIZED_LIKE_POST: createErrorCode(401, 'E016', 'Unauthorized to create like'),
 };

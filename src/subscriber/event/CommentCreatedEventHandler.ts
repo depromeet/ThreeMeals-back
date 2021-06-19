@@ -17,7 +17,6 @@ export class CommentCreatedEventHandler extends EventHandler<CommentCreatedEvent
     }
 
     async handle(event: CommentCreatedEvent): Promise<void> {
-        console.log('!!!!!!!!!!!!');
         const { postId, content, accountId, isUniqueComment } = event.data;
         const post = await this.postRepository.findOneById(postId);
         if (!post) {
@@ -28,5 +27,6 @@ export class CommentCreatedEventHandler extends EventHandler<CommentCreatedEvent
         post.answer(accountId, content, isUniqueComment);
 
         await this.postRepository.save(post);
+        await this.postRepository.increaseCommentCount(postId);
     }
 }

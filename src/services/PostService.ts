@@ -27,7 +27,7 @@ export class PostService {
         postId: string,
         myAccountId: string | null;
     }): Promise<Post> {
-        const {postId, myAccountId} = args;
+        const { postId, myAccountId } = args;
         const post = await this.postRepository.findOneById(postId, true);
         if (!post) {
             console.error(`Post 찾을 수 없음 postId: ${args.postId}`);

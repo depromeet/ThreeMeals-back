@@ -25,7 +25,7 @@ export default ({ app }: { app: express.Application }) => {
     app.use(express.urlencoded({ extended: true }));
     app.use(
         morgan('combined', {
-            skip: function (req, res) {
+            skip: function(req, res) {
                 return req.path === '/ping';
             },
             stream: {

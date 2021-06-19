@@ -3,15 +3,15 @@ import { filter, flow, map, uniq } from 'lodash/fp';
 import { PostRepository } from '../repositories/PostRepository';
 import { Service } from 'typedi';
 import { InjectRepository } from 'typeorm-typedi-extensions';
-import { isEnum } from 'class-validator';
 import { Comment } from '../entities/Comment';
 import { CommentRepository } from '../repositories/CommentRepository';
 import { Account } from '../entities/Account';
 import BaseError from '../exceptions/BaseError';
 import { ERROR_CODE } from '../exceptions/ErrorCode';
-import { CommentState, OXComment, PostState, PostType, SecretType } from '../entities/Enums';
+import { CommentState, SecretType } from '../entities/Enums';
 import { EventPublisher } from '../EventPublisher';
 import { CommentCreatedEvent } from './event/CommentCreatedEvent';
+import { CommentDeletedEvent } from "./event/CommentDeletedEvent";
 
 @Service()
 export class CommentService {
@@ -59,8 +59,6 @@ export class CommentService {
         }
 
         const existedComment = await this.commentRepository.findOneByPostIdAndCommentState(postId, CommentState.Submitted);
-
-        console.log(existedComment);
 
         await this.eventPublisher.publishAsync(
             new CommentCreatedEvent({
@@ -150,6 +148,14 @@ export class CommentService {
         }
 
         comment.delete(account.id);
+
+        await this.eventPublisher.publishAsync(
+            new CommentDeletedEvent({
+                postId: comment.postId,
+                content: comment.content,
+                accountId: account.id,
+            }),
+        );
 
         await this.commentRepository.save(comment);
     }
