@@ -33,4 +33,9 @@ export class NotificationService {
     async readAllNotifications(account: Account): Promise<void> {
         await this.notificationRepository.updateReadAll(account.id);
     }
+
+    async getUnreadNotiCount(account: Account): Promise<number> {
+        console.log(account);
+        return await this.notificationRepository.countUnreadNoti(account);
+    }
 }

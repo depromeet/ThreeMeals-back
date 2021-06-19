@@ -27,4 +27,10 @@ export class NotificationRepository extends BaseRepository<Notification> {
     async updateReadAll(accountId: string) {
         const notifications = this.update({ accountId: accountId }, { read: true });
     }
+
+    async countUnreadNoti(account: Account): Promise<number> {
+        console.log(account);
+        const notiDatas = await this.find({ accountId: account.id, read: false });
+        return notiDatas.length;
+    }
 }
