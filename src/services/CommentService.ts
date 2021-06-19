@@ -58,7 +58,9 @@ export class CommentService {
             throw new BaseError(ERROR_CODE.POST_NOT_FOUND);
         }
 
-        const existedComment = await this.commentRepository.findOneByPostId(postId);
+        const existedComment = await this.commentRepository.findOneByPostIdAndCommentState(postId, CommentState.Submitted);
+
+        console.log(existedComment);
 
         await this.eventPublisher.publishAsync(
             new CommentCreatedEvent({

@@ -11,8 +11,8 @@ export class CommentRepository extends BaseRepository<Comment> {
         return await this.entityManager.save(newComment);
     }
 
-    async findOneByPostId(postId: string): Promise<Comment | undefined> {
-        return this.findOne({ postId }, { relations: ['account'] });
+    async findOneByPostIdAndCommentState(postId: string, state: CommentState): Promise<Comment | undefined> {
+        return this.findOne({ postId, commentState: state }, { relations: ['account'] });
     }
 
     async listParentByPostId(args: {
