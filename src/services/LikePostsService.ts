@@ -26,7 +26,7 @@ export class LikePostsService {
             throw new BaseError(ERROR_CODE.POST_NOT_FOUND);
         }
 
-        if (accountId !== post.fromAccountId) {
+        if (accountId !== post.toAccountId) {
             throw new BaseError(ERROR_CODE.UNAUTHORIZED_LIKE_POST);
         }
 

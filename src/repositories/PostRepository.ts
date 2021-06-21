@@ -68,7 +68,8 @@ export class PostRepository extends BaseRepository<Post> {
         const queryBuilder = this.createQueryBuilder(post);
         let builder = queryBuilder
             .leftJoinAndSelect(`${post}.fromAccount`, 'fromAccount')
-            .leftJoinAndSelect(`${post}.toAccount`, 'toAccount');
+            .leftJoinAndSelect(`${post}.toAccount`, 'toAccount')
+            .leftJoinAndSelect(`${post}.likedPosts`, 'likedPosts');
 
         if (hasUsedEmoticons) {
             builder = builder
@@ -102,7 +103,8 @@ export class PostRepository extends BaseRepository<Post> {
         const post = 'post';
         let builder = this.createQueryBuilder(post)
             .leftJoinAndSelect(`${post}.fromAccount`, 'fromAccount')
-            .leftJoinAndSelect(`${post}.toAccount`, 'toAccount');
+            .leftJoinAndSelect(`${post}.toAccount`, 'toAccount')
+            .leftJoinAndSelect(`${post}.likedPosts`, 'likedPosts');
         if (hasEmoticon) {
             builder = builder
                 .leftJoinAndSelect(`${post}.usedEmoticons`, 'usedEmoticons')

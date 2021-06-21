@@ -83,7 +83,7 @@ export class Post extends DomainEntity implements IAggregateRoot {
     toAccount!: Account | null;
 
     // LikePosts 1:N 관계
-    @Field(() => LikePost)
+    @Field(() => [LikePost])
     @OneToMany((type) => LikePost, (likeposts) => likeposts.post)
     likedPosts!: LikePost[];
 
