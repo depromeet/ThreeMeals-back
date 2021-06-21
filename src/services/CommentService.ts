@@ -11,7 +11,7 @@ import { ERROR_CODE } from '../exceptions/ErrorCode';
 import { CommentState, SecretType } from '../entities/Enums';
 import { EventPublisher } from '../EventPublisher';
 import { CommentCreatedEvent } from './event/CommentCreatedEvent';
-import { CommentDeletedEvent } from "./event/CommentDeletedEvent";
+import { CommentDeletedEvent } from './event/CommentDeletedEvent';
 
 @Service()
 export class CommentService {

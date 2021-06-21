@@ -12,10 +12,10 @@ import { ERROR_CODE } from '../exceptions/ErrorCode';
 import { ChildrenCommentConnection } from '../schemas/ChildrenCommentSchema';
 import { GetChildrenCommentsArgument } from './arguments/GetChildrenCommentsArgument';
 import { MutationResult } from '../schemas/base/MutationResult';
-import { LikePostsService } from "../services/LikePostsService";
-import { LikePost } from "../entities/LikePost";
-import { LikePostsArgument } from "./arguments/LikePostsArgument";
-import { AuthContext } from "../middleware/express/AuthContext";
+import { LikePostsService } from '../services/LikePostsService';
+import { LikePost } from '../entities/LikePost';
+import { LikePostsArgument } from './arguments/LikePostsArgument';
+import { AuthContext } from '../middleware/express/AuthContext';
 
 @Service()
 @Resolver(() => Comment)
