@@ -1,14 +1,13 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, RelationId } from 'typeorm';
-import { ObjectType, Field, Int, ID } from 'type-graphql';
-import { length } from 'class-validator';
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, RelationId } from 'typeorm';
+import { Field, ID, ObjectType } from 'type-graphql';
 import { Post } from './Post';
 import { Emoticon } from './Emoticon';
 import { EmoticonPosition } from './EmoticonPosition';
-
+import { DomainEntity } from '../common/DomainEntity';
 
 @ObjectType()
-@Entity()
-export class PostEmoticon {
+@Entity('post_emoticon')
+export class PostEmoticon extends DomainEntity {
     @Field(() => ID)
     @PrimaryGeneratedColumn({ type: 'bigint', unsigned: true })
     id!: string;
@@ -16,14 +15,6 @@ export class PostEmoticon {
     @Field(() => EmoticonPosition)
     @Column((type) => EmoticonPosition, { prefix: false })
     position!: EmoticonPosition;
-
-    // @Field()
-    // @Column('float', { precision: 8, scale: 2 })
-    // positionX!: number;
-    //
-    // @Field()
-    // @Column('float', { precision: 8, scale: 2 })
-    // positionY!: number;
 
     @Field()
     @Column('float', { precision: 8, scale: 2 })

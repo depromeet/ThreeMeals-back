@@ -38,7 +38,7 @@ export class LikePostsResolver {
         if (!account) {
             throw new BaseError(ERROR_CODE.UNAUTHORIZED);
         }
-        await this.likePostsService.deleteLikePosts({ accountId: account.id, id });
+        await this.likePostsService.deleteLikePosts({ accountId: account.id, postId: id });
         return true;
     }
 }

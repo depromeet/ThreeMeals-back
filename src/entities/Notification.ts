@@ -1,35 +1,23 @@
 import {
-    Entity,
-    PrimaryGeneratedColumn,
     Column,
     CreateDateColumn,
-    UpdateDateColumn,
-    OneToMany,
-    ManyToOne,
+    Entity,
     JoinColumn,
-    RelationId,
-    OneToOne,
+    ManyToOne,
+    PrimaryGeneratedColumn,
+    UpdateDateColumn,
 } from 'typeorm';
-import { ObjectType, Field, Int, ID } from 'type-graphql';
+import { Field, ID, ObjectType } from 'type-graphql';
 import { Account } from './Account';
 import { Post } from './Post';
-import { LikeComment } from './LikeComment';
-import { PostType, NotiType } from './Enums';
+import { NotiType } from './Enums';
 
 @ObjectType()
-@Entity()
+@Entity('notification')
 export class Notification {
     @Field(() => ID)
     @PrimaryGeneratedColumn({ type: 'bigint', unsigned: true })
     id!: string;
-
-    @Field()
-    @CreateDateColumn({ name: 'created_at' })
-    createdAt!: Date;
-
-    @Field()
-    @UpdateDateColumn({ name: 'updated_at' })
-    updatedAt!: Date;
 
     @Column({ name: 'account_id', type: 'bigint', unsigned: true })
     accountId!: string;
@@ -56,10 +44,18 @@ export class Notification {
     relatedPost!: Post;
 
     @Field()
-    @Column('varchar', { length: 15 })
+    @Column({ name: 'notification_type', type: 'varchar' })
     notificationType!: NotiType;
 
     @Field({ defaultValue: 0 })
-    @Column('boolean', { default: 0 })
+    @Column('boolean', { default: false })
     read!: boolean;
+
+    @Field()
+    @CreateDateColumn({ name: 'created_at' })
+    createdAt!: Date;
+
+    @Field()
+    @UpdateDateColumn({ name: 'updated_at' })
+    updatedAt!: Date;
 }

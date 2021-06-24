@@ -1,6 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
-import { ObjectType, Field, Int, ID } from 'type-graphql';
-import { length } from 'class-validator';
+import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { Field, ID, ObjectType } from 'type-graphql';
 import { Contact } from './Contact';
 import { Post } from './Post';
 import { Comment } from './Comment';
@@ -10,40 +9,39 @@ import { Notification } from './Notification';
 import { Provider } from './Enums';
 
 @ObjectType()
-@Entity()
+@Entity('account')
 export class Account {
     @Field(() => ID)
     @PrimaryGeneratedColumn({ type: 'bigint', unsigned: true })
     id!: string;
 
     @Field()
-    @Column('varchar', { length: 100 })
+    @Column('varchar')
     nickname!: string;
 
-    // Enum
     @Field((type) => Provider)
-    @Column('varchar', { length: 8 })
+    @Column('varchar')
     provider!: Provider;
 
     @Field()
-    @Column('varchar', { name: 'provider_id', length: 20 })
+    @Column('varchar', { name: 'provider_id' })
     providerId!: string;
 
     @Field()
-    @Column('varchar', { length: 10 })
+    @Column('varchar')
     status!: string;
 
-    @Field({ nullable: true })
-    @Column('text')
-    image?: string;
+    @Field(() => String, { nullable: true })
+    @Column('varchar', { nullable: true })
+    image!: string | null;
 
-    @Field({ nullable: true })
-    @Column('varchar', { length: 50, nullable: true })
-    content?: string;
+    @Field(() => String, { nullable: true })
+    @Column('varchar', { nullable: true })
+    content!: string | null;
 
-    @Field({ nullable: true, description: 'insta or facebook url' })
-    @Column('varchar', { name: 'profile_url', length: 50, nullable: true })
-    profileUrl?: string;
+    @Field(() => String, { nullable: true, description: 'insta or facebook url' })
+    @Column('varchar', { name: 'profile_url', nullable: true })
+    profileUrl!: string | null;
 
     @Field()
     @CreateDateColumn({ name: 'created_at' })

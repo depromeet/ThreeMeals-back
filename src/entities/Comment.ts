@@ -7,7 +7,7 @@ import {
     OneToMany,
     PrimaryGeneratedColumn,
     RelationId,
-    UpdateDateColumn, VersionColumn,
+    UpdateDateColumn,
 } from 'typeorm';
 import { Field, ID, ObjectType } from 'type-graphql';
 import { Account } from './Account';
@@ -16,11 +16,12 @@ import { LikeComment } from './LikeComment';
 import { CommentState, SecretType } from './Enums';
 import BaseError from '../exceptions/BaseError';
 import { ERROR_CODE } from '../exceptions/ErrorCode';
-import { IDomainEvent } from '../common/IDomainEvent';
+import { DomainEntity } from '../common/DomainEntity';
+import { LikePost } from './LikePost';
 
 @ObjectType()
-@Entity()
-export class Comment {
+@Entity('comment')
+export class Comment extends DomainEntity {
     @Field(() => ID)
     @PrimaryGeneratedColumn({ type: 'bigint', unsigned: true })
     id!: string;
@@ -66,6 +67,7 @@ export class Comment {
     post!: Post | null;
 
     // LikeComments 1:N 관계
+    @Field(() => [LikeComment])
     @OneToMany((type) => LikeComment, (likecomments) => likecomments.comment)
     likedComments!: LikeComment[];
 

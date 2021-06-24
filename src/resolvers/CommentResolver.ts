@@ -1,4 +1,4 @@
-import { Arg, Args, Ctx, Mutation, Query, Resolver, Root, UseMiddleware } from 'type-graphql';
+import { Arg, Args, Ctx, Mutation, Query, Resolver, UseMiddleware } from 'type-graphql';
 import { Service } from 'typedi';
 import { CommentService } from '../services/CommentService';
 import { Comment } from '../entities/Comment';
@@ -12,15 +12,20 @@ import { ERROR_CODE } from '../exceptions/ErrorCode';
 import { ChildrenCommentConnection } from '../schemas/ChildrenCommentSchema';
 import { GetChildrenCommentsArgument } from './arguments/GetChildrenCommentsArgument';
 import { MutationResult } from '../schemas/base/MutationResult';
-import { LikePostsService } from '../services/LikePostsService';
-import { LikePost } from '../entities/LikePost';
+import { CommandBus } from '../common/Command';
+import { LikeCommentCommand } from '../command/like-comment/LikeCommentCommand';
 import { LikePostsArgument } from './arguments/LikePostsArgument';
 import { AuthContext } from '../middleware/express/AuthContext';
+import { LikeCommentArgument } from './arguments/LikeCommentArgument';
+import { DeleteLikeCommentCommand } from '../command/delete-like-comment/DeleteLikeCommentCommand';
 
 @Service()
 @Resolver(() => Comment)
 export class CommentResolver {
-    constructor(private readonly commentService: CommentService) {}
+    constructor(
+        private readonly commandBus: CommandBus,
+        private readonly commentService: CommentService,
+    ) {}
 
     @Mutation((returns) => Comment)
     @UseMiddleware(AuthMiddleware)
@@ -86,17 +91,31 @@ export class CommentResolver {
     }
 
 
-    // @Mutation((returns) => LikePost)
-    // @UseMiddleware(AuthMiddleware)
-    // async createLikePosts(
-    //     @Args() { postId }: LikePostsArgument,
-    //     @Ctx() { account }: AuthContext,
-    // ): Promise<LikePost> {
-    //     if (!account) {
-    //         throw new BaseError(ERROR_CODE.UNAUTHORIZED);
-    //     }
-    //     const accountId = account.id;
-    //     const post = await this.likePostsService.createLikePosts({ accountId, postId });
-    //     return post;
-    // }
+    @Mutation((returns) => MutationResult)
+    @UseMiddleware(AuthMiddleware)
+    async createLikeComments(
+        @Args() { postId, commentId }: LikeCommentArgument,
+        @Ctx('account') account?: Account,
+    ): Promise<MutationResult> {
+        if (!account) {
+            throw new BaseError(ERROR_CODE.UNAUTHORIZED);
+        }
+
+        await this.commandBus.send(new LikeCommentCommand(account.id, commentId, postId));
+        return MutationResult.fromSuccessResult();
+    }
+
+    @Mutation((returns) => MutationResult)
+    @UseMiddleware(AuthMiddleware)
+    async deleteLikeComments(
+        @Args() { postId, commentId }: LikeCommentArgument,
+        @Ctx('account') account?: Account,
+    ): Promise<MutationResult> {
+        if (!account) {
+            throw new BaseError(ERROR_CODE.UNAUTHORIZED);
+        }
+
+        await this.commandBus.send(new DeleteLikeCommentCommand(account.id, commentId));
+        return MutationResult.fromSuccessResult();
+    }
 }

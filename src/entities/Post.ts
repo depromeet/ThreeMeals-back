@@ -18,13 +18,12 @@ import { LikePost } from './LikePost';
 import { OXComment, PostState, PostType, SecretType } from './Enums';
 import BaseError from '../exceptions/BaseError';
 import { ERROR_CODE } from '../exceptions/ErrorCode';
-import { DomainEntity } from '../common/DomainEntity';
-import { IAggregateRoot } from '../common/IAggregateRoot';
+import { AggregateRoot } from '../common/AggregateRoot';
 import { PostCreatedEvent } from '../services/event/PostCreatedEvent';
 
 @ObjectType()
-@Entity()
-export class Post extends DomainEntity implements IAggregateRoot {
+@Entity('post')
+export class Post extends AggregateRoot {
     @Field(() => ID)
     @PrimaryGeneratedColumn({ type: 'bigint', unsigned: true })
     id!: string;
@@ -46,7 +45,7 @@ export class Post extends DomainEntity implements IAggregateRoot {
     // class-validator - color인지
     @Field()
     @IsHexColor()
-    @Column('varchar', { length: 20 })
+    @Column('varchar')
     color!: string;
 
     @Field((type) => SecretType)
@@ -89,13 +88,12 @@ export class Post extends DomainEntity implements IAggregateRoot {
 
     // PostEmoticon과 1:N
     @Field(() => [PostEmoticon])
-    @OneToMany(() => PostEmoticon, (postEmoticon) => postEmoticon.post)
+    @OneToMany(() => PostEmoticon, (postEmoticon) => postEmoticon.post, { cascade: ['insert', 'update'] })
     usedEmoticons!: PostEmoticon[];
 
     // Comment와 1:N관계
     @OneToMany(() => Comment, (comment) => comment.post)
     comments!: Comment[];
-
 
     static create(args: {
         content: string,

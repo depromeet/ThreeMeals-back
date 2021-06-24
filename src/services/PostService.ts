@@ -4,8 +4,6 @@ import { Post } from '../entities/Post';
 import { PostEmoticon } from '../entities/PostEmoticon';
 import { AccountRepository } from '../repositories/AccountRepository';
 import { PostRepository } from '../repositories/PostRepository';
-import { PostEmoticonRepository } from '../repositories/PostEmoticonRepository';
-import { LikePostsRepository } from '../repositories/LikePostsRepository';
 import { InjectRepository } from 'typeorm-typedi-extensions';
 import { PostState, PostType, SecretType } from '../entities/Enums';
 import BaseError from '../exceptions/BaseError';
@@ -18,8 +16,6 @@ export class PostService {
     constructor(
         @InjectRepository() private readonly accountRepository: AccountRepository,
         @InjectRepository() private readonly postRepository: PostRepository,
-        @InjectRepository() private readonly postEmoticonRepository: PostEmoticonRepository,
-        @InjectRepository() private readonly likePostsRepository: LikePostsRepository,
         @Inject(UNIT_OF_WORK) private readonly unitOfWork: IUnitOfWork,
     ) {}
 
@@ -106,8 +102,9 @@ export class PostService {
 
             if (postType !== PostType.Quiz && postEmoticons.length > 0) {
                 // PostEmotion 생성
-                newPost.addEmoticons(await this.postEmoticonRepository.savePostEmoticons(postEmoticons));
-                // newPost.addEmoticons(postEmoticons);
+                // postEmoticons.forEach((emoticon) => emoticon.post = savedPost);
+                // await this.postEmoticonRepository.savePostEmoticons(postEmoticons);
+                newPost.addEmoticons(postEmoticons);
             }
 
             // Post 생성

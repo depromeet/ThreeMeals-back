@@ -1,19 +1,15 @@
-import { CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 import { Field, ID, ObjectType } from 'type-graphql';
 import { Account } from './Account';
 import { Post } from './Post';
-import { DomainEntity } from '../common/DomainEntity';
+import { IValueObject } from '../common/IValueObject';
 
 @ObjectType()
-@Entity()
-export class LikePost extends DomainEntity {
+@Entity('like_post')
+export class LikePost implements IValueObject {
     @Field(() => ID)
     @PrimaryGeneratedColumn({ type: 'bigint', unsigned: true })
     id!: string;
-
-    @Field()
-    @CreateDateColumn({ name: 'created_at' })
-    createdAt!: Date;
 
     // Account와 N:1 관계
     @ManyToOne((type) => Account, (account) => account.likePosts)
@@ -24,4 +20,12 @@ export class LikePost extends DomainEntity {
     @ManyToOne((type) => Post, (post) => post.likedPosts)
     @JoinColumn({ name: 'post_id', referencedColumnName: 'id' })
     post?: Post;
+
+    @Field()
+    @CreateDateColumn({ name: 'created_at' })
+    createdAt!: Date;
+
+    @Field()
+    @UpdateDateColumn({ name: 'updated_at' })
+    updatedAt!: Date;
 }

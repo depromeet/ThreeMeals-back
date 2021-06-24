@@ -6,7 +6,9 @@ import { CommentDeletedEvent } from '../../services/event/CommentDeletedEvent';
 
 @Service()
 export class CommentDeletedEventHandler extends EventHandler<CommentDeletedEvent> {
-    constructor(@InjectRepository() private readonly postRepository: PostRepository) {
+    constructor(
+        @InjectRepository() private readonly postRepository: PostRepository,
+    ) {
         super();
     }
 

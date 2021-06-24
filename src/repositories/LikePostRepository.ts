@@ -6,7 +6,7 @@ import { Post } from '../entities/Post';
 
 @Service()
 @EntityRepository(LikePost)
-export class LikePostsRepository extends BaseRepository<LikePost> {
+export class LikePostRepository extends BaseRepository<LikePost> {
     async saveLike(likePost: LikePost): Promise<LikePost> {
         return this.entityManager.save(likePost);
     }

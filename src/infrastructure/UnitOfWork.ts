@@ -16,7 +16,7 @@ export class UnitOfWork implements IUnitOfWork {
         return DBContext.currentDBContext();
     }
 
-    async withTransaction<T>(work: () => T, name = config.db.default.connectionName): Promise<T> {
+    async withTransaction<T>(work: () => Promise<T> | T, name = config.db.default.connectionName): Promise<T> {
         const queryRunner = this.dbContext?.queryRunner;
         if (!queryRunner) {
             console.log('Cannot get query Runner');

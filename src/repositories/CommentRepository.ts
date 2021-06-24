@@ -25,6 +25,7 @@ export class CommentRepository extends BaseRepository<Comment> {
         const queryBuilder = this.createQueryBuilder(comment);
         let builder = queryBuilder
             .leftJoinAndSelect(`${comment}.account`, 'account')
+            .leftJoinAndSelect(`${comment}.likedComments`, 'likedComments')
             .where(`${comment}.post_id = :postId`, { postId })
             .andWhere(`${comment}.parent_id IS NULL`);
 
@@ -76,7 +77,12 @@ export class CommentRepository extends BaseRepository<Comment> {
     }
 
     async findOneById(commentId: string): Promise<Comment | undefined> {
-        return this.findOne({ id: commentId, commentState: Not(CommentState.Deleted) }, { relations: ['account'] });
+        const comment = 'comment';
+        return this.entityManager.createQueryBuilder(Comment, comment)
+            .leftJoinAndSelect(`${comment}.likedComments`, 'likedComments')
+            .where(`${comment}.id = :commentId`, { commentId })
+            .andWhere(`${comment}.comment_state != :commentState`, { commentState: CommentState.Deleted })
+            .getOne();
     }
 
     async getChildrenCountCommentsByIds(commentIds: string[]): Promise<{parentId: string, childrenCount: string}[]> {

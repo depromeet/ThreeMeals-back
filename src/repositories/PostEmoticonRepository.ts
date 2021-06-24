@@ -7,14 +7,6 @@ import { BaseRepository } from './BaseRepository';
 @Service()
 @EntityRepository(PostEmoticon)
 export class PostEmoticonRepository extends BaseRepository<PostEmoticon> {
-    async savePostEmoticon(newPostEmoticon: PostEmoticon): Promise<PostEmoticon> {
-        return await this.entityManager.save(newPostEmoticon);
-    }
-
-    async savePostEmoticons(newPostEmoticons: PostEmoticon[]): Promise<PostEmoticon[]> {
-        return await this.entityManager.save(newPostEmoticons);
-    }
-
     async listPostEmoticonByPostIds(postIds: string[]): Promise<PostEmoticon[]> {
         const postEmoticon = 'postEmoticon';
         const queryBuilder = this.createQueryBuilder(postEmoticon);
@@ -27,17 +19,5 @@ export class PostEmoticonRepository extends BaseRepository<PostEmoticon> {
             postEmoticon.name = postEmoticon.emoticon ? postEmoticon.emoticon.name : null;
             return postEmoticon;
         });
-    }
-
-    async getPostEmoticonId(postEmoticonId: number): Promise<PostEmoticon | undefined> {
-        const postEmoticon = await this.findOne(postEmoticonId, { select: ['id'] });
-
-        return postEmoticon;
-    }
-
-    async getPostEmoticonIdbyObject(id: PostEmoticon): Promise<PostEmoticon | undefined> {
-        const postEmoticon = await this.findOne(id, { select: ['id'] });
-
-        return postEmoticon;
     }
 }

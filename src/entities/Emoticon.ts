@@ -1,11 +1,11 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
-import { ObjectType, Field, Int, ID } from 'type-graphql';
-import { length } from 'class-validator';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Field, ID, ObjectType } from 'type-graphql';
 import { PostEmoticon } from './PostEmoticon';
+import { DomainEntity } from '../common/DomainEntity';
 
 @ObjectType()
-@Entity()
-export class Emoticon {
+@Entity('emoticon')
+export class Emoticon extends DomainEntity {
     @Field(() => ID)
     @PrimaryGeneratedColumn({ type: 'bigint', unsigned: true })
     id!: string;
