@@ -14,8 +14,6 @@ import { GetChildrenCommentsArgument } from './arguments/GetChildrenCommentsArgu
 import { MutationResult } from '../schemas/base/MutationResult';
 import { CommandBus } from '../common/Command';
 import { LikeCommentCommand } from '../command/like-comment/LikeCommentCommand';
-import { LikePostsArgument } from './arguments/LikePostsArgument';
-import { AuthContext } from '../middleware/express/AuthContext';
 import { LikeCommentArgument } from './arguments/LikeCommentArgument';
 import { DeleteLikeCommentCommand } from '../command/delete-like-comment/DeleteLikeCommentCommand';
 

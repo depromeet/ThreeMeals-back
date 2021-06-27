@@ -51,6 +51,7 @@ export class CommentRepository extends BaseRepository<Comment> {
         const comment = 'comment';
         let builder = this.createQueryBuilder(comment)
             .leftJoinAndSelect(`${comment}.account`, 'account')
+            .leftJoinAndSelect(`${comment}.likedComments`, 'likedComments')
             .where(`${comment}.parent_id = :parentId`, { parentId })
             .andWhere(`${comment}.post_id = :postId`, { postId });
 
