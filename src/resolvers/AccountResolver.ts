@@ -32,11 +32,7 @@ export class AccountResolver {
     @UseMiddleware(AuthMiddleware)
     async getAccountInfo(
         @Arg('accountId') accountId: string,
-        @Ctx('account') account?: Account,
     ): Promise<Account> {
-        if (!account) {
-            throw new BaseError(ERROR_CODE.UNAUTHORIZED);
-        }
         const accountInfo = await this.accountService.getAccountInfo({ accountId: accountId });
 
         return accountInfo;

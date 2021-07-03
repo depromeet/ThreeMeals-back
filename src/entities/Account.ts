@@ -23,7 +23,6 @@ export class Account {
     @Column('varchar')
     provider!: Provider;
 
-    @Field()
     @Column('varchar', { name: 'provider_id' })
     providerId!: string;
 
