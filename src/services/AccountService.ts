@@ -91,9 +91,9 @@ export class AccountService {
 
     // 프로필 변경
     async updateAccountInfo(args: {
-        nickname: string;
-        content: string;
-        profileUrl: string;
+        nickname?: string;
+        content?: string;
+        profileUrl?: string;
         accountId: string;
     }): Promise<Account> {
         const { nickname, content, accountId, profileUrl } = args;
@@ -106,9 +106,9 @@ export class AccountService {
 
         // updateInfo!.nickname = nickname;
         // updateInfo!.image = image;
-        updateInfo!.nickname = nickname;
-        updateInfo!.content = content;
-        updateInfo!.profileUrl = profileUrl;
+        nickname && (updateInfo.nickname = nickname);
+        content && (updateInfo.content = content);
+        profileUrl && (updateInfo.profileUrl = profileUrl);
 
 
         const accountInfo = await this.accountRepository.save(updateInfo);
