@@ -1,13 +1,14 @@
 import { Service } from 'typedi';
 import { Notification } from '../entities/Notification';
-import { NotificationRepository } from '../repositories/NotificationRepository';
-import { InjectRepository } from 'typeorm-typedi-extensions';
+import { NotificationRepository } from '../infrastructure/repositories/NotificationRepository';
 import { Account } from '../entities/Account';
 import { NotiType } from '../entities/Enums';
 
 @Service()
 export class NotificationService {
-    constructor(@InjectRepository() private readonly notificationRepository: NotificationRepository) {}
+    constructor(
+        private readonly notificationRepository: NotificationRepository,
+    ) {}
 
     async getNotificationsByUser(account: Account): Promise<Notification[]> {
         const notifications = await this.notificationRepository.getNotifications(account);
@@ -26,6 +27,7 @@ export class NotificationService {
         newNoti.otherAccountId = args.otherAccountId;
         newNoti.relatedPostId = args.relatedPostId;
         newNoti.notificationType = args.notiType;
+        newNoti.read = false;
 
         await this.notificationRepository.saveNotification(newNoti);
     }

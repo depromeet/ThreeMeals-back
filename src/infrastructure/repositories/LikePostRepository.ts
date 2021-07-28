@@ -1,11 +1,9 @@
-import { EntityRepository } from 'typeorm';
-import { LikePost } from '../entities/LikePost';
+import { LikePost } from '../../entities/LikePost';
 import { Service } from 'typedi';
 import { BaseRepository } from './BaseRepository';
-import { Post } from '../entities/Post';
+import { Post } from '../../entities/Post';
 
 @Service()
-@EntityRepository(LikePost)
 export class LikePostRepository extends BaseRepository<LikePost> {
     async saveLike(likePost: LikePost): Promise<LikePost> {
         return this.entityManager.save(likePost);

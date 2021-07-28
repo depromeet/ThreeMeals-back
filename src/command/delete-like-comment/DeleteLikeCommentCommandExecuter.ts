@@ -1,18 +1,17 @@
 import { CommandExecuter, ICommandExecuter } from '../../common/Command';
 import { DeleteLikeCommentCommand } from './DeleteLikeCommentCommand';
-import { InjectRepository } from 'typeorm-typedi-extensions';
-import { CommentRepository } from '../../repositories/CommentRepository';
-import { LikeCommentRepository } from '../../repositories/LikeCommentRepository';
+import { CommentRepository } from '../../infrastructure/repositories/CommentRepository';
+import { LikeCommentRepository } from '../../infrastructure/repositories/LikeCommentRepository';
 import BaseError from '../../exceptions/BaseError';
 import { ERROR_CODE } from '../../exceptions/ErrorCode';
-import { PostRepository } from '../../repositories/PostRepository';
+import { PostRepository } from '../../infrastructure/repositories/PostRepository';
 
 @CommandExecuter(DeleteLikeCommentCommand)
 export class DeleteLikeCommentCommandExecuter implements ICommandExecuter<DeleteLikeCommentCommand> {
     constructor(
-        @InjectRepository() private readonly postRepository: PostRepository,
-        @InjectRepository() private readonly commentRepository: CommentRepository,
-        @InjectRepository() private readonly likeCommentRepository: LikeCommentRepository,
+        private readonly postRepository: PostRepository,
+        private readonly commentRepository: CommentRepository,
+        private readonly likeCommentRepository: LikeCommentRepository,
     ) {}
 
     async execute(command: DeleteLikeCommentCommand): Promise<any> {

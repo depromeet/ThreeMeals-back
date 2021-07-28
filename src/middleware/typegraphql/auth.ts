@@ -3,13 +3,12 @@ import { verify } from 'jsonwebtoken';
 import { Service } from 'typedi';
 import { AuthContext, isAuthPayload } from '../express/AuthContext';
 import { config } from '../../config';
-import { InjectRepository } from 'typeorm-typedi-extensions';
-import { AccountRepository } from '../../repositories/AccountRepository';
+import { AccountRepository } from '../../infrastructure/repositories/AccountRepository';
 
 @Service()
 export class AuthMiddleware implements MiddlewareInterface<AuthContext> {
     constructor(
-        @InjectRepository() private readonly accountRepository: AccountRepository,
+        private readonly accountRepository: AccountRepository,
     ) {}
 
     async use({ context, info }: ResolverData<AuthContext>, next: NextFn) {

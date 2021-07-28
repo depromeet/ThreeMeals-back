@@ -1,13 +1,15 @@
 import { Service } from 'typedi';
 import { EventHandler } from '../../common/EventHandler';
-import { InjectRepository } from 'typeorm-typedi-extensions';
-import { PostRepository } from '../../repositories/PostRepository';
+import { PostRepository } from '../../infrastructure/repositories/PostRepository';
 import { CommentDeletedEvent } from '../../services/event/CommentDeletedEvent';
+import BaseError from '../../exceptions/BaseError';
+import { ERROR_CODE } from '../../exceptions/ErrorCode';
+import { PostState, PostType } from '../../entities/Enums';
 
 @Service()
 export class CommentDeletedEventHandler extends EventHandler<CommentDeletedEvent> {
     constructor(
-        @InjectRepository() private readonly postRepository: PostRepository,
+        private readonly postRepository: PostRepository,
     ) {
         super();
     }
@@ -18,6 +20,15 @@ export class CommentDeletedEventHandler extends EventHandler<CommentDeletedEvent
 
     async handle(event: CommentDeletedEvent): Promise<void> {
         const { postId } = event.data;
+        const post = await this.postRepository.findOneById(postId);
+        if (!post) {
+            throw new BaseError(ERROR_CODE.NOT_FOUND);
+        }
+        if (post.postType === PostType.Quiz || post.postType === PostType.Ask) {
+            post.postState = PostState.Submitted;
+        }
+
+        await this.postRepository.savePost(post);
         await this.postRepository.decreaseCommentCount(postId);
     }
 }

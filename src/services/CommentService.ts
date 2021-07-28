@@ -1,10 +1,9 @@
 import * as _ from 'lodash';
 import { filter, flow, map, uniq } from 'lodash/fp';
-import { PostRepository } from '../repositories/PostRepository';
+import { PostRepository } from '../infrastructure/repositories/PostRepository';
 import { Service } from 'typedi';
-import { InjectRepository } from 'typeorm-typedi-extensions';
 import { Comment } from '../entities/Comment';
-import { CommentRepository } from '../repositories/CommentRepository';
+import { CommentRepository } from '../infrastructure/repositories/CommentRepository';
 import { Account } from '../entities/Account';
 import BaseError from '../exceptions/BaseError';
 import { ERROR_CODE } from '../exceptions/ErrorCode';
@@ -16,10 +15,8 @@ import { CommentDeletedEvent } from './event/CommentDeletedEvent';
 @Service()
 export class CommentService {
     constructor(
-        @InjectRepository()
-        private readonly commentRepository: CommentRepository,
-        @InjectRepository()
         private readonly postRepository: PostRepository,
+        private readonly commentRepository: CommentRepository,
         private readonly eventPublisher: EventPublisher,
     ) {}
 
@@ -35,7 +32,7 @@ export class CommentService {
         let parent: Comment | null = null;
         if (parentId) {
             // parentId 가 있다면 parent 가 있는지 체크
-            const comment = await this.commentRepository.findOne({ id: parentId });
+            const comment = await this.commentRepository.findOneById(parentId);
             if (!comment) {
                 console.error(`부모 댓글이 없습니다. parentId: ${parentId}`);
                 throw new BaseError(ERROR_CODE.COMMENT_NOT_FOUND);
@@ -157,6 +154,6 @@ export class CommentService {
             }),
         );
 
-        await this.commentRepository.save(comment);
+        await this.commentRepository.saveComment(comment);
     }
 }

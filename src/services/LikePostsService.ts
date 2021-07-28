@@ -1,9 +1,8 @@
-import { Inject, Service } from 'typedi';
+import { Service } from 'typedi';
 import { LikePost } from '../entities/LikePost';
-import { LikePostRepository } from '../repositories/LikePostRepository';
-import { PostRepository } from '../repositories/PostRepository';
-import { AccountRepository } from '../repositories/AccountRepository';
-import { InjectRepository } from 'typeorm-typedi-extensions';
+import { LikePostRepository } from '../infrastructure/repositories/LikePostRepository';
+import { PostRepository } from '../infrastructure/repositories/PostRepository';
+import { AccountRepository } from '../infrastructure/repositories/AccountRepository';
 import BaseError from '../exceptions/BaseError';
 import { ERROR_CODE } from '../exceptions/ErrorCode';
 import { EventPublisher } from '../EventPublisher';
@@ -12,15 +11,16 @@ import { LikeCreatedEvent } from './event/LikeCreatedEvent';
 @Service()
 export class LikePostsService {
     constructor(
-        @InjectRepository() private readonly likePostsRepository: LikePostRepository,
-        @InjectRepository() private readonly postRepository: PostRepository,
-        @InjectRepository() private readonly accountRepository: AccountRepository,
+        private readonly postRepository: PostRepository,
+        private readonly likePostsRepository: LikePostRepository,
+        private readonly accountRepository: AccountRepository,
         private readonly eventPublisher: EventPublisher,
     ) {}
+
     async createLikePosts(args: { accountId: string; postId: string }): Promise<LikePost> {
         const { accountId, postId } = args;
 
-        const from = await this.accountRepository.getAccountId(accountId);
+        const from = await this.accountRepository.findOneById(accountId);
         const post = await this.postRepository.findOneById(postId);
         if (!post) {
             throw new BaseError(ERROR_CODE.POST_NOT_FOUND);

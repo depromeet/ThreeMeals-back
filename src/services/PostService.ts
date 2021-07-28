@@ -2,9 +2,8 @@ import { Inject, Service } from 'typedi';
 import { each, filter, flow, map, unionBy, values } from 'lodash/fp';
 import { Post } from '../entities/Post';
 import { PostEmoticon } from '../entities/PostEmoticon';
-import { AccountRepository } from '../repositories/AccountRepository';
-import { PostRepository } from '../repositories/PostRepository';
-import { InjectRepository } from 'typeorm-typedi-extensions';
+import { AccountRepository } from '../infrastructure/repositories/AccountRepository';
+import { PostRepository } from '../infrastructure/repositories/PostRepository';
 import { PostState, PostType, SecretType } from '../entities/Enums';
 import BaseError from '../exceptions/BaseError';
 import { ERROR_CODE } from '../exceptions/ErrorCode';
@@ -14,8 +13,8 @@ import { IUnitOfWork, UNIT_OF_WORK } from '../common/IUnitOfWork';
 @Service()
 export class PostService {
     constructor(
-        @InjectRepository() private readonly accountRepository: AccountRepository,
-        @InjectRepository() private readonly postRepository: PostRepository,
+        private readonly accountRepository: AccountRepository,
+        private readonly postRepository: PostRepository,
         @Inject(UNIT_OF_WORK) private readonly unitOfWork: IUnitOfWork,
     ) {}
 
@@ -72,7 +71,7 @@ export class PostService {
         return this.unitOfWork.withTransaction(async () => {
             const { fromAccount: from, toAccountId, content, color, secretType, postType, postEmoticons } = args;
 
-            const to = await this.accountRepository.getAccountId(toAccountId);
+            const to = await this.accountRepository.findOneById(toAccountId);
             if (!to) {
                 throw new BaseError(ERROR_CODE.USER_NOT_FOUND);
             }
@@ -101,9 +100,6 @@ export class PostService {
             });
 
             if (postType !== PostType.Quiz && postEmoticons.length > 0) {
-                // PostEmotion 생성
-                // postEmoticons.forEach((emoticon) => emoticon.post = savedPost);
-                // await this.postEmoticonRepository.savePostEmoticons(postEmoticons);
                 newPost.addEmoticons(postEmoticons);
             }
 
@@ -125,6 +121,6 @@ export class PostService {
         }
         post.delete(account.id);
 
-        await this.postRepository.save(post);
+        await this.postRepository.savePost(post);
     }
 }

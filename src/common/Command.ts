@@ -1,4 +1,4 @@
-import { Constructable, Container, Service } from 'typedi';
+import { Container } from 'typedi';
 import { ClassType } from './ClassType';
 
 export const COMMAND_EXECUTER_SERVICE_METADATA = 'COMMAND_EXECUTER_SERVICE_METADATA';

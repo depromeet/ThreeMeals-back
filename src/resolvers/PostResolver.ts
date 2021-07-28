@@ -1,8 +1,7 @@
 import { Arg, Args, Ctx, FieldResolver, Mutation, Query, Resolver, Root, UseMiddleware } from 'type-graphql';
-import { getCustomRepository } from 'typeorm';
 import DataLoader from 'dataloader';
 import * as _ from 'lodash';
-import { Service } from 'typedi';
+import { Container, Service } from 'typedi';
 import { Loader } from 'type-graphql-dataloader';
 import { Post } from '../entities/Post';
 import { PostEmoticon } from '../entities/PostEmoticon';
@@ -10,7 +9,7 @@ import { PostService } from '../services/PostService';
 import { CreatePostArgument } from './arguments/CreatePostArgument';
 import { AuthMiddleware } from '../middleware/typegraphql/auth';
 import { Account } from '../entities/Account';
-import { PostEmoticonRepository } from '../repositories/PostEmoticonRepository';
+import { PostEmoticonRepository } from '../infrastructure/repositories/PostEmoticonRepository';
 import { PostConnection } from '../schemas/PostConnection';
 import { GetMyNewPostCount, GetPostsArgument } from './arguments/GetPostsArgument';
 import { NewPostCount } from '../schemas/NewPostCount';
@@ -18,7 +17,7 @@ import { PostState, PostType } from '../entities/Enums';
 import BaseError from '../exceptions/BaseError';
 import { ERROR_CODE } from '../exceptions/ErrorCode';
 import { Comment } from '../entities/Comment';
-import { CommentRepository } from '../repositories/CommentRepository';
+import { CommentRepository } from '../infrastructure/repositories/CommentRepository';
 import { PostCommentSchema } from '../schemas/PostCommentSchema';
 import { MutationResult } from '../schemas/base/MutationResult';
 
@@ -121,7 +120,7 @@ export class PostResolver {
 
     @FieldResolver((returns) => [PostEmoticon])
     @Loader<string, PostEmoticon[]>(async (ids, { context }) => { // batchLoadFn
-        const postEmoticons = await getCustomRepository(PostEmoticonRepository)
+        const postEmoticons = await Container.get(PostEmoticonRepository)
             .listPostEmoticonByPostIds([...ids]);
         const emoticonsById = _.groupBy(postEmoticons, 'postId');
         return ids.map((id) => emoticonsById[id] ?? []);
@@ -134,7 +133,7 @@ export class PostResolver {
 
     @FieldResolver((returns) => [PostCommentSchema])
     @Loader<Post, Comment[]>(async (posts, { context }) => { // batchLoadFn
-        const commentRepository = getCustomRepository(CommentRepository);
+        const commentRepository = Container.get(CommentRepository);
         const onlyOneCommentPostIds = posts
             .filter((post) => (post.postType === PostType.Quiz || post.postType === PostType.Ask))
             .map((post) => post.id);

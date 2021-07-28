@@ -1,42 +1,23 @@
-/* eslint-disable prefer-promise-reject-errors */
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { Inject, Service } from 'typedi';
-import { v4 as uuid } from 'uuid';
+import { Service } from 'typedi';
 import BaseError from '../exceptions/BaseError';
 import { ERROR_CODE } from '../exceptions/ErrorCode';
 import { Account } from '../entities/Account';
 import { logger } from '../logger/winston';
-import * as faker from 'faker';
-import { koreanMnemonic } from '../constants';
-import { getCustomRepository } from 'typeorm';
-import { AccountRepository } from '../repositories/AccountRepository';
+import { AccountRepository } from '../infrastructure/repositories/AccountRepository';
 import { SignInArgument } from '../resolvers/arguments/SignInArgument';
-import { Provider } from '../entities/Enums';
-import { InjectRepository } from 'typeorm-typedi-extensions';
 import * as jwt from 'jsonwebtoken';
 import axios from 'axios';
 import { classToPlain } from 'class-transformer';
 import { config } from '../config';
-import { GraphQLUpload, FileUpload } from 'graphql-upload';
-import { assertNamedType, GraphQLScalarType } from 'graphql';
-import { createWriteStream } from 'fs';
+import { FileUpload } from 'graphql-upload';
 import { uploadFileToS3 } from '../middleware/typegraphql/uploadS3';
 import * as AWS from 'aws-sdk';
 
 @Service()
 export class AccountService {
     constructor(
-        @InjectRepository() private readonly accountRepository: AccountRepository,
+        private readonly accountRepository: AccountRepository,
     ) {}
-
-    async getAccount(id: string): Promise<Account> {
-        const account = await this.accountRepository.findOneById(id);
-        if (!account) {
-            console.log(`cannot find account by id, ${id}`);
-            throw new Error('Not authenticated');
-        }
-        return account;
-    }
 
     async getAccountInfo(args: {
         accountId: string,
@@ -111,7 +92,7 @@ export class AccountService {
         profileUrl && (updateInfo.profileUrl = profileUrl);
 
 
-        const accountInfo = await this.accountRepository.save(updateInfo);
+        const accountInfo = await this.accountRepository.saveAccount(updateInfo);
         return accountInfo;
     }
 
@@ -143,7 +124,7 @@ export class AccountService {
         });
         const newFilename = `https://threemeals-back.s3.ap-northeast-2.amazonaws.com/${updateInfo.id}/${filename}`;
         updateInfo!.image = newFilename;
-        const accountInfo = await this.accountRepository.save(updateInfo);
+        const accountInfo = await this.accountRepository.saveAccount(updateInfo);
 
         return accountInfo;
     }
@@ -161,7 +142,7 @@ export class AccountService {
         }
 
         updateInfo!.image = 'https://threemeals-back.s3.ap-northeast-2.amazonaws.com/basic.PNG';
-        const accountInfo = await this.accountRepository.save(updateInfo);
+        const accountInfo = await this.accountRepository.saveAccount(updateInfo);
 
         return accountInfo;
     }

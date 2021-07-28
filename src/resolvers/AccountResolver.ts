@@ -98,24 +98,6 @@ export class AccountResolver {
         return true;
     }
 
-    // return Type이 Boolean이 아니고 Account Type일 때.
-    // @Mutation((returns) => Account)
-    // @UseMiddleware(AuthMiddleware)
-    // async updateImage(
-    //     @Arg('file', () => GraphQLUpload) file: FileUpload,
-    //     @Args() { providerId }: updateImageArgument,
-    //     @Ctx('account') account: Account,
-    // ): Promise<Account> {
-    //     const accountImage = await this.accountService.updateImage({ fromAccount: account, file, providerId });
-
-    //     return accountImage;
-    // }
-
-    // mutation updateImage($file: Upload!) {
-    //     updateImage(file: $file, providerId: "1706701468")
-    // }
-    // curl: // {"query":"mutation updateImage($file: Upload!) {\n\tupdateImage(file: $file, providerId: \"1706701468\")\n}"}
-
     // 프로필 수정 - 사진 추가
     @Mutation((returns) => Boolean)
     @UseMiddleware(AuthMiddleware)

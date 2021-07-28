@@ -1,18 +1,17 @@
-import { DeleteResult, EntityRepository, Not, Repository } from 'typeorm';
 import { Service } from 'typedi';
-import { Comment } from '../entities/Comment';
-import { CommentState, PostState } from '../entities/Enums';
+import { Comment } from '../../entities/Comment';
+import { CommentState } from '../../entities/Enums';
 import { BaseRepository } from './BaseRepository';
 
 @Service()
-@EntityRepository(Comment)
 export class CommentRepository extends BaseRepository<Comment> {
     async saveComment(newComment: Comment): Promise<Comment> {
-        return await this.entityManager.save(newComment);
+        return await this.entityManager.save(Comment, newComment);
     }
 
     async findOneByPostIdAndCommentState(postId: string, state: CommentState): Promise<Comment | undefined> {
-        return this.findOne({ postId, commentState: state }, { relations: ['account'] });
+        return this.entityManager
+            .findOne(Comment, { postId, commentState: state }, { relations: ['account'] });
     }
 
     async listParentByPostId(args: {
@@ -22,7 +21,7 @@ export class CommentRepository extends BaseRepository<Comment> {
     }): Promise<Comment[]> {
         const { postId, limit, after } = args;
         const comment = 'comment';
-        const queryBuilder = this.createQueryBuilder(comment);
+        const queryBuilder = this.entityManager.createQueryBuilder(Comment, comment);
         let builder = queryBuilder
             .leftJoinAndSelect(`${comment}.account`, 'account')
             .leftJoinAndSelect(`${comment}.likedComments`, 'likedComments')
@@ -49,7 +48,7 @@ export class CommentRepository extends BaseRepository<Comment> {
     }): Promise<Comment[]> {
         const { parentId, postId, limit, after } = args;
         const comment = 'comment';
-        let builder = this.createQueryBuilder(comment)
+        let builder = this.entityManager.createQueryBuilder(Comment, comment)
             .leftJoinAndSelect(`${comment}.account`, 'account')
             .leftJoinAndSelect(`${comment}.likedComments`, 'likedComments')
             .where(`${comment}.parent_id = :parentId`, { parentId })
@@ -69,7 +68,7 @@ export class CommentRepository extends BaseRepository<Comment> {
 
     async listByPostIds(postIds: string[]): Promise<Comment[]> {
         const comment = 'comment';
-        const queryBuilder = this.createQueryBuilder(comment);
+        const queryBuilder = this.entityManager.createQueryBuilder(Comment, comment);
         return queryBuilder
             .leftJoinAndSelect(`${comment}.account`, 'account')
             .where(`${comment}.post_id IN (:...postIds)`, { postIds })
@@ -88,7 +87,7 @@ export class CommentRepository extends BaseRepository<Comment> {
 
     async getChildrenCountCommentsByIds(commentIds: string[]): Promise<{parentId: string, childrenCount: string}[]> {
         const comment = 'comment';
-        return this.createQueryBuilder(comment)
+        return this.entityManager.createQueryBuilder(Comment, comment)
             .select(`${comment}.parent_id AS parentId`)
             .addSelect(`COUNT(*) AS childrenCount`)
             .where(`${comment}.parent_id IN (:...commentIds)`, { commentIds })

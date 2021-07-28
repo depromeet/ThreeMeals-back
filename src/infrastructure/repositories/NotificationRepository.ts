@@ -1,23 +1,17 @@
-import { Repository, EntityRepository } from 'typeorm';
 import { Service } from 'typedi';
-import { Notification } from '../entities/Notification';
-import { Account } from '../entities/Account';
+import { Notification } from '../../entities/Notification';
+import { Account } from '../../entities/Account';
 import { BaseRepository } from './BaseRepository';
 
 @Service()
-@EntityRepository(Notification)
 export class NotificationRepository extends BaseRepository<Notification> {
     async saveNotification(noti: Notification): Promise<Notification> {
         return this.entityManager.save(noti);
     }
 
     async getNotifications(account: Account): Promise<Notification[]> {
-        // const notifications = await this.find({ accountId: account.id });
-        // return notifications;
-
         const notification = 'notification';
-
-        const builder = this.createQueryBuilder(notification)
+        const builder = this.entityManager.createQueryBuilder(Notification, notification)
             .where(`${notification}.accountId = :accountId`, { accountId: account.id })
             .leftJoinAndSelect(`${notification}.relatedPost`, 'relatedPost')
             .leftJoinAndSelect(`${notification}.otherAccount`, 'otherAccount');
@@ -25,12 +19,16 @@ export class NotificationRepository extends BaseRepository<Notification> {
     }
 
     async updateReadAll(accountId: string) {
-        const notifications = this.update({ accountId: accountId }, { read: true });
+        this.entityManager.createQueryBuilder()
+            .update(Notification)
+            .set({ read: true })
+            .where('account_id = :accountId', { accountId })
+            .execute();
     }
 
     async countUnreadNoti(account: Account): Promise<number> {
-        console.log(account);
-        const notiDatas = await this.find({ accountId: account.id, read: false });
+        const notiDatas = await this.entityManager
+            .find(Notification, { accountId: account.id, read: false });
         return notiDatas.length;
     }
 }
