@@ -8,7 +8,6 @@ import { config } from '../config';
 import { handleUserAgent } from '../middleware/express/user-agent';
 import { logger } from '../logger/winston';
 import { handle404Error, handleError } from '../middleware/express/error';
-import router from '../routers';
 import { DBContext } from '../infrastructure/DBContext';
 
 export default ({ app }: { app: express.Application }) => {
@@ -44,7 +43,6 @@ export default ({ app }: { app: express.Application }) => {
 
     app.use(graphqlUploadExpress({ maxFileSize: 10000000, maxFiles: 10 }));
     app.use('/', express.static('uploads'));
-    app.use(router);
 };
 
 export const loadHandleError = ({ app }: { app: express.Application }) => {
