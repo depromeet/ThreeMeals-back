@@ -32,13 +32,26 @@ export default ({ app }: { app: express.Application }) => {
             },
         }),
     );
-    app.use(handleUserAgent);
+    // app.use(handleUserAgent);
     app.use((req, res, next) => {
         DBContext.create([req, res], next);
     });
 
+    app.use(async (req, res, next) => {
+        const oldSend = res.send;
+        res.send = function(data) {
+            const queryRunner = DBContext.getQueryRunner();
+            if (queryRunner && !queryRunner.isReleased) {
+                queryRunner.release();
+            }
+            res.send = oldSend;
+            return res.send(data);
+        };
+        next();
+    });
+
     app.get('/ping', (req, res, next) => {
-        return res.status(200).end('pong');
+        return res.status(200).send('pong');
     });
 
     app.use(graphqlUploadExpress({ maxFileSize: 10000000, maxFiles: 10 }));
