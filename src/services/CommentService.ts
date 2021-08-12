@@ -156,4 +156,10 @@ export class CommentService {
 
         await this.commentRepository.saveComment(comment);
     }
+
+    async getAllCommentsByPostId(postId: string): Promise<any> {
+        const comments = await this.commentRepository.allCommentsByPostId({ postId: postId });
+
+        return comments;
+    }
 }
