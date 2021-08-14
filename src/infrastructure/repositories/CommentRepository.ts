@@ -99,15 +99,27 @@ export class CommentRepository extends BaseRepository<Comment> {
             .where(`${comment}.post_id = :postId`, { postId })
             .andWhere(`${comment}.parent_id IS NULL`);
 
-        return (
-            builder
-                .andWhere(`${comment}.comment_state != :commentState`, { commentState: CommentState.Deleted })
-                .leftJoinAndSelect(`${comment}.children`, 'children')
-                .orderBy(`${comment}.id`, 'ASC')
-                .addOrderBy(`children.id`, 'ASC')
-                // .orderBy(`${comment}.children.id`, 'ASC')
-                .getMany()
-        );
+        return builder
+            .andWhere(`${comment}.comment_state != :commentState`, { commentState: CommentState.Deleted })
+            .orderBy(`${comment}.id`, 'ASC')
+            .getMany();
+    }
+
+    async listChildrenByPostId(args: { postId: string }): Promise<Comment[]> {
+        const { postId } = args;
+        const comment = 'comment';
+        let builder = this.entityManager
+            .createQueryBuilder(Comment, comment)
+            .leftJoinAndSelect(`${comment}.account`, 'account')
+            .leftJoinAndSelect(`${comment}.likedComments`, 'likedComments')
+            .where(`${comment}.post_id = :postId`, { postId })
+            .andWhere(`${comment}.parent_id IS NOT NULL`);
+
+        // comment 는 오래된 순
+        return builder
+            .andWhere(`${comment}.comment_state != :commentState`, { commentState: CommentState.Deleted })
+            .orderBy(`${comment}.id`, 'ASC')
+            .getMany();
     }
 }
 // .leftJoinAndSelect('categories.childCategories', 'child')

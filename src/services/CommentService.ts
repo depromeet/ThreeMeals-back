@@ -158,8 +158,43 @@ export class CommentService {
     }
 
     async getAllCommentsByPostId(postId: string): Promise<any> {
-        const comments = await this.commentRepository.allCommentsByPostId({ postId: postId });
+        const post = await this.postRepository.findOneById(postId);
+        if (!post) {
+            console.error(`Post 찾을 수 없음 postId: ${postId}`);
+            throw new BaseError(ERROR_CODE.POST_NOT_FOUND);
+        }
 
-        return comments;
+        // 부모댓글
+        const comments = await (await this.commentRepository.allCommentsByPostId({ postId: postId })).map((comment) => {
+            if (comment.accountId != post.toAccountId) {
+                comment.account = null;
+            }
+            return comment;
+        });
+
+        // 자식놈들
+        let childrenComments = await this.commentRepository.listChildrenByPostId({ postId: postId });
+
+        childrenComments = await Promise.all(
+            childrenComments.map((data) => {
+                if (data.account && data.account.id != post.toAccountId) {
+                    data.account.id == post.toAccountId;
+                    data.account = null;
+                }
+                return data;
+            }),
+        );
+
+        // 가족 찾기
+        const allComments = await Promise.all(
+            comments.map((data) => {
+                data.children = childrenComments.filter((child) => {
+                    return child.parentId === data.id;
+                });
+                return data;
+            }),
+        );
+
+        return allComments;
     }
 }

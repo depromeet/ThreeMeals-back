@@ -108,7 +108,6 @@ export class CommentResolver {
     @UseMiddleware(AuthMiddleware)
     async getAllCommentsByPostId(@Arg('postId') postId: string, @Ctx('account') account?: Account): Promise<Comment> {
         const comments = await this.commentService.getAllCommentsByPostId(postId);
-        console.log(comments);
 
         return comments;
     }
