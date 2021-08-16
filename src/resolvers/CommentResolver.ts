@@ -20,17 +20,11 @@ import { DeleteLikeCommentCommand } from '../command/delete-like-comment/DeleteL
 @Service()
 @Resolver(() => Comment)
 export class CommentResolver {
-    constructor(
-        private readonly commandBus: CommandBus,
-        private readonly commentService: CommentService,
-    ) {}
+    constructor(private readonly commandBus: CommandBus, private readonly commentService: CommentService) {}
 
     @Mutation((returns) => Comment)
     @UseMiddleware(AuthMiddleware)
-    async createComment(
-        @Args() args: CreateCommentArgs,
-        @Ctx('account') account?: Account,
-    ): Promise<Comment> {
+    async createComment(@Args() args: CreateCommentArgs, @Ctx('account') account?: Account): Promise<Comment> {
         if (!account) {
             throw new BaseError(ERROR_CODE.UNAUTHORIZED);
         }
@@ -46,10 +40,7 @@ export class CommentResolver {
 
     @Mutation((returns) => MutationResult)
     @UseMiddleware(AuthMiddleware)
-    async deleteComment(
-        @Arg('commentId') commentId: string,
-        @Ctx('account') account?: Account,
-    ): Promise<MutationResult> {
+    async deleteComment(@Arg('commentId') commentId: string, @Ctx('account') account?: Account): Promise<MutationResult> {
         if (!account) {
             throw new BaseError(ERROR_CODE.UNAUTHORIZED);
         }
@@ -59,10 +50,7 @@ export class CommentResolver {
 
     @Query((returns) => CommentConnection)
     @UseMiddleware(AuthMiddleware)
-    async getParentComments(
-        @Args() args: GetCommentsArgument,
-        @Ctx('account') account?: Account,
-    ): Promise<CommentConnection> {
+    async getParentComments(@Args() args: GetCommentsArgument, @Ctx('account') account?: Account): Promise<CommentConnection> {
         const comments = await this.commentService.getParentComments({
             myAccountId: account ? account.id : null,
             postId: args.postId,
@@ -87,7 +75,6 @@ export class CommentResolver {
         });
         return new ChildrenCommentConnection(comments, 'id');
     }
-
 
     @Mutation((returns) => MutationResult)
     @UseMiddleware(AuthMiddleware)
@@ -115,5 +102,13 @@ export class CommentResolver {
 
         await this.commandBus.send(new DeleteLikeCommentCommand(account.id, commentId));
         return MutationResult.fromSuccessResult();
+    }
+
+    @Query((returns) => [Comment])
+    @UseMiddleware(AuthMiddleware)
+    async getAllCommentsByPostId(@Arg('postId') postId: string, @Ctx('account') account?: Account): Promise<Comment> {
+        const comments = await this.commentService.getAllCommentsByPostId(postId);
+
+        return comments;
     }
 }

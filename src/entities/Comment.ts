@@ -73,6 +73,7 @@ export class Comment extends DomainEntity {
 
     // Comment 내에서 self join
     @OneToMany((type) => Comment, (comment) => comment.parent)
+    @Field((type) => [Comment])
     children!: Comment[];
 
     @Field((type) => Number)

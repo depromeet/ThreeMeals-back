@@ -2,8 +2,9 @@ import { Field, ID, ObjectType } from 'type-graphql';
 import { CommentState, SecretType } from '../entities/Enums';
 import { Connection, Edge, PageInfo } from './base/Connection';
 import { Account } from '../entities/Account';
-import { LikeComment } from "../entities/LikeComment";
-import { OneToMany } from "typeorm";
+import { LikeComment } from '../entities/LikeComment';
+import { OneToMany } from 'typeorm';
+import { Comment } from '../entities/Comment';
 
 @ObjectType('childrenComments')
 export class ChildrenCommentSchema {
