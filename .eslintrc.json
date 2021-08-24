@@ -30,5 +30,6 @@
         "max-len": ["error", { "code": 140 }],
         "array-bracket-spacing": "warn",
         "object-curly-spacing": ["error", "always"]
-    }
+    },
+    "ignorePatterns": ["gql/*"]
 }

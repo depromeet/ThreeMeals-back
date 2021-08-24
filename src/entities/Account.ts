@@ -42,6 +42,9 @@ export class Account {
     @Column('varchar', { name: 'instagram_url', nullable: true })
     instagramUrl!: string | null;
 
+    @Field(() => String, { nullable: true, description: 'no use!! just legacy' })
+    profileUrl = null;
+
     @Field()
     @CreateDateColumn({ name: 'created_at' })
     createdAt!: Date;
