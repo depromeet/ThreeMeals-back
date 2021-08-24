@@ -1,7 +1,7 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Field, ID, ObjectType } from 'type-graphql';
 import { PostEmoticon } from './PostEmoticon';
-import { DomainEntity } from '../common/DomainEntity';
+import { DomainEntity } from '../domain/common/DomainEntity';
 
 @ObjectType()
 @Entity('emoticon')

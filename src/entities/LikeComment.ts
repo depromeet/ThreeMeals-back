@@ -10,7 +10,7 @@ import {
 import { Field, ID, ObjectType } from 'type-graphql';
 import { Account } from './Account';
 import { Comment } from './Comment';
-import { IValueObject } from '../common/IValueObject';
+import { IValueObject } from '../domain/common/IValueObject';
 
 @ObjectType()
 @Entity('like_comment')

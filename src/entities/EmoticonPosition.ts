@@ -1,6 +1,6 @@
 import { Column } from 'typeorm';
 import { Field, ObjectType } from 'type-graphql';
-import { IValueObject } from '../common/IValueObject';
+import { IValueObject } from '../domain/common/IValueObject';
 
 @ObjectType()
 export class EmoticonPosition implements IValueObject {

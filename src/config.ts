@@ -42,9 +42,10 @@ export interface IConfig {
     };
 
     aws: {
-        AWS_SECRET_KEY: string;
-        AWS_ACCESS_KEY: string;
-        AWS_REGION: string;
+        secretKey: string;
+        accessKey: string;
+        region: string;
+        bucket: string;
     };
 }
 
@@ -88,8 +89,9 @@ export const config: IConfig = {
     },
 
     aws: {
-        AWS_SECRET_KEY: process.env.AWS_SECRET_KEY || '',
-        AWS_ACCESS_KEY: process.env.AWS_ACCESS_KEY || '',
-        AWS_REGION: process.env.AWS_REGION || '',
+        secretKey: process.env.AWS_SECRET_KEY || '',
+        accessKey: process.env.AWS_ACCESS_KEY || '',
+        region: process.env.AWS_REGION || '',
+        bucket: process.env.AWS_BUCKET || '',
     },
 };

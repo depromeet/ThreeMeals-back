@@ -10,7 +10,7 @@ import {
 } from 'typeorm';
 import { Field, ID, ObjectType } from 'type-graphql';
 import { Account } from './Account';
-import { DomainEntity } from '../common/DomainEntity';
+import { DomainEntity } from '../domain/common/DomainEntity';
 
 
 @ObjectType()

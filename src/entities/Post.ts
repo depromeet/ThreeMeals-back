@@ -18,8 +18,8 @@ import { LikePost } from './LikePost';
 import { OXComment, PostState, PostType, SecretType } from './Enums';
 import BaseError from '../exceptions/BaseError';
 import { ERROR_CODE } from '../exceptions/ErrorCode';
-import { AggregateRoot } from '../common/AggregateRoot';
-import { PostCreatedEvent } from '../services/event/PostCreatedEvent';
+import { AggregateRoot } from '../domain/common/AggregateRoot';
+import { PostCreatedEvent } from '../domain/events/PostCreatedEvent';
 
 @ObjectType()
 @Entity('post')
@@ -114,7 +114,7 @@ export class Post extends AggregateRoot {
         return post;
     }
 
-    // id 를 save 이후에 알 수 있어 create event 의 경우 따로 등록해준다.
+    // id 를 save 이후에 알 수 있어 create events 의 경우 따로 등록해준다.
     addCreatedEvent(): void {
         this.addEvent(new PostCreatedEvent({
             id: this.id,

@@ -1,12 +1,12 @@
 import 'reflect-metadata';
 import * as express from 'express';
-import apolloLoader from '../loaders/apollo';
-import expressLoader, { loadHandleError } from '../loaders/express';
-import infrastructureLoader from '../loaders/infrastructure';
-import eventEmitterLoader from '../loaders/event-emitter';
-import commandLoader from '../loaders/command';
-import dbConnection from '../loaders/typeorm';
-import { logger } from '../logger/winston';
+import apolloLoader from '../infrastructure/apollo/apollo';
+import expressLoader, { loadHandleError } from '../infrastructure/express/express';
+import infrastructureLoader from '../infrastructure/unit-of-work/loadUnitOfWork';
+import eventEmitterLoader from '../infrastructure/typedi/event-emitter';
+import commandLoader from '../infrastructure/typedi/command';
+import dbConnection from '../infrastructure/typeorm/typeorm';
+import { logger } from '../infrastructure/logger/winston';
 import { config } from '../config';
 
 const startApiServer = async () => {

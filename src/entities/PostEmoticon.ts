@@ -3,7 +3,7 @@ import { Field, ID, ObjectType } from 'type-graphql';
 import { Post } from './Post';
 import { Emoticon } from './Emoticon';
 import { EmoticonPosition } from './EmoticonPosition';
-import { DomainEntity } from '../common/DomainEntity';
+import { DomainEntity } from '../domain/common/DomainEntity';
 
 @ObjectType()
 @Entity('post_emoticon')

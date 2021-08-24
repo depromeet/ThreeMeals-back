@@ -16,8 +16,7 @@ import { LikeComment } from './LikeComment';
 import { CommentState, SecretType } from './Enums';
 import BaseError from '../exceptions/BaseError';
 import { ERROR_CODE } from '../exceptions/ErrorCode';
-import { DomainEntity } from '../common/DomainEntity';
-import { LikePost } from './LikePost';
+import { DomainEntity } from '../domain/common/DomainEntity';
 
 @ObjectType()
 @Entity('comment')

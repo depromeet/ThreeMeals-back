@@ -2,7 +2,7 @@ import { CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn
 import { Field, ID, ObjectType } from 'type-graphql';
 import { Account } from './Account';
 import { Post } from './Post';
-import { IValueObject } from '../common/IValueObject';
+import { IValueObject } from '../domain/common/IValueObject';
 
 @ObjectType()
 @Entity('like_post')

@@ -11,7 +11,7 @@ const { createPost } = require("./post/createPost");
 
 const command = process.argv[2];
 if (!command) {
-    console.log("Please input command")
+    console.log("Please input commands")
 }
 
 let variables = undefined;
@@ -53,5 +53,5 @@ switch (command) {
         createPost(client, variables);
         break;
     default:
-        console.log("Please input correct command")
+        console.log("Please input correct commands")
 }
