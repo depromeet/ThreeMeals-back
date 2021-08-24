@@ -40,7 +40,7 @@ export class AccountService {
                 newAccount.providerId = userData.data.id;
                 newAccount.status = 'active';
                 if (!userData.data.properties.profile_image) {
-                    newAccount.image = 'https://threemeals-back.s3.ap-northeast-2.amazonaws.com/basic.PNG';
+                    newAccount.image = null;
                 } else {
                     newAccount.image = userData.data.properties.profile_image;
                 }
@@ -141,7 +141,7 @@ export class AccountService {
             throw new BaseError(ERROR_CODE.USER_NOT_FOUND);
         }
 
-        updateInfo!.image = 'https://threemeals-back.s3.ap-northeast-2.amazonaws.com/basic.PNG';
+        updateInfo.image = null;
         const accountInfo = await this.accountRepository.saveAccount(updateInfo);
 
         return accountInfo;
