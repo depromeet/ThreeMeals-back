@@ -5,10 +5,9 @@ import * as cookieParser from 'cookie-parser';
 import * as morgan from 'morgan';
 import * as helmet from 'helmet';
 import { config } from '../../config';
-import { handleUserAgent } from './middlewares/user-agent';
 import { logger } from '../logger/winston';
 import { handle404Error, handleError } from './middlewares/error';
-import { TypeOrmDBContext } from '../type-orm/TypeOrmDBContext';
+import { TypeOrmDBContext } from "../type-orm/TypeOrmDBContext";
 
 export default ({ app }: { app: express.Application }) => {
     app.set('etag', false);
@@ -34,21 +33,21 @@ export default ({ app }: { app: express.Application }) => {
     );
     // app.use(handleUserAgent);
     app.use((req, res, next) => {
-        TypeOrmDBContext.create([req, res], next);
+        TypeOrmDBContext.createWithEmitters([req, res], next);
     });
-
-    app.use(async (req, res, next) => {
-        const oldSend = res.send;
-        res.send = function(data) {
-            const queryRunner = TypeOrmDBContext.getQueryRunner();
-            if (queryRunner && !queryRunner.isReleased) {
-                queryRunner.release();
-            }
-            res.send = oldSend;
-            return res.send(data);
-        };
-        next();
-    });
+    //
+    // app.use(async (req, res, next) => {
+    //     const oldSend = res.send;
+    //     res.send = function(data) {
+    //         const queryRunner = TypeOrmDBContext.getQueryRunner();
+    //         if (queryRunner && !queryRunner.isReleased) {
+    //             queryRunner.release();
+    //         }
+    //         res.send = oldSend;
+    //         return res.send(data);
+    //     };
+    //     next();
+    // });
 
     app.get('/ping', (req, res, next) => {
         return res.status(200).send('pong');

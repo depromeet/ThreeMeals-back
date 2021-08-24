@@ -36,7 +36,7 @@ export class LikePostsService {
 
         await this.likePostsRepository.saveLike(newLikePost);
 
-        await this.eventPublisher.publishAsync(
+        await this.eventPublisher.dispatchAsync(
             new LikeCreatedEvent({
                 postId: postId,
                 accountId: accountId,

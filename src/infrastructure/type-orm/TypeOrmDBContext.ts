@@ -1,18 +1,20 @@
-import { NextFunction } from 'express';
-import { EntityManager, getConnection, QueryRunner } from 'typeorm';
+import { EventEmitter } from 'events';
 import { AsyncLocalStorage, AsyncResource } from 'async_hooks';
-import { wrapEmitter } from '../../util/wrapEmitter';
-import EventEmitter from 'events';
+import { EntityManager, getConnection, QueryRunner } from 'typeorm';
 import { config } from '../../config';
 import { DomainEntity } from '../../domain/common/DomainEntity';
+import { wrapEmitter } from '../../util/wrapEmitter';
 
 const pluginName = 'DBRequestContext';
 
-export class DBContext {
-    private static storage = new AsyncLocalStorage<DBContext>();
-    private _entities: DomainEntity[] = [];
+export class TypeOrmDBContext {
+    private static storage = new AsyncLocalStorage<TypeOrmDBContext>();
 
-    constructor(readonly map: Map<string, QueryRunner>) {}
+    constructor(
+        readonly map: Map<string, QueryRunner>,
+        public readonly tag = 'default',
+        private _entities: DomainEntity[] = [],
+    ) {}
 
     get entityManager(): EntityManager | undefined {
         return this.map.get('default')?.manager;
@@ -30,10 +32,9 @@ export class DBContext {
         this._entities.push(entity);
     }
 
-    static create(emitters: EventEmitter[], next?: NextFunction): void {
-        const ctx = this.createContext([
-            getConnection(config.db.default.connectionName).createQueryRunner(),
-        ]);
+    static createWithEmitters<T>(emitters: EventEmitter[], next?: () => void): void {
+        const queryRunner = getConnection(config.db.default.connectionName).createQueryRunner();
+        const ctx = this.createContext([queryRunner]);
         this.storage.run(ctx, () => {
             const asyncResource = new AsyncResource(pluginName);
             emitters.forEach((emitter) => {
@@ -43,22 +44,24 @@ export class DBContext {
         });
     }
 
-    static async createAsync(emitters: EventEmitter[], next?: (...args: any[]) => Promise<void>): Promise<void> {
-        const ctx = this.createContext([
-            getConnection(config.db.default.connectionName).createQueryRunner(),
-        ]);
-        await new Promise((resolve, reject) => {
+    static async createAsync<T>(con: string, next?: (queryRunner: QueryRunner) => Promise<T>): Promise<T> {
+        const queryRunner = getConnection(con).createQueryRunner();
+        const ctx = this.createContext([queryRunner]);
+        return new Promise((resolve, reject) => {
             this.storage.run(ctx, () => {
-                const asyncResource = new AsyncResource(pluginName);
-                emitters.forEach((emitter) => {
-                    wrapEmitter(emitter, asyncResource);
-                });
-                return next ? next().then(resolve).catch(reject) : undefined;
+                return next ?
+                    next(queryRunner)
+                        .then(resolve)
+                        .catch(reject)
+                        .finally(() => {
+                            return queryRunner.release();
+                        }) :
+                    undefined;
             });
         });
     }
 
-    private static createContext(queryRunner :QueryRunner | QueryRunner[]): DBContext {
+    private static createContext(queryRunner :QueryRunner | QueryRunner[]): TypeOrmDBContext {
         const forks = new Map<string, QueryRunner>();
 
         if (Array.isArray(queryRunner)) {
@@ -67,10 +70,10 @@ export class DBContext {
             forks.set(queryRunner.connection.name, queryRunner);
         }
 
-        return new DBContext(forks);
+        return new TypeOrmDBContext(forks);
     }
 
-    static currentDBContext(): DBContext | undefined {
+    static currentDBContext(): TypeOrmDBContext | undefined {
         return this.storage.getStore();
     }
 

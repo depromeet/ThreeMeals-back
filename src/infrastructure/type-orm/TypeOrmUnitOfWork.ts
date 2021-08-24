@@ -1,8 +1,7 @@
 import { Service } from 'typedi';
-import { DBContext } from './DBContext';
+import { flatMap } from 'lodash';
+import { TypeOrmDBContext } from './TypeOrmDBContext';
 import { config } from '../../config';
-import BaseError from '../../exceptions/BaseError';
-import { ERROR_CODE } from '../../exceptions/ErrorCode';
 import { IUnitOfWork, UNIT_OF_WORK } from '../../domain/common/IUnitOfWork';
 import { IEventPublisher } from '../event-publishers/EventPublisher';
 
@@ -12,29 +11,26 @@ export class TypeOrmUnitOfWork implements IUnitOfWork {
         private readonly eventPublisher: IEventPublisher,
     ) {}
 
-    get dbContext(): DBContext | undefined {
-        return DBContext.currentDBContext();
+    get dbContext(): TypeOrmDBContext | undefined {
+        return TypeOrmDBContext.currentDBContext();
     }
 
-    async withTransaction<T>(work: () => Promise<T> | T, name = config.db.default.connectionName): Promise<T> {
-        const queryRunner = this.dbContext?.queryRunner;
-        if (!queryRunner) {
-            console.log('Cannot get query Runner');
-            throw new BaseError(ERROR_CODE.INTERNAL_SERVER_ERROR);
-        }
-        await queryRunner.startTransaction();
-        try {
-            const result = await work();
+    async withTransaction<T>(work: () => Promise<T> | T, conName = config.db.default.connectionName): Promise<T> {
+        return TypeOrmDBContext.createAsync(conName, async (queryRunner) => {
+            await queryRunner.startTransaction();
+            try {
+                const result = await work();
 
-            await this.eventPublisher.dispatchEventsAsync();
+                await this.eventPublisher.dispatchAsync(
+                    flatMap(TypeOrmDBContext.currentDBContext()?.entities, (entity) => entity.domainEvents),
+                );
 
-            await queryRunner.commitTransaction();
-            return result;
-        } catch (error) {
-            await queryRunner.rollbackTransaction();
-            throw error;
-        } finally {
-            await queryRunner.release();
-        }
+                await queryRunner.commitTransaction();
+                return result;
+            } catch (error) {
+                await queryRunner.rollbackTransaction();
+                throw error;
+            }
+        });
     }
 }

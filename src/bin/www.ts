@@ -1,11 +1,10 @@
 import 'reflect-metadata';
 import * as express from 'express';
-import apolloLoader from '../infrastructure/apollo/apollo';
-import expressLoader, { loadHandleError } from '../infrastructure/express/express';
-import infrastructureLoader from '../infrastructure/unit-of-work/loadUnitOfWork';
+import apolloLoader from '../infrastructure/apollo/loader';
+import expressLoader, { loadHandleError } from '../infrastructure/express/loader';
 import eventEmitterLoader from '../infrastructure/typedi/event-emitter';
 import commandLoader from '../infrastructure/typedi/command';
-import dbConnection from '../infrastructure/typeorm/typeorm';
+import typeOrmLoader from '../infrastructure/type-orm/loader';
 import { logger } from '../infrastructure/logger/winston';
 import { config } from '../config';
 
@@ -13,9 +12,8 @@ const startApiServer = async () => {
     const app = express();
     expressLoader({ app });
     await apolloLoader({ app });
-    await dbConnection();
+    await typeOrmLoader();
 
-    await infrastructureLoader();
     await eventEmitterLoader();
     await commandLoader();
     loadHandleError({ app });

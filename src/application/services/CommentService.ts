@@ -57,7 +57,7 @@ export class CommentService {
 
         const existedComment = await this.commentRepository.findOneByPostIdAndCommentState(postId, CommentState.Submitted);
 
-        await this.eventPublisher.publishAsync(
+        await this.eventPublisher.dispatchAsync(
             new CommentCreatedEvent({
                 postId: postId,
                 content: content,
@@ -146,7 +146,7 @@ export class CommentService {
 
         comment.delete(account.id);
 
-        await this.eventPublisher.publishAsync(
+        await this.eventPublisher.dispatchAsync(
             new CommentDeletedEvent({
                 postId: comment.postId,
                 content: comment.content,

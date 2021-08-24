@@ -1,9 +1,9 @@
 import { EntityManager, getManager } from 'typeorm';
-import { DBContext } from '../typeorm/DBContext';
+import { TypeOrmDBContext } from '../type-orm/TypeOrmDBContext';
 
 export abstract class BaseRepository<T> {
-    get dbContext(): DBContext | undefined {
-        return DBContext.currentDBContext();
+    get dbContext(): TypeOrmDBContext | undefined {
+        return TypeOrmDBContext.currentDBContext();
     }
 
     get entityManager(): EntityManager {
