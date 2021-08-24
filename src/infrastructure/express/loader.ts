@@ -8,7 +8,7 @@ import { config } from '../../config';
 import { handleUserAgent } from './middlewares/user-agent';
 import { logger } from '../logger/winston';
 import { handle404Error, handleError } from './middlewares/error';
-import { DBContext } from '../typeorm/DBContext';
+import { TypeOrmDBContext } from '../type-orm/TypeOrmDBContext';
 
 export default ({ app }: { app: express.Application }) => {
     app.set('etag', false);
@@ -34,13 +34,13 @@ export default ({ app }: { app: express.Application }) => {
     );
     // app.use(handleUserAgent);
     app.use((req, res, next) => {
-        DBContext.create([req, res], next);
+        TypeOrmDBContext.create([req, res], next);
     });
 
     app.use(async (req, res, next) => {
         const oldSend = res.send;
         res.send = function(data) {
-            const queryRunner = DBContext.getQueryRunner();
+            const queryRunner = TypeOrmDBContext.getQueryRunner();
             if (queryRunner && !queryRunner.isReleased) {
                 queryRunner.release();
             }

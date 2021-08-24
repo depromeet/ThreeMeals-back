@@ -1,5 +1,5 @@
 import { Service } from 'typedi';
-import { DBContext } from '../typeorm/DBContext';
+import { DBContext } from './DBContext';
 import { config } from '../../config';
 import BaseError from '../../exceptions/BaseError';
 import { ERROR_CODE } from '../../exceptions/ErrorCode';
