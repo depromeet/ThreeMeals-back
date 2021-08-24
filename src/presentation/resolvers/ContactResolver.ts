@@ -3,7 +3,7 @@ import { Contact } from '../../entities/Contact';
 import { ContactService } from '../../application/services/ContactService';
 import { Service } from 'typedi';
 import { AuthMiddleware } from '../../infrastructure/apollo/middleware/auth';
-import { Account } from '../../entities/Account';
+import { AccountOrmEntity } from '../../entities/AccountOrmEntity';
 import { createContactArguments } from './arguments/ContactArgument';
 import BaseError from '../../exceptions/BaseError';
 import { ERROR_CODE } from '../../exceptions/ErrorCode';
@@ -18,7 +18,7 @@ export class ContactResolver {
     @UseMiddleware(AuthMiddleware)
     async createContact(
         @Args() { content }: createContactArguments,
-        @Ctx('account') account?: Account,
+        @Ctx('account') account?: AccountOrmEntity,
     ): Promise<Contact> {
         if (!account) {
             throw new BaseError(ERROR_CODE.UNAUTHORIZED);

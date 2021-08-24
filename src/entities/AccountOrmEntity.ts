@@ -6,11 +6,37 @@ import { Comment } from './Comment';
 import { LikePost } from './LikePost';
 import { LikeComment } from './LikeComment';
 import { Notification } from './Notification';
-import { Provider } from './Enums';
+import { Account } from '../domain/aggregates/account/Account';
+import { ProviderType } from '../domain/aggregates/account/ProviderType';
+import { Social } from '../domain/aggregates/account/Social';
+import { SocialType } from '../domain/aggregates/account/SocialType';
 
-@ObjectType()
+export class Provider {
+    @Column('varchar')
+    provider!: ProviderType;
+
+    @Column('varchar', { name: 'provider_id' })
+    providerId!: string;
+}
+
+@Entity('account_social')
+export class SocialOrmEntity extends Social {
+    @PrimaryGeneratedColumn({ type: 'bigint', unsigned: true })
+    id!: string;
+
+    @Column('varchar', { name: 'social_type' })
+    socialType!: SocialType;
+
+    @Column('varchar')
+    url!: string;
+
+    @Column('varchar', { name: 'account_id' })
+    accountId!: string;
+}
+
+@ObjectType('Account')
 @Entity('account')
-export class Account {
+export class AccountOrmEntity extends Account {
     @Field(() => ID)
     @PrimaryGeneratedColumn({ type: 'bigint', unsigned: true })
     id!: string;
@@ -19,12 +45,8 @@ export class Account {
     @Column('varchar')
     nickname!: string;
 
-    @Field((type) => Provider)
-    @Column('varchar')
+    @Column((type) => Provider, { prefix: false })
     provider!: Provider;
-
-    @Column('varchar', { name: 'provider_id' })
-    providerId!: string;
 
     @Field()
     @Column('varchar')
@@ -38,9 +60,14 @@ export class Account {
     @Column('varchar', { nullable: true })
     content!: string | null;
 
-    @Field(() => String, { nullable: true, description: 'instagram url' })
-    @Column('varchar', { name: 'instagram_url', nullable: true })
-    instagramUrl!: string | null;
+    @OneToMany(() => SocialOrmEntity,
+        (social) => social.accountId,
+        {
+            cascade: ['insert', 'update'],
+            createForeignKeyConstraints: false,
+        },
+    )
+    socials!: Social[];
 
     @Field(() => String, { nullable: true, description: 'no use!! just legacy' })
     profileUrl = null;

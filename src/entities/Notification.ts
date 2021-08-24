@@ -8,7 +8,7 @@ import {
     UpdateDateColumn,
 } from 'typeorm';
 import { Field, ID, ObjectType } from 'type-graphql';
-import { Account } from './Account';
+import { AccountOrmEntity } from './AccountOrmEntity';
 import { Post } from './Post';
 import { NotiType } from './Enums';
 
@@ -22,18 +22,18 @@ export class Notification {
     @Column({ name: 'account_id', type: 'bigint', unsigned: true })
     accountId!: string;
 
-    @Field(() => Account)
-    @ManyToOne((type) => Account, (account) => account.notifications)
+    @Field(() => AccountOrmEntity)
+    @ManyToOne((type) => AccountOrmEntity, (account) => account.notifications)
     @JoinColumn({ name: 'account_id', referencedColumnName: 'id' })
-    account!: Account | null;
+    account!: AccountOrmEntity | null;
 
     @Column({ name: 'other_account_id', type: 'bigint', unsigned: true })
     otherAccountId!: string;
 
-    @Field(() => Account, { nullable: true })
-    @ManyToOne(() => Account)
+    @Field(() => AccountOrmEntity, { nullable: true })
+    @ManyToOne(() => AccountOrmEntity)
     @JoinColumn({ name: 'other_account_id', referencedColumnName: 'id' })
-    otherAccount!: Account | null;
+    otherAccount!: AccountOrmEntity | null;
 
     @Column({ name: 'related_post_id', type: 'bigint', unsigned: true })
     relatedPostId!: string;

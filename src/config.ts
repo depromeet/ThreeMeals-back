@@ -85,7 +85,7 @@ export const config: IConfig = {
     jwt: {
         secret: process.env.JWT_SECRET || '',
         expiresIn: process.env.JWT_EXPIRATION || '7d',
-        iss: process.env.JWT_ISS || 'accounts.depromeet.com',
+        iss: process.env.JWT_ISS || 'accounts.hush-it.com',
     },
 
     aws: {

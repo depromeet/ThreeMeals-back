@@ -4,7 +4,7 @@ import { PostRepository } from '../../infrastructure/repositories/PostRepository
 import { Service } from 'typedi';
 import { Comment } from '../../entities/Comment';
 import { CommentRepository } from '../../infrastructure/repositories/CommentRepository';
-import { Account } from '../../entities/Account';
+import { AccountOrmEntity } from '../../entities/AccountOrmEntity';
 import BaseError from '../../exceptions/BaseError';
 import { ERROR_CODE } from '../../exceptions/ErrorCode';
 import { CommentState, SecretType } from '../../entities/Enums';
@@ -25,7 +25,7 @@ export class CommentService {
         postId: string;
         parentId: string | null;
         secretType: SecretType;
-        account: Account;
+        account: AccountOrmEntity;
     }): Promise<Comment> {
         const { content, postId, parentId, secretType, account } = args;
 
@@ -138,7 +138,7 @@ export class CommentService {
         return comments;
     }
 
-    async deleteComment(commentId: string, account: Account): Promise<void> {
+    async deleteComment(commentId: string, account: AccountOrmEntity): Promise<void> {
         const comment = await this.commentRepository.findOneById(commentId);
         if (!comment) {
             throw new BaseError(ERROR_CODE.NOT_FOUND);

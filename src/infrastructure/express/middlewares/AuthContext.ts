@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { Account } from '../../../entities/Account';
+import { AccountOrmEntity } from '../../../entities/AccountOrmEntity';
 
 export interface AuthPayload {
     id: string;
@@ -14,5 +14,5 @@ export const isAuthPayload = (payload: any): payload is AuthPayload => {
 export interface AuthContext {
     req: Request;
     res: Response;
-    account?: Account;
+    account?: AccountOrmEntity;
 }

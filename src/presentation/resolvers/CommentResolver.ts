@@ -4,7 +4,7 @@ import { CommentService } from '../../application/services/CommentService';
 import { Comment } from '../../entities/Comment';
 import { CreateCommentArgs } from './arguments/CommentArgument';
 import { AuthMiddleware } from '../../infrastructure/apollo/middleware/auth';
-import { Account } from '../../entities/Account';
+import { AccountOrmEntity } from '../../entities/AccountOrmEntity';
 import { CommentConnection } from './schemas/CommentConnection';
 import { GetCommentsArgument } from './arguments/GetCommentsArgument';
 import BaseError from '../../exceptions/BaseError';
@@ -24,7 +24,7 @@ export class CommentResolver {
 
     @Mutation((returns) => Comment)
     @UseMiddleware(AuthMiddleware)
-    async createComment(@Args() args: CreateCommentArgs, @Ctx('account') account?: Account): Promise<Comment> {
+    async createComment(@Args() args: CreateCommentArgs, @Ctx('account') account?: AccountOrmEntity): Promise<Comment> {
         if (!account) {
             throw new BaseError(ERROR_CODE.UNAUTHORIZED);
         }
@@ -40,7 +40,7 @@ export class CommentResolver {
 
     @Mutation((returns) => MutationResult)
     @UseMiddleware(AuthMiddleware)
-    async deleteComment(@Arg('commentId') commentId: string, @Ctx('account') account?: Account): Promise<MutationResult> {
+    async deleteComment(@Arg('commentId') commentId: string, @Ctx('account') account?: AccountOrmEntity): Promise<MutationResult> {
         if (!account) {
             throw new BaseError(ERROR_CODE.UNAUTHORIZED);
         }
@@ -50,7 +50,7 @@ export class CommentResolver {
 
     @Query((returns) => CommentConnection)
     @UseMiddleware(AuthMiddleware)
-    async getParentComments(@Args() args: GetCommentsArgument, @Ctx('account') account?: Account): Promise<CommentConnection> {
+    async getParentComments(@Args() args: GetCommentsArgument, @Ctx('account') account?: AccountOrmEntity): Promise<CommentConnection> {
         const comments = await this.commentService.getParentComments({
             myAccountId: account ? account.id : null,
             postId: args.postId,
@@ -64,7 +64,7 @@ export class CommentResolver {
     @UseMiddleware(AuthMiddleware)
     async getChildrenComments(
         @Args() args: GetChildrenCommentsArgument,
-        @Ctx('account') account?: Account,
+        @Ctx('account') account?: AccountOrmEntity,
     ): Promise<ChildrenCommentConnection> {
         const comments = await this.commentService.getChildrenComments({
             myAccountId: account ? account.id : null,
@@ -80,7 +80,7 @@ export class CommentResolver {
     @UseMiddleware(AuthMiddleware)
     async createLikeComments(
         @Args() { postId, commentId }: LikeCommentArgument,
-        @Ctx('account') account?: Account,
+        @Ctx('account') account?: AccountOrmEntity,
     ): Promise<MutationResult> {
         if (!account) {
             throw new BaseError(ERROR_CODE.UNAUTHORIZED);
@@ -94,7 +94,7 @@ export class CommentResolver {
     @UseMiddleware(AuthMiddleware)
     async deleteLikeComments(
         @Args() { postId, commentId }: LikeCommentArgument,
-        @Ctx('account') account?: Account,
+        @Ctx('account') account?: AccountOrmEntity,
     ): Promise<MutationResult> {
         if (!account) {
             throw new BaseError(ERROR_CODE.UNAUTHORIZED);
@@ -106,7 +106,7 @@ export class CommentResolver {
 
     @Query((returns) => [Comment])
     @UseMiddleware(AuthMiddleware)
-    async getAllCommentsByPostId(@Arg('postId') postId: string, @Ctx('account') account?: Account): Promise<Comment> {
+    async getAllCommentsByPostId(@Arg('postId') postId: string, @Ctx('account') account?: AccountOrmEntity): Promise<Comment> {
         const comments = await this.commentService.getAllCommentsByPostId(postId);
 
         return comments;

@@ -1,6 +1,6 @@
 import { CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 import { Field, ID, ObjectType } from 'type-graphql';
-import { Account } from './Account';
+import { AccountOrmEntity } from './AccountOrmEntity';
 import { Post } from './Post';
 import { IValueObject } from '../domain/common/IValueObject';
 
@@ -12,9 +12,9 @@ export class LikePost implements IValueObject {
     id!: string;
 
     // Account와 N:1 관계
-    @ManyToOne((type) => Account, (account) => account.likePosts)
+    @ManyToOne((type) => AccountOrmEntity, (account) => account.likePosts)
     @JoinColumn({ name: 'account_id', referencedColumnName: 'id' })
-    account?: Account;
+    account?: AccountOrmEntity;
 
     // Post와 N:1 관계
     @ManyToOne((type) => Post, (post) => post.likedPosts)

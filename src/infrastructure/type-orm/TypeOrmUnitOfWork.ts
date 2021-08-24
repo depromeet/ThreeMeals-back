@@ -1,11 +1,10 @@
-import { Service } from 'typedi';
 import { flatMap } from 'lodash';
 import { TypeOrmDBContext } from './TypeOrmDBContext';
 import { config } from '../../config';
-import { IUnitOfWork, UNIT_OF_WORK } from '../../domain/common/IUnitOfWork';
+import { IUnitOfWork } from '../../domain/common/IUnitOfWork';
 import { IEventPublisher } from '../event-publishers/EventPublisher';
 
-@Service(UNIT_OF_WORK)
+
 export class TypeOrmUnitOfWork implements IUnitOfWork {
     constructor(
         private readonly eventPublisher: IEventPublisher,

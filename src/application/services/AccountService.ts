@@ -1,7 +1,7 @@
 import { Service } from 'typedi';
 import BaseError from '../../exceptions/BaseError';
 import { ERROR_CODE } from '../../exceptions/ErrorCode';
-import { Account } from '../../entities/Account';
+import { AccountOrmEntity } from '../../entities/AccountOrmEntity';
 import { logger } from '../../infrastructure/logger/winston';
 import { AccountRepository } from '../../infrastructure/repositories/AccountRepository';
 import { SignInArgument } from '../../presentation/resolvers/arguments/SignInArgument';
@@ -21,7 +21,7 @@ export class AccountService {
 
     async getAccountInfo(args: {
         accountId: string,
-    }): Promise<Account> {
+    }): Promise<AccountOrmEntity> {
         const account = await this.accountRepository.findOneById(args.accountId);
         if (!account) {
             throw new BaseError(ERROR_CODE.USER_NOT_FOUND);
@@ -32,24 +32,25 @@ export class AccountService {
     async signIn({ accessToken, provider }: SignInArgument): Promise<string> {
         const userData = await this.fetchUserData({ accessToken, provider });
         if (userData) {
-            let accountData = await this.accountRepository.getAccount(userData.data.id);
-            if (!accountData) {
-                const newAccount = new Account();
+            // let accountData = await this.accountRepository.getAccount(userData.data.id);
+            // if (!accountData) {
+            //     const newAccount = new AccountOrmEntity();
+            //
+            //     newAccount.nickname = userData.data.properties.nickname;
+            //     newAccount.providerId = userData.data.id;
+            //     newAccount.status = 'active';
+            //     if (!userData.data.properties.profile_image) {
+            //         newAccount.image = null;
+            //     } else {
+            //         newAccount.image = userData.data.properties.profile_image;
+            //     }
+            //     newAccount.provider = provider;
+            //     accountData = await this.accountRepository.saveAccount(newAccount);
+            // }
+            // // 필요한 정보 담아야 하는걸로 수정필요
 
-                newAccount.nickname = userData.data.properties.nickname;
-                newAccount.providerId = userData.data.id;
-                newAccount.status = 'active';
-                if (!userData.data.properties.profile_image) {
-                    newAccount.image = null;
-                } else {
-                    newAccount.image = userData.data.properties.profile_image;
-                }
-                newAccount.provider = provider;
-                accountData = await this.accountRepository.saveAccount(newAccount);
-            }
-            // 필요한 정보 담아야 하는걸로 수정필요
-
-            return await this.issueJWT(classToPlain(accountData));
+            // return await this.issueJWT(classToPlain(accountData));
+            return 'temp';
         } else {
             logger.info('no user');
             throw new BaseError(ERROR_CODE.USER_NOT_FOUND);
@@ -76,7 +77,7 @@ export class AccountService {
         content?: string;
         instagramUrl?: string;
         accountId: string;
-    }): Promise<Account> {
+    }): Promise<AccountOrmEntity> {
         const { nickname, content, accountId, instagramUrl } = args;
 
         const updateInfo = await this.accountRepository.findOneById(accountId);
@@ -89,7 +90,7 @@ export class AccountService {
         // updateInfo!.image = image;
         nickname && (updateInfo.nickname = nickname);
         content && (updateInfo.content = content);
-        instagramUrl && (updateInfo.instagramUrl = instagramUrl);
+        // instagramUrl && (updateInfo.instagramUrl = instagramUrl);
 
 
         const accountInfo = await this.accountRepository.saveAccount(updateInfo);
@@ -100,7 +101,7 @@ export class AccountService {
     async updateImage(args: {
         accountId: string;
         file: FileUpload;
-    }): Promise<Account> {
+    }): Promise<AccountOrmEntity> {
         const { accountId, file } = args;
         const { createReadStream, filename, mimetype, encoding } = file;
 
@@ -133,7 +134,7 @@ export class AccountService {
     // 기본이미지로 변경
     async updateImageToBasic(args: {
         accountId: string;
-    }): Promise<Account> {
+    }): Promise<AccountOrmEntity> {
         const { accountId } = args;
 
         const updateInfo = await this.accountRepository.findOneById(accountId);

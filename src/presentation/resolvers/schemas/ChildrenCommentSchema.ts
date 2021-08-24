@@ -1,7 +1,7 @@
 import { Field, ID, ObjectType } from 'type-graphql';
 import { CommentState, SecretType } from '../../../entities/Enums';
 import { Connection, Edge, PageInfo } from './base/Connection';
-import { Account } from '../../../entities/Account';
+import { AccountOrmEntity } from '../../../entities/AccountOrmEntity';
 import { LikeComment } from '../../../entities/LikeComment';
 
 @ObjectType('childrenComments')
@@ -24,8 +24,8 @@ export class ChildrenCommentSchema {
     @Field()
     updatedAt!: Date;
 
-    @Field((type) => Account, { nullable: true })
-    account!: Account | null;
+    @Field((type) => AccountOrmEntity, { nullable: true })
+    account!: AccountOrmEntity | null;
 
     @Field()
     postId!: string;

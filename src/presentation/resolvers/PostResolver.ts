@@ -8,7 +8,7 @@ import { PostEmoticon } from '../../entities/PostEmoticon';
 import { PostService } from '../../application/services/PostService';
 import { CreatePostArgument } from './arguments/CreatePostArgument';
 import { AuthMiddleware } from '../../infrastructure/apollo/middleware/auth';
-import { Account } from '../../entities/Account';
+import { AccountOrmEntity } from '../../entities/AccountOrmEntity';
 import { PostEmoticonRepository } from '../../infrastructure/repositories/PostEmoticonRepository';
 import { PostConnection } from './schemas/PostConnection';
 import { GetMyNewPostCount, GetPostsArgument } from './arguments/GetPostsArgument';
@@ -32,7 +32,7 @@ export class PostResolver {
     @UseMiddleware(AuthMiddleware)
     async getPost(
         @Arg('postId') postId: string,
-        @Ctx('account') account?: Account,
+        @Ctx('account') account?: AccountOrmEntity,
     ): Promise<Post> {
         return this.postService.getPost({
             postId,
@@ -44,7 +44,7 @@ export class PostResolver {
     @UseMiddleware(AuthMiddleware)
     async getPosts(
         @Args() args: GetPostsArgument,
-        @Ctx('account') account?: Account,
+        @Ctx('account') account?: AccountOrmEntity,
     ): Promise<PostConnection> {
         if (args.postState && args.postState === PostState.Deleted) {
             console.error('post state cannot be deleted');
@@ -67,7 +67,7 @@ export class PostResolver {
     @UseMiddleware(AuthMiddleware)
     async getMyNewPostCount(
         @Args() args: GetMyNewPostCount,
-        @Ctx('account') account?: Account,
+        @Ctx('account') account?: AccountOrmEntity,
     ): Promise<NewPostCount> {
         if (!account) {
             throw new BaseError(ERROR_CODE.UNAUTHORIZED);
@@ -86,7 +86,7 @@ export class PostResolver {
     @UseMiddleware(AuthMiddleware)
     async createPost(
         @Args() { content, color, secretType, postType, toAccountId, emoticons }: CreatePostArgument,
-        @Ctx('account') account?: Account,
+        @Ctx('account') account?: AccountOrmEntity,
     ): Promise<MutationResult> {
         if (!account) {
             throw new BaseError(ERROR_CODE.UNAUTHORIZED);
@@ -109,7 +109,7 @@ export class PostResolver {
     @UseMiddleware(AuthMiddleware)
     async deletePost(
         @Arg('postId') postId: string,
-        @Ctx('account') account?: Account,
+        @Ctx('account') account?: AccountOrmEntity,
     ): Promise<MutationResult> {
         if (!account) {
             throw new BaseError(ERROR_CODE.UNAUTHORIZED);

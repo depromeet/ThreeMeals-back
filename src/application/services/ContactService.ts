@@ -4,7 +4,7 @@ import { AccountRepository } from '../../infrastructure/repositories/AccountRepo
 import { ContactRepository } from '../../infrastructure/repositories/ContactRepository';
 import BaseError from '../../exceptions/BaseError';
 import { ERROR_CODE } from '../../exceptions/ErrorCode';
-import { Account } from '../../entities/Account';
+import { AccountOrmEntity } from '../../entities/AccountOrmEntity';
 
 @Service()
 export class ContactService {
@@ -14,7 +14,7 @@ export class ContactService {
     ) {}
 
     async createContact(args: {
-        sender: Account,
+        sender: AccountOrmEntity,
         content: string,
     }): Promise<Contact> {
         const { sender, content } = args;

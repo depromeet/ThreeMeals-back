@@ -9,7 +9,7 @@ import {
     UpdateDateColumn,
 } from 'typeorm';
 import { Field, ID, ObjectType } from 'type-graphql';
-import { Account } from './Account';
+import { AccountOrmEntity } from './AccountOrmEntity';
 import { DomainEntity } from '../domain/common/DomainEntity';
 
 
@@ -28,10 +28,10 @@ export class Contact extends DomainEntity {
     @RelationId((contact: Contact) => contact.sender)
     senderId!: string;
 
-    @Field(() => Account)
-    @ManyToOne((type) => Account, (account) => account.writeContacts)
+    @Field(() => AccountOrmEntity)
+    @ManyToOne((type) => AccountOrmEntity, (account) => account.writeContacts)
     @JoinColumn({ name: 'sender_id', referencedColumnName: 'id' })
-    sender!: Account | null;
+    sender!: AccountOrmEntity | null;
 
     @Field()
     @CreateDateColumn({ name: 'created_at' })

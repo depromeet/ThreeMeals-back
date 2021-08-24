@@ -11,7 +11,7 @@ import {
 import * as dayjs from 'dayjs';
 import { Field, ID, ObjectType } from 'type-graphql';
 import { isEnum, IsHexColor } from 'class-validator';
-import { Account } from './Account';
+import { AccountOrmEntity } from './AccountOrmEntity';
 import { Comment } from './Comment';
 import { PostEmoticon } from './PostEmoticon';
 import { LikePost } from './LikePost';
@@ -68,18 +68,18 @@ export class Post extends AggregateRoot {
     fromAccountId!: string;
 
     // Account와 N:1 관계
-    @Field(() => Account, { nullable: true })
-    @ManyToOne((type) => Account, (account) => account.writePosts)
+    @Field(() => AccountOrmEntity, { nullable: true })
+    @ManyToOne((type) => AccountOrmEntity, (account) => account.writePosts)
     @JoinColumn({ name: 'from_account_id', referencedColumnName: 'id' })
-    fromAccount!: Account | null;
+    fromAccount!: AccountOrmEntity | null;
 
     @Column({ name: 'to_account_id', type: 'bigint', unsigned: true })
     toAccountId!: string;
 
-    @Field(() => Account)
-    @ManyToOne((type) => Account, (account) => account.receivePosts)
+    @Field(() => AccountOrmEntity)
+    @ManyToOne((type) => AccountOrmEntity, (account) => account.receivePosts)
     @JoinColumn({ name: 'to_account_id', referencedColumnName: 'id' })
-    toAccount!: Account | null;
+    toAccount!: AccountOrmEntity | null;
 
     // LikePosts 1:N 관계
     @Field(() => [LikePost])

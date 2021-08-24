@@ -1,6 +1,6 @@
 import { Service } from 'typedi';
 import { Notification } from '../../entities/Notification';
-import { Account } from '../../entities/Account';
+import { AccountOrmEntity } from '../../entities/AccountOrmEntity';
 import { BaseRepository } from './BaseRepository';
 
 @Service()
@@ -9,7 +9,7 @@ export class NotificationRepository extends BaseRepository<Notification> {
         return this.entityManager.save(noti);
     }
 
-    async getNotifications(account: Account): Promise<Notification[]> {
+    async getNotifications(account: AccountOrmEntity): Promise<Notification[]> {
         const notification = 'notification';
         const builder = this.entityManager.createQueryBuilder(Notification, notification)
             .where(`${notification}.accountId = :accountId`, { accountId: account.id })
@@ -26,7 +26,7 @@ export class NotificationRepository extends BaseRepository<Notification> {
             .execute();
     }
 
-    async countUnreadNoti(account: Account): Promise<number> {
+    async countUnreadNoti(account: AccountOrmEntity): Promise<number> {
         const notiDatas = await this.entityManager
             .find(Notification, { accountId: account.id, read: false });
         return notiDatas.length;

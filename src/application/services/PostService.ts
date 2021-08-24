@@ -1,4 +1,4 @@
-import { Inject, Service } from 'typedi';
+import { Service } from 'typedi';
 import { each, filter, flow, map, unionBy, values } from 'lodash/fp';
 import { Post } from '../../entities/Post';
 import { PostEmoticon } from '../../entities/PostEmoticon';
@@ -7,15 +7,15 @@ import { PostRepository } from '../../infrastructure/repositories/PostRepository
 import { PostState, PostType, SecretType } from '../../entities/Enums';
 import BaseError from '../../exceptions/BaseError';
 import { ERROR_CODE } from '../../exceptions/ErrorCode';
-import { Account } from '../../entities/Account';
-import { IUnitOfWork, UNIT_OF_WORK } from '../../domain/common/IUnitOfWork';
+import { AccountOrmEntity } from '../../entities/AccountOrmEntity';
+import { IUnitOfWork } from '../../domain/common/IUnitOfWork';
 
 @Service()
 export class PostService {
     constructor(
         private readonly accountRepository: AccountRepository,
         private readonly postRepository: PostRepository,
-        @Inject(UNIT_OF_WORK) private readonly unitOfWork: IUnitOfWork,
+        private readonly unitOfWork: IUnitOfWork,
     ) {}
 
     async getPost(args: {
@@ -60,7 +60,7 @@ export class PostService {
     }
 
     async createPost(args: {
-        fromAccount: Account;
+        fromAccount: AccountOrmEntity;
         toAccountId: string;
         content: string;
         color: string;
@@ -112,7 +112,7 @@ export class PostService {
     }
 
     // Post 삭제
-    async deletePost(args: { account: Account, postId: string }): Promise<void> {
+    async deletePost(args: { account: AccountOrmEntity, postId: string }): Promise<void> {
         const { account, postId } = args;
         const post = await this.postRepository.findOneById(postId);
         if (!post) {

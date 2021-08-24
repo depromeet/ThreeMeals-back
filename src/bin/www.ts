@@ -2,8 +2,7 @@ import 'reflect-metadata';
 import * as express from 'express';
 import apolloLoader from '../infrastructure/apollo/loader';
 import expressLoader, { loadHandleError } from '../infrastructure/express/loader';
-import eventEmitterLoader from '../infrastructure/typedi/event-emitter';
-import commandLoader from '../infrastructure/typedi/command';
+import typediLoader from '../infrastructure/typedi';
 import typeOrmLoader from '../infrastructure/type-orm/loader';
 import { logger } from '../infrastructure/logger/winston';
 import { config } from '../config';
@@ -14,8 +13,7 @@ const startApiServer = async () => {
     await apolloLoader({ app });
     await typeOrmLoader();
 
-    await eventEmitterLoader();
-    await commandLoader();
+    await typediLoader();
     loadHandleError({ app });
 
     app.listen(config.server.port, () => {

@@ -1,7 +1,7 @@
 import { Arg, Args, Ctx, Mutation, Query, Resolver, UseMiddleware } from 'type-graphql';
 import { Service } from 'typedi';
 import { AccountService } from '../../application/services/AccountService';
-import { Account } from '../../entities/Account';
+import { AccountOrmEntity } from '../../entities/AccountOrmEntity';
 import { Token } from './schemas/TokenSchema';
 import { AuthMiddleware } from '../../infrastructure/apollo/middleware/auth';
 import { SignInArgument } from './arguments/SignInArgument';
@@ -10,40 +10,33 @@ import { FileUpload, GraphQLUpload } from 'graphql-upload';
 import BaseError from '../../exceptions/BaseError';
 import { ERROR_CODE } from '../../exceptions/ErrorCode';
 import { CommandBus } from '../../application/commands/Command';
-import { HelloCommand } from '../../application/commands/hello/HelloCommand';
+import { SignInCommand } from '../../application/commands/sign-in/SignInCommand';
 
 @Service()
-@Resolver(() => Account)
+@Resolver(() => AccountOrmEntity)
 export class AccountResolver {
     constructor(
         private readonly accountService: AccountService,
         private readonly commandBus: CommandBus,
     ) {}
 
-    @Query((returns) => String)
-    async helloWorld(): Promise<string> {
-        const a = await this.commandBus.send<HelloCommand, string>(new HelloCommand('1', 'hello world'));
-        console.log(a);
-        return 'hello';
-    }
-
     // 다른 사용자 정보 가져오기
-    @Query((returns) => Account)
+    @Query((returns) => AccountOrmEntity)
     @UseMiddleware(AuthMiddleware)
     async getAccountInfo(
         @Arg('accountId') accountId: string,
-    ): Promise<Account> {
+    ): Promise<AccountOrmEntity> {
         const accountInfo = await this.accountService.getAccountInfo({ accountId: accountId });
 
         return accountInfo;
     }
 
     // 내 정보 가져오기
-    @Query((returns) => Account)
+    @Query((returns) => AccountOrmEntity)
     @UseMiddleware(AuthMiddleware)
     async getMyAccountInfo(
-        @Ctx('account') account?: Account,
-    ): Promise<Account> {
+        @Ctx('account') account?: AccountOrmEntity,
+    ): Promise<AccountOrmEntity> {
         if (!account) {
             throw new BaseError(ERROR_CODE.UNAUTHORIZED);
         }
@@ -55,17 +48,21 @@ export class AccountResolver {
     // jwtnewAccount
     @Mutation((returns) => Token)
     async signIn(@Args() { accessToken, provider }: SignInArgument, @Ctx() ctx: any): Promise<Token> {
-        const accountToken = await this.accountService.signIn({ accessToken, provider });
-        return { token: accountToken };
+        const accountToken = await this.commandBus.send(new SignInCommand({
+            token: accessToken,
+            providerType: provider as any,
+        }));
+        // const accountToken = await this.accountService.signIn({ accessToken, provider });
+        return { token: 'asdf' };
     }
 
     // 프로필 수정
-    @Mutation((returns) => Account)
+    @Mutation((returns) => AccountOrmEntity)
     @UseMiddleware(AuthMiddleware)
     async updateAccountInfo(
         @Args() { nickname, content, instagramUrl }: updateAccountInfoArgument,
-        @Ctx('account') account?: Account,
-    ): Promise<Account> {
+        @Ctx('account') account?: AccountOrmEntity,
+    ): Promise<AccountOrmEntity> {
         if (!account) {
             throw new BaseError(ERROR_CODE.UNAUTHORIZED);
         }
@@ -85,7 +82,7 @@ export class AccountResolver {
     @UseMiddleware(AuthMiddleware)
     async updateImage(
         @Arg('file', () => GraphQLUpload) file: FileUpload,
-        @Ctx('account') account?: Account,
+        @Ctx('account') account?: AccountOrmEntity,
     ): Promise<boolean> {
         if (!account) {
             throw new BaseError(ERROR_CODE.UNAUTHORIZED);
@@ -102,7 +99,7 @@ export class AccountResolver {
     @Mutation((returns) => Boolean)
     @UseMiddleware(AuthMiddleware)
     async updateImageToBasic(
-        @Ctx('account') account?: Account,
+        @Ctx('account') account?: AccountOrmEntity,
     ): Promise<boolean> {
         if (!account) {
             throw new BaseError(ERROR_CODE.UNAUTHORIZED);

@@ -8,7 +8,7 @@ import {
     UpdateDateColumn,
 } from 'typeorm';
 import { Field, ID, ObjectType } from 'type-graphql';
-import { Account } from './Account';
+import { AccountOrmEntity } from './AccountOrmEntity';
 import { Comment } from './Comment';
 import { IValueObject } from '../domain/common/IValueObject';
 
@@ -23,9 +23,9 @@ export class LikeComment implements IValueObject {
     accountId!: string;
 
     // Account와 N:1 관계
-    @ManyToOne((type) => Account, (account) => account.likeComments)
+    @ManyToOne((type) => AccountOrmEntity, (account) => account.likeComments)
     @JoinColumn({ name: 'account_id', referencedColumnName: 'id' })
-    account!: Account;
+    account!: AccountOrmEntity;
 
     // Post와 N:1 관계
     @ManyToOne((type) => Comment, (comment) => comment.likedComments)

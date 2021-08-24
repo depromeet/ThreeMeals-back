@@ -10,7 +10,7 @@ import {
     UpdateDateColumn,
 } from 'typeorm';
 import { Field, ID, ObjectType } from 'type-graphql';
-import { Account } from './Account';
+import { AccountOrmEntity } from './AccountOrmEntity';
 import { Post } from './Post';
 import { LikeComment } from './LikeComment';
 import { CommentState, SecretType } from './Enums';
@@ -50,10 +50,10 @@ export class Comment extends DomainEntity {
     accountId!: string;
 
     // Account와 N:1 관계
-    @Field((type) => Account, { nullable: true })
-    @ManyToOne((type) => Account, (account) => account.writeComments)
+    @Field((type) => AccountOrmEntity, { nullable: true })
+    @ManyToOne((type) => AccountOrmEntity, (account) => account.writeComments)
     @JoinColumn({ name: 'account_id', referencedColumnName: 'id' })
-    account!: Account | null;
+    account!: AccountOrmEntity | null;
 
     @Field()
     // @RelationId((comment: Comment) => comment.post)

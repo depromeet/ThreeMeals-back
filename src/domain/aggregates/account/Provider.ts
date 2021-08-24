@@ -1,8 +1,5 @@
 import { IValueObject } from '../../common/IValueObject';
-
-export enum ProviderType {
-    Kakao = 'Kakao',
-}
+import { ProviderType } from './ProviderType';
 
 export class Provider implements IValueObject {
     provider: ProviderType;
