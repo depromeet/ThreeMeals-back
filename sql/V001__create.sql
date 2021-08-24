@@ -7,7 +7,7 @@ CREATE TABLE account
   `status`      VARCHAR(30)         NOT NULL COMMENT '상태',
   `image`       VARCHAR(255)        NULL COMMENT '프로필 이미지',
   `content`     VARCHAR(255)        NULL COMMENT '자기소개 글',
-  `profile_url`  VARCHAR(255)        NULL COMMENT '인스타그램 혹은 facebook',
+  `instagram_url`  VARCHAR(255)        NULL COMMENT '인스타그램 url',
   `created_at`  TIMESTAMP           NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at`  TIMESTAMP           NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)

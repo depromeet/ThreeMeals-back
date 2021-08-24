@@ -63,7 +63,7 @@ export class AccountResolver {
     @Mutation((returns) => Account)
     @UseMiddleware(AuthMiddleware)
     async updateAccountInfo(
-        @Args() { nickname, content, profileUrl }: updateAccountInfoArgument,
+        @Args() { nickname, content, instagramUrl }: updateAccountInfoArgument,
         @Ctx('account') account?: Account,
     ): Promise<Account> {
         if (!account) {
@@ -73,7 +73,7 @@ export class AccountResolver {
         const accountInfo = await this.accountService.updateAccountInfo({
             nickname,
             content,
-            profileUrl,
+            instagramUrl,
             accountId: account.id,
         });
 

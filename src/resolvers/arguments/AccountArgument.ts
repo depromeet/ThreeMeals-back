@@ -23,5 +23,5 @@ export class updateAccountInfoArgument {
     })
     @IsOptional()
     @Field({ nullable: true })
-    profileUrl?: string;
+    instagramUrl?: string;
 }

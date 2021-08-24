@@ -74,10 +74,10 @@ export class AccountService {
     async updateAccountInfo(args: {
         nickname?: string;
         content?: string;
-        profileUrl?: string;
+        instagramUrl?: string;
         accountId: string;
     }): Promise<Account> {
-        const { nickname, content, accountId, profileUrl } = args;
+        const { nickname, content, accountId, instagramUrl } = args;
 
         const updateInfo = await this.accountRepository.findOneById(accountId);
 
@@ -89,7 +89,7 @@ export class AccountService {
         // updateInfo!.image = image;
         nickname && (updateInfo.nickname = nickname);
         content && (updateInfo.content = content);
-        profileUrl && (updateInfo.profileUrl = profileUrl);
+        instagramUrl && (updateInfo.instagramUrl = instagramUrl);
 
 
         const accountInfo = await this.accountRepository.saveAccount(updateInfo);

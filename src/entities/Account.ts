@@ -38,9 +38,9 @@ export class Account {
     @Column('varchar', { nullable: true })
     content!: string | null;
 
-    @Field(() => String, { nullable: true, description: 'insta or facebook url' })
-    @Column('varchar', { name: 'profile_url', nullable: true })
-    profileUrl!: string | null;
+    @Field(() => String, { nullable: true, description: 'instagram url' })
+    @Column('varchar', { name: 'instagram_url', nullable: true })
+    instagramUrl!: string | null;
 
     @Field()
     @CreateDateColumn({ name: 'created_at' })
