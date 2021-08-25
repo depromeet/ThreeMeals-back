@@ -7,7 +7,7 @@ import * as helmet from 'helmet';
 import { config } from '../../config';
 import { logger } from '../logger/winston';
 import { handle404Error, handleError } from './middlewares/error';
-import { TypeOrmDBContext } from "../type-orm/TypeOrmDBContext";
+import { TypeOrmDBContext } from '../type-orm/TypeOrmDBContext';
 
 export default ({ app }: { app: express.Application }) => {
     app.set('etag', false);

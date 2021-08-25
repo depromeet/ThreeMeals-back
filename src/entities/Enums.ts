@@ -1,5 +1,5 @@
 import { registerEnumType } from 'type-graphql';
-import { SNSType } from "../domain/aggregates/account/SNSType";
+import { SNSType } from '../domain/aggregates/account/SNSType';
 
 // Account - Provider
 export enum Provider {

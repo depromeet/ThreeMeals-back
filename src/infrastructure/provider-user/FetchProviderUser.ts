@@ -1,6 +1,6 @@
 import {
     IFetchProviderUser,
-    ProviderUserInfo
+    ProviderUserInfo,
 } from '../../application/services/fetch-provider-user/IFetchProviderUser';
 import { ProviderType } from '../../domain/aggregates/account/ProviderType';
 import { KakaoApi } from './KakaoApi';

@@ -93,7 +93,7 @@ export class CommentRepository extends BaseRepository<Comment> {
         const { postId } = args;
         const comment = 'comment';
         const queryBuilder = this.entityManager.createQueryBuilder(Comment, comment);
-        let builder = queryBuilder
+        const builder = queryBuilder
             .leftJoinAndSelect(`${comment}.account`, 'account')
             .leftJoinAndSelect(`${comment}.likedComments`, 'likedComments')
             .where(`${comment}.post_id = :postId`, { postId })
@@ -108,7 +108,7 @@ export class CommentRepository extends BaseRepository<Comment> {
     async listChildrenByPostId(args: { postId: string }): Promise<Comment[]> {
         const { postId } = args;
         const comment = 'comment';
-        let builder = this.entityManager
+        const builder = this.entityManager
             .createQueryBuilder(Comment, comment)
             .leftJoinAndSelect(`${comment}.account`, 'account')
             .leftJoinAndSelect(`${comment}.likedComments`, 'likedComments')

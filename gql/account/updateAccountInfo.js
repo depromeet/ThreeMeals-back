@@ -24,7 +24,11 @@ const updateAccountInfo = (client, variables) => {
                 image
                 content
                 profileUrl
-                instagramUrl
+                snsInfos {
+                    id
+                    snsType
+                    url
+                }
             }
         }
     `

@@ -14,11 +14,11 @@ import { SignInCommand } from '../../application/commands/sign-in/SignInCommand'
 import { UpdateAccountCommand } from '../../application/commands/update-account/UpdateAccountCommand';
 import { UploadAccountImageCommand } from '../../application/commands/upload-account-image/UploadAccountImageCommand';
 import { DeleteAccountImageCommand } from '../../application/commands/delete-account-image/DeleteAccountImageCommand';
-import { MutationResult } from "./schemas/base/MutationResult";
-import { RegisterSnsInfoArgument } from "./arguments/RegisterSnsInfoArgument";
-import { RegisterSnsCommand } from "../../application/commands/register-sns/RegisterSnsCommand";
-import { DeregisterSnsInfoArgument } from "./arguments/DeregisterSnsInfoArgument";
-import { DeregisterSnsCommand } from "../../application/commands/deregister-sns/DeregisterSnsCommand";
+import { MutationResult } from './schemas/base/MutationResult';
+import { RegisterSnsInfoArgument } from './arguments/RegisterSnsInfoArgument';
+import { RegisterSnsCommand } from '../../application/commands/register-sns/RegisterSnsCommand';
+import { DeregisterSnsInfoArgument } from './arguments/DeregisterSnsInfoArgument';
+import { DeregisterSnsCommand } from '../../application/commands/deregister-sns/DeregisterSnsCommand';
 
 @Service()
 @Resolver(() => AccountOrmEntity)
