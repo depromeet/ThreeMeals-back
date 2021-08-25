@@ -19,14 +19,18 @@ export class Provider {
     providerId!: string;
 }
 
+@ObjectType('Social')
 @Entity('account_social')
 export class SocialOrmEntity extends Social {
+    @Field(() => ID)
     @PrimaryGeneratedColumn({ type: 'bigint', unsigned: true })
     id!: string;
 
+    @Field((type) => SocialType)
     @Column('varchar', { name: 'social_type' })
     socialType!: SocialType;
 
+    @Field()
     @Column('varchar')
     url!: string;
 
@@ -60,6 +64,7 @@ export class AccountOrmEntity extends Account {
     @Column('varchar', { nullable: true })
     content!: string | null;
 
+    @Field(() => [SocialOrmEntity])
     @OneToMany(() => SocialOrmEntity,
         (social) => social.accountId,
         {
@@ -68,9 +73,6 @@ export class AccountOrmEntity extends Account {
         },
     )
     socials!: Social[];
-
-    @Field(() => String, { nullable: true, description: 'no use!! just legacy' })
-    profileUrl = null;
 
     @Field()
     @CreateDateColumn({ name: 'created_at' })

@@ -3,7 +3,7 @@ import * as express from 'express';
 import apolloLoader from '../infrastructure/apollo/loader';
 import expressLoader, { loadHandleError } from '../infrastructure/express/loader';
 import typediLoader from '../infrastructure/typedi';
-import typeOrmLoader from '../infrastructure/type-orm/loader';
+import typeOrmLoader from '../infrastructure/type-orm/createConnection';
 import { logger } from '../infrastructure/logger/winston';
 import { config } from '../config';
 

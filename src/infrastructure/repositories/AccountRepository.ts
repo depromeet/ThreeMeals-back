@@ -25,7 +25,7 @@ export class AccountRepository extends BaseRepository<AccountOrmEntity> implemen
     // for abstract repository
     async add(account: Account): Promise<void> {
         this.dbContext && this.dbContext.addDomainEntity(account);
-        await this.entityManager.save(Account, account);
+        await this.entityManager.save(AccountOrmEntity, account);
     }
 
     async save(account: Account): Promise<void> {

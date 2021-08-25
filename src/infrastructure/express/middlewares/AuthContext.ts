@@ -16,3 +16,9 @@ export interface AuthContext {
     res: Response;
     account?: AccountOrmEntity;
 }
+
+export interface AuthJwtContext {
+    req: Request;
+    res: Response;
+    accountId?: string
+}

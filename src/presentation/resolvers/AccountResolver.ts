@@ -1,9 +1,9 @@
 import { Arg, Args, Ctx, Mutation, Query, Resolver, UseMiddleware } from 'type-graphql';
 import { Service } from 'typedi';
-import { AccountService } from '../../application/services/AccountService';
+import { AccountQueries } from '../../application/queries/AccountQueries';
 import { AccountOrmEntity } from '../../entities/AccountOrmEntity';
 import { Token } from './schemas/TokenSchema';
-import { AuthMiddleware } from '../../infrastructure/apollo/middleware/auth';
+import { AuthJwtMiddleware, AuthMiddleware } from '../../infrastructure/apollo/middleware/auth';
 import { SignInArgument } from './arguments/SignInArgument';
 import { updateAccountInfoArgument } from './arguments/AccountArgument';
 import { FileUpload, GraphQLUpload } from 'graphql-upload';
@@ -11,12 +11,15 @@ import BaseError from '../../exceptions/BaseError';
 import { ERROR_CODE } from '../../exceptions/ErrorCode';
 import { CommandBus } from '../../application/commands/Command';
 import { SignInCommand } from '../../application/commands/sign-in/SignInCommand';
+import { UpdateAccountCommand } from '../../application/commands/update-account/UpdateAccountCommand';
+import { UploadAccountImageCommand } from '../../application/commands/upload-account-image/UploadAccountImageCommand';
+import { DeleteAccountImageCommand } from '../../application/commands/delete-account-image/DeleteAccountImageCommand';
 
 @Service()
 @Resolver(() => AccountOrmEntity)
 export class AccountResolver {
     constructor(
-        private readonly accountService: AccountService,
+        private readonly accountQueries: AccountQueries,
         private readonly commandBus: CommandBus,
     ) {}
 
@@ -26,22 +29,22 @@ export class AccountResolver {
     async getAccountInfo(
         @Arg('accountId') accountId: string,
     ): Promise<AccountOrmEntity> {
-        const accountInfo = await this.accountService.getAccountInfo({ accountId: accountId });
-
+        const accountInfo = await this.accountQueries.getAccountInfo({ accountId: accountId });
+        !accountInfo.socials && ( accountInfo.socials = []);
         return accountInfo;
     }
 
     // 내 정보 가져오기
     @Query((returns) => AccountOrmEntity)
-    @UseMiddleware(AuthMiddleware)
+    @UseMiddleware(AuthJwtMiddleware)
     async getMyAccountInfo(
-        @Ctx('account') account?: AccountOrmEntity,
+        @Ctx('accountId') accountId?: string,
     ): Promise<AccountOrmEntity> {
-        if (!account) {
+        if (!accountId) {
             throw new BaseError(ERROR_CODE.UNAUTHORIZED);
         }
-        const accountInfo = await this.accountService.getAccountInfo({ accountId: account.id });
-
+        const accountInfo = await this.accountQueries.getAccountInfo({ accountId });
+        !accountInfo.socials && ( accountInfo.socials = []);
         return accountInfo;
     }
 
@@ -52,61 +55,71 @@ export class AccountResolver {
             token: accessToken,
             providerType: provider as any,
         }));
-        // const accountToken = await this.accountService.signIn({ accessToken, provider });
-        return { token: 'asdf' };
+        return { token: accountToken };
     }
 
     // 프로필 수정
     @Mutation((returns) => AccountOrmEntity)
-    @UseMiddleware(AuthMiddleware)
+    @UseMiddleware(AuthJwtMiddleware)
     async updateAccountInfo(
-        @Args() { nickname, content, instagramUrl }: updateAccountInfoArgument,
-        @Ctx('account') account?: AccountOrmEntity,
+        @Args() { nickname, content }: updateAccountInfoArgument,
+        @Ctx('accountId') accountId?: string,
     ): Promise<AccountOrmEntity> {
-        if (!account) {
+        if (!accountId) {
             throw new BaseError(ERROR_CODE.UNAUTHORIZED);
         }
 
-        const accountInfo = await this.accountService.updateAccountInfo({
+        const changedAccount = await this.commandBus.send(new UpdateAccountCommand({
             nickname,
             content,
-            instagramUrl,
-            accountId: account.id,
-        });
-
-        return accountInfo;
+            accountId,
+        }));
+        !changedAccount.socials && ( changedAccount.socials = []);
+        return changedAccount;
     }
 
-    // 프로필 수정 - 사진 추가
     @Mutation((returns) => Boolean)
-    @UseMiddleware(AuthMiddleware)
+    @UseMiddleware(AuthJwtMiddleware)
     async updateImage(
         @Arg('file', () => GraphQLUpload) file: FileUpload,
-        @Ctx('account') account?: AccountOrmEntity,
+        @Ctx('accountId') accountId?: string,
     ): Promise<boolean> {
-        if (!account) {
+        if (!accountId) {
             throw new BaseError(ERROR_CODE.UNAUTHORIZED);
         }
-        await this.accountService.updateImage({
-            accountId: account.id,
-            file,
-        });
+
+        // check mimetype & ext type
+        const mimeType = /(image\/jpg|image\/jpeg|image\/png|image\/gif|image\/bmp)$/;
+        const extType = /(.*?)\.(jpg|jpeg|png|gif|bmp)$/;
+        if (!mimeType.test(file.mimetype) || !extType.test(file.filename)) {
+            throw new BaseError(ERROR_CODE.INVALID_IMAGE_TYPE);
+        }
+
+        await this.commandBus.send(new UploadAccountImageCommand({
+            accountId,
+            imageData: {
+                filename: file.filename,
+                mimetype: file.mimetype,
+                encoding: file.encoding,
+                body: file.createReadStream(),
+            },
+        }));
 
         return true;
+        // return MutationResult.fromSuccessResult();
     }
 
-    // 프로필 수정 - 사진 추가
     @Mutation((returns) => Boolean)
-    @UseMiddleware(AuthMiddleware)
+    @UseMiddleware(AuthJwtMiddleware)
     async updateImageToBasic(
-        @Ctx('account') account?: AccountOrmEntity,
+        @Ctx('accountId') accountId?: string,
     ): Promise<boolean> {
-        if (!account) {
+        if (!accountId) {
             throw new BaseError(ERROR_CODE.UNAUTHORIZED);
         }
-        await this.accountService.updateImageToBasic({
-            accountId: account.id,
-        });
+        await this.commandBus.send(new DeleteAccountImageCommand({
+            accountId,
+        }));
 
         return true;
     }

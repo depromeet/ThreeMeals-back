@@ -15,7 +15,7 @@ export class SignInCommandExecuter implements ICommandExecuter<SignInCommand> {
         private readonly accountRepository: IAccountRepository,
     ) {}
 
-    async execute(command: SignInCommand): Promise<any> {
+    async execute(command: SignInCommand): Promise<string> {
         return this.unitOfWork.withTransaction(async () => {
             const { token, providerType } = command;
 
@@ -37,7 +37,7 @@ export class SignInCommandExecuter implements ICommandExecuter<SignInCommand> {
                 profileImage,
             );
             await this.accountRepository.add(account);
-            console.log(account);
+            return issueJWT(account.id);
         });
     }
 }

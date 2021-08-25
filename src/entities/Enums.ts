@@ -1,4 +1,5 @@
 import { registerEnumType } from 'type-graphql';
+import { SocialType } from "../domain/aggregates/account/SocialType";
 
 // Account - Provider
 export enum Provider {
@@ -79,4 +80,9 @@ export enum OXComment {
 registerEnumType(OXComment, {
     name: 'OXComment',
     description: 'OX 답변내용',
+});
+
+registerEnumType(SocialType, {
+    name: 'SocialType',
+    description: '소셜연동타입 (Instagram, Facebook, etc..)',
 });

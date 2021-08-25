@@ -2,7 +2,7 @@ const { gql } = require('graphql-request');
 
 const getAccountInfo = (client, variables) => {
     const data = {
-        accountId: "2"
+        accountId: "1"
     };
 
     const query = gql`
@@ -13,8 +13,10 @@ const getAccountInfo = (client, variables) => {
                 status
                 image
                 content
-                profileUrl
-                instagramUrl
+                socials {
+                    id
+                    socialType
+                }
             }
         }
     `;

@@ -1,6 +1,6 @@
 const { gql } = require('graphql-request');
 
-const getMyAccount = (client, variables) => {
+const getMyAccountInfo = (client, variables) => {
     const data = {
 
     };
@@ -13,8 +13,10 @@ const getMyAccount = (client, variables) => {
                 status
                 image
                 content
-                profileUrl
-                instagramUrl
+                socials {
+                    id
+                    socialType
+                }
             }
         }
     `
@@ -25,5 +27,5 @@ const getMyAccount = (client, variables) => {
 };
 
 module.exports = {
-    getMyAccount,
+    getMyAccountInfo,
 };

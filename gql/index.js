@@ -1,8 +1,10 @@
 const { GraphQLClient } = require('graphql-request');
 const { signIn } = require("./account/signIn");
 const { getAccountInfo } = require("./account/getAccountInfo");
-const { getMyAccount } = require("./account/getMyAccount");
+const { getMyAccountInfo } = require("./account/getMyAccount");
 const { updateAccountInfo } = require("./account/updateAccountInfo");
+const { uploadImage } = require("./account/uploadImage");
+const { deleteImage } = require("./account/deleteImage");
 
 const { getMyNewPostCount } = require("./post/getMyNewPostCount");
 const { getPosts } = require("./post/getPosts");
@@ -34,12 +36,19 @@ switch (command) {
     case "getAccountInfo":
         getAccountInfo(client, variables);
         break;
-    case "getMyAccount":
-        getMyAccount(client, variables);
+    case "getMyAccountInfo":
+        getMyAccountInfo(client, variables);
         break;
     case "updateAccountInfo":
         updateAccountInfo(client, variables);
         break;
+    case "uploadImage":
+        uploadImage(client, variables);
+        break;
+    case "deleteImage":
+        deleteImage(client, variables);
+        break;
+
     case "getMyNewPostCount":
         getMyNewPostCount(client, variables);
         break;
