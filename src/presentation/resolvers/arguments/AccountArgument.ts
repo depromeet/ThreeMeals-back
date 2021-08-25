@@ -3,7 +3,7 @@ import { ArgsType, Field } from 'type-graphql';
 
 
 @ArgsType()
-export class updateAccountInfoArgument {
+export class UpdateAccountInfoArgument {
     @IsString({
         message: 'invalid type',
     })

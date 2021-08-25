@@ -5,6 +5,8 @@ const { getMyAccountInfo } = require("./account/getMyAccount");
 const { updateAccountInfo } = require("./account/updateAccountInfo");
 const { uploadImage } = require("./account/uploadImage");
 const { deleteImage } = require("./account/deleteImage");
+const { registerSnsInfo } = require("./account/registerSnsInfo");
+const { deregisterSnsInfo } = require("./account/deregisterSnsInfo");
 
 const { getMyNewPostCount } = require("./post/getMyNewPostCount");
 const { getPosts } = require("./post/getPosts");
@@ -47,6 +49,12 @@ switch (command) {
         break;
     case "deleteImage":
         deleteImage(client, variables);
+        break;
+    case "registerSnsInfo":
+        registerSnsInfo(client, variables);
+        break;
+    case "deregisterSnsInfo":
+        deregisterSnsInfo(client, variables);
         break;
 
     case "getMyNewPostCount":

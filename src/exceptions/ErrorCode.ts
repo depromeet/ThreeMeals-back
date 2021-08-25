@@ -19,4 +19,5 @@ export const ERROR_CODE = {
     UNAUTHORIZED_LIKE_POST: createErrorCode(401, 'E016', 'Unauthorized to create like'),
     ALREADY_COMMENT_LIKE: createErrorCode(401, 'E017', 'already comment like'),
     JWT_SIGN_ERROR: createErrorCode(400, 'E018', 'failed to create access token'),
+    SNS_ALREADY_REGISTERED: createErrorCode(400, 'E019', 'this snsType already registered'),
 };

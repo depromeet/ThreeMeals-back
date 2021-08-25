@@ -1,8 +1,11 @@
+import { remove } from 'lodash';
 import { AggregateRoot } from '../../common/AggregateRoot';
 import { Provider } from './Provider';
-import { Social } from './Social';
-import { SocialType } from './SocialType';
+import { SNSInfo } from './SNSInfo';
+import { SNSType } from './SNSType';
 import { ProfileImageData, ProfileImageUploader } from './ProfileImageUploader';
+import BaseError from '../../../exceptions/BaseError';
+import { ERROR_CODE } from '../../../exceptions/ErrorCode';
 
 export type ProfileUrl = string;
 
@@ -13,7 +16,7 @@ export class Account extends AggregateRoot {
     status: string;
     image: ProfileUrl | null;
     content: string | null;
-    socials!: Social[];
+    snsInfos!: SNSInfo[];
     createdAt!: Date;
     updatedAt!: Date;
 
@@ -26,10 +29,21 @@ export class Account extends AggregateRoot {
         this.content = null;
     }
 
-    public registerSocial(socialType: SocialType, url: string): void {
-        this.socials ?
-            this.socials.push(new Social(socialType, url)) :
-            this.socials = [new Social(socialType, url)];
+    public registerSNSInfo(snsType: SNSType, url: string): void {
+        this.snsInfos && this.verifyRegisteredSNSInfo(snsType);
+        this.snsInfos ?
+            this.snsInfos.push(new SNSInfo(snsType, url)) :
+            this.snsInfos = [new SNSInfo(snsType, url)];
+    }
+
+    public deregisterSNSInfo(snsType: SNSType): void {
+        this.snsInfos && remove(this.snsInfos, (snsInfo) => snsType === snsInfo.snsType);
+    }
+
+    public verifyRegisteredSNSInfo(snsType: SNSType): void {
+        if (this.snsInfos.map((sns) => sns.snsType).includes(snsType)) {
+            throw new BaseError(ERROR_CODE.SNS_ALREADY_REGISTERED);
+        }
     }
 
     public changeNickname(nickname: string): void {

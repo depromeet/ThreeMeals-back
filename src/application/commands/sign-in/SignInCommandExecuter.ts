@@ -1,6 +1,6 @@
 import { CommandExecuter, ICommandExecuter } from '../Command';
 import { SignInCommand } from './SignInCommand';
-import { IFetchProviderUserData } from '../../services/fetch-social-user-data/IFetchProviderUserData';
+import { IFetchProviderUser } from '../../services/fetch-provider-user/IFetchProviderUser';
 import { IAccountRepository } from '../../../domain/aggregates/account/IAccountRepository';
 import { Account } from '../../../domain/aggregates/account/Account';
 import { Provider } from '../../../domain/aggregates/account/Provider';
@@ -11,7 +11,7 @@ import { issueJWT } from '../../../util/jwt';
 export class SignInCommandExecuter implements ICommandExecuter<SignInCommand> {
     constructor(
         private readonly unitOfWork: IUnitOfWork,
-        private readonly fetchSocialUserData: IFetchProviderUserData,
+        private readonly fetchProviderUserData: IFetchProviderUser,
         private readonly accountRepository: IAccountRepository,
     ) {}
 
@@ -23,7 +23,7 @@ export class SignInCommandExecuter implements ICommandExecuter<SignInCommand> {
                 providerId,
                 nickname,
                 profileImage,
-            } = await this.fetchSocialUserData
+            } = await this.fetchProviderUserData
                 .fetchUserData({ token, provider: providerType });
 
             const existedAccount = await this.accountRepository.findOneByProviderId(providerId);

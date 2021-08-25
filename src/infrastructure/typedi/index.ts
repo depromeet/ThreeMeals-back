@@ -10,8 +10,8 @@ import { CommentDeletedEventHandler } from '../../application/domain-event-handl
 import { EventPublisher, IEventPublisher } from '../event-publishers/EventPublisher';
 import { IUnitOfWork } from '../../domain/common/IUnitOfWork';
 import { TypeOrmUnitOfWork } from '../type-orm/TypeOrmUnitOfWork';
-import { IFetchProviderUserData } from '../../application/services/fetch-social-user-data/IFetchProviderUserData';
-import { FetchProviderUserData } from '../../application/services/fetch-social-user-data/FetchProviderUserData';
+import { IFetchProviderUser } from '../../application/services/fetch-provider-user/IFetchProviderUser';
+import { FetchProviderUser } from '../provider-user/FetchProviderUser';
 import { CommandBus } from '../../application/commands/Command';
 import { LikeCommentCommandExecuter } from '../../application/commands/like-comment/LikeCommentCommandExecuter';
 import { DeleteLikeCommentCommandExecuter } from '../../application/commands/delete-like-comment/DeleteLikeCommentCommandExecuter';
@@ -21,10 +21,15 @@ import { ProfileImageUploader } from '../../domain/aggregates/account/ProfileIma
 import { S3ImageUploader } from '../aws/s3/S3ImageUploader';
 import { UploadAccountImageCommandExecuter } from "../../application/commands/upload-account-image/UploadAccountImageCommandExecuter";
 import { DeleteAccountImageCommandExecuter } from "../../application/commands/delete-account-image/DeleteAccountImageCommandExecuter";
+import { RegisterSnsCommandExecuter } from "../../application/commands/register-sns/RegisterSnsCommandExecuter";
+import { DeregisterSnsCommandExecuter } from "../../application/commands/deregister-sns/DeregisterSnsCommandExecuter";
 
 export default async (): Promise<void> => {
     // aws
     Container.set(ProfileImageUploader, new S3ImageUploader());
+
+    // provider-user
+    Container.set(IFetchProviderUser, new FetchProviderUser());
 
     // repository
     Container.set(IAccountRepository, new AccountRepository());
@@ -52,9 +57,6 @@ export default async (): Promise<void> => {
     // typeorm
     Container.set(IUnitOfWork, new TypeOrmUnitOfWork(eventPublisher));
 
-    // services
-    Container.set(IFetchProviderUserData, new FetchProviderUserData());
-
     // command
     const commandBus = new CommandBus();
     commandBus.register([
@@ -64,6 +66,8 @@ export default async (): Promise<void> => {
         UpdateAccountCommandExecuter,
         UploadAccountImageCommandExecuter,
         DeleteAccountImageCommandExecuter,
+        RegisterSnsCommandExecuter,
+        DeregisterSnsCommandExecuter,
     ]);
     Container.set(CommandBus, commandBus);
 };

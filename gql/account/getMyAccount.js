@@ -13,9 +13,11 @@ const getMyAccountInfo = (client, variables) => {
                 status
                 image
                 content
-                socials {
+                profileUrl
+                snsInfos {
                     id
-                    socialType
+                    snsType
+                    url
                 }
             }
         }

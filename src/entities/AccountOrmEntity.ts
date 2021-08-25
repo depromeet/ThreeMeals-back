@@ -1,4 +1,12 @@
-import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import {
+    Column,
+    CreateDateColumn,
+    Entity, JoinColumn,
+    ManyToOne,
+    OneToMany,
+    PrimaryGeneratedColumn,
+    UpdateDateColumn,
+} from 'typeorm';
 import { Field, ID, ObjectType } from 'type-graphql';
 import { Contact } from './Contact';
 import { Post } from './Post';
@@ -8,8 +16,8 @@ import { LikeComment } from './LikeComment';
 import { Notification } from './Notification';
 import { Account } from '../domain/aggregates/account/Account';
 import { ProviderType } from '../domain/aggregates/account/ProviderType';
-import { Social } from '../domain/aggregates/account/Social';
-import { SocialType } from '../domain/aggregates/account/SocialType';
+import { SNSInfo } from '../domain/aggregates/account/SNSInfo';
+import { SNSType } from '../domain/aggregates/account/SNSType';
 
 export class Provider {
     @Column('varchar')
@@ -19,22 +27,23 @@ export class Provider {
     providerId!: string;
 }
 
-@ObjectType('Social')
-@Entity('account_social')
-export class SocialOrmEntity extends Social {
+@ObjectType('SNSInfo')
+@Entity('account_sns_info')
+export class SNSInfoOrmEntity extends SNSInfo {
     @Field(() => ID)
     @PrimaryGeneratedColumn({ type: 'bigint', unsigned: true })
     id!: string;
 
-    @Field((type) => SocialType)
-    @Column('varchar', { name: 'social_type' })
-    socialType!: SocialType;
+    @Field((type) => SNSType)
+    @Column('varchar', { name: 'sns_type' })
+    snsType!: SNSType;
 
     @Field()
     @Column('varchar')
     url!: string;
 
-    @Column('varchar', { name: 'account_id' })
+    @ManyToOne((type) => AccountOrmEntity, (account) => account.snsInfos)
+    @JoinColumn({ name: 'account_id', referencedColumnName: 'id' })
     accountId!: string;
 }
 
@@ -64,15 +73,19 @@ export class AccountOrmEntity extends Account {
     @Column('varchar', { nullable: true })
     content!: string | null;
 
-    @Field(() => [SocialOrmEntity])
-    @OneToMany(() => SocialOrmEntity,
+    @Field(() => String, { nullable: true })
+    @Column('varchar', { name: 'profile_url', nullable: true })
+    profileUrl!: string | null;
+
+    @Field(() => [SNSInfoOrmEntity])
+    @OneToMany(() => SNSInfoOrmEntity,
         (social) => social.accountId,
         {
             cascade: ['insert', 'update'],
             createForeignKeyConstraints: false,
         },
     )
-    socials!: Social[];
+    snsInfos!: SNSInfo[];
 
     @Field()
     @CreateDateColumn({ name: 'created_at' })

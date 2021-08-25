@@ -10,6 +10,8 @@ export class S3ImageUploader implements ProfileImageUploader {
     private readonly s3Client: AWS.S3;
     constructor() {
         this.s3Client = new AWS.S3({
+            secretAccessKey: config.aws.secretKey,
+            accessKeyId: config.aws.accessKey,
             region: config.aws.region,
         });
     }

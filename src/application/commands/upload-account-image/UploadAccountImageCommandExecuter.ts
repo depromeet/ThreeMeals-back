@@ -34,6 +34,7 @@ export class UploadAccountImageCommandExecuter implements ICommandExecuter<Uploa
                 filename: `${account.id}/${uuidV4().toString()}${fileExt}`,
             });
 
+            console.log(account);
             await this.accountRepository.save(account);
             return account;
         });

@@ -7,7 +7,18 @@ CREATE TABLE account
   `status`      VARCHAR(30)         NOT NULL COMMENT '상태',
   `image`       VARCHAR(255)        NULL COMMENT '프로필 이미지',
   `content`     VARCHAR(255)        NULL COMMENT '자기소개 글',
-  `instagram_url`  VARCHAR(255)        NULL COMMENT '인스타그램 url',
+  `profile_url`  VARCHAR(255)        NULL COMMENT '프로필 url',
+  `created_at`  TIMESTAMP           NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at`  TIMESTAMP           NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) DEFAULT CHARSET = utf8mb4 COMMENT '유저 정보';
+
+CREATE TABLE account_sns_info
+(
+  `id`          BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `account_id`    BIGINT(20) UNSIGNED NULL COMMENT '소유자 account id',
+  `sns_type`    VARCHAR(50)         NOT NULL COMMENT 'sns 종류',
+  `url`  VARCHAR(255)        NULL COMMENT 'sns url',
   `created_at`  TIMESTAMP           NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at`  TIMESTAMP           NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
