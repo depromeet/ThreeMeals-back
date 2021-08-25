@@ -11,6 +11,7 @@ import {
 import { Field, ID, ObjectType } from 'type-graphql';
 import { AccountOrmEntity } from './AccountOrmEntity';
 import { DomainEntity } from '../domain/common/DomainEntity';
+import { AccountSchema } from '../presentation/resolvers/schemas/AccountSchema';
 
 
 @ObjectType()
@@ -28,7 +29,7 @@ export class Contact extends DomainEntity {
     @RelationId((contact: Contact) => contact.sender)
     senderId!: string;
 
-    @Field(() => AccountOrmEntity)
+    @Field(() => AccountSchema)
     @ManyToOne((type) => AccountOrmEntity, (account) => account.writeContacts)
     @JoinColumn({ name: 'sender_id', referencedColumnName: 'id' })
     sender!: AccountOrmEntity | null;

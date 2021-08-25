@@ -17,6 +17,7 @@ import { CommentState, SecretType } from './Enums';
 import BaseError from '../exceptions/BaseError';
 import { ERROR_CODE } from '../exceptions/ErrorCode';
 import { DomainEntity } from '../domain/common/DomainEntity';
+import { AccountSchema } from '../presentation/resolvers/schemas/AccountSchema';
 
 @ObjectType()
 @Entity('comment')
@@ -50,7 +51,7 @@ export class Comment extends DomainEntity {
     accountId!: string;
 
     // Account와 N:1 관계
-    @Field((type) => AccountOrmEntity, { nullable: true })
+    @Field((type) => AccountSchema, { nullable: true })
     @ManyToOne((type) => AccountOrmEntity, (account) => account.writeComments)
     @JoinColumn({ name: 'account_id', referencedColumnName: 'id' })
     account!: AccountOrmEntity | null;

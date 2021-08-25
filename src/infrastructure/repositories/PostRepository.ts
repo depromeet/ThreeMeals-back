@@ -1,7 +1,7 @@
 import { Post } from '../../entities/Post';
 import { Service } from 'typedi';
 import { PostState, PostType } from '../../entities/Enums';
-import { BaseRepository } from './BaseRepository';
+import { BaseRepository } from '../type-orm/BaseRepository';
 
 @Service()
 export class PostRepository extends BaseRepository<Post> {

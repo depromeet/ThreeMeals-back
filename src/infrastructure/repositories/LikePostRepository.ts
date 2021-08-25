@@ -1,6 +1,6 @@
 import { LikePost } from '../../entities/LikePost';
 import { Service } from 'typedi';
-import { BaseRepository } from './BaseRepository';
+import { BaseRepository } from '../type-orm/BaseRepository';
 import { Post } from '../../entities/Post';
 
 @Service()

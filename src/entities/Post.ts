@@ -20,6 +20,7 @@ import BaseError from '../exceptions/BaseError';
 import { ERROR_CODE } from '../exceptions/ErrorCode';
 import { AggregateRoot } from '../domain/common/AggregateRoot';
 import { PostCreatedEvent } from '../domain/events/PostCreatedEvent';
+import { AccountSchema } from '../presentation/resolvers/schemas/AccountSchema';
 
 @ObjectType()
 @Entity('post')
@@ -68,7 +69,7 @@ export class Post extends AggregateRoot {
     fromAccountId!: string;
 
     // Account와 N:1 관계
-    @Field(() => AccountOrmEntity, { nullable: true })
+    @Field(() => AccountSchema, { nullable: true })
     @ManyToOne((type) => AccountOrmEntity, (account) => account.writePosts)
     @JoinColumn({ name: 'from_account_id', referencedColumnName: 'id' })
     fromAccount!: AccountOrmEntity | null;
@@ -76,7 +77,7 @@ export class Post extends AggregateRoot {
     @Column({ name: 'to_account_id', type: 'bigint', unsigned: true })
     toAccountId!: string;
 
-    @Field(() => AccountOrmEntity)
+    @Field(() => AccountSchema)
     @ManyToOne((type) => AccountOrmEntity, (account) => account.receivePosts)
     @JoinColumn({ name: 'to_account_id', referencedColumnName: 'id' })
     toAccount!: AccountOrmEntity | null;

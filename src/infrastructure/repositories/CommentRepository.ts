@@ -1,7 +1,7 @@
 import { Service } from 'typedi';
 import { Comment } from '../../entities/Comment';
 import { CommentState } from '../../entities/Enums';
-import { BaseRepository } from './BaseRepository';
+import { BaseRepository } from '../type-orm/BaseRepository';
 
 @Service()
 export class CommentRepository extends BaseRepository<Comment> {

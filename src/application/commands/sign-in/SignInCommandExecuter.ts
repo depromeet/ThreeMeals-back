@@ -11,7 +11,7 @@ import { issueJWT } from '../../../util/jwt';
 export class SignInCommandExecuter implements ICommandExecuter<SignInCommand> {
     constructor(
         private readonly unitOfWork: IUnitOfWork,
-        private readonly fetchProviderUserData: IFetchProviderUser,
+        private readonly fetchProviderUser: IFetchProviderUser,
         private readonly accountRepository: IAccountRepository,
     ) {}
 
@@ -23,8 +23,7 @@ export class SignInCommandExecuter implements ICommandExecuter<SignInCommand> {
                 providerId,
                 nickname,
                 profileImage,
-            } = await this.fetchProviderUserData
-                .fetchUserData({ token, provider: providerType });
+            } = await this.fetchProviderUser.fetch({ token, provider: providerType });
 
             const existedAccount = await this.accountRepository.findOneByProviderId(providerId);
             if (existedAccount) {

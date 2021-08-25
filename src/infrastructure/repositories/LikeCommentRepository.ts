@@ -1,5 +1,5 @@
 import { Service } from 'typedi';
-import { BaseRepository } from './BaseRepository';
+import { BaseRepository } from '../type-orm/BaseRepository';
 import { LikeComment } from '../../entities/LikeComment';
 import { Comment } from '../../entities/Comment';
 

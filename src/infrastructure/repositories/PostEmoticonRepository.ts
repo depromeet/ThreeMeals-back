@@ -1,6 +1,6 @@
 import { PostEmoticon } from '../../entities/PostEmoticon';
 import { Service } from 'typedi';
-import { BaseRepository } from './BaseRepository';
+import { BaseRepository } from '../type-orm/BaseRepository';
 
 @Service()
 export class PostEmoticonRepository extends BaseRepository<PostEmoticon> {

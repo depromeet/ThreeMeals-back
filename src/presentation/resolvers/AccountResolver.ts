@@ -19,9 +19,10 @@ import { RegisterSnsInfoArgument } from './arguments/RegisterSnsInfoArgument';
 import { RegisterSnsCommand } from '../../application/commands/register-sns/RegisterSnsCommand';
 import { DeregisterSnsInfoArgument } from './arguments/DeregisterSnsInfoArgument';
 import { DeregisterSnsCommand } from '../../application/commands/deregister-sns/DeregisterSnsCommand';
+import { AccountSchema } from './schemas/AccountSchema';
 
 @Service()
-@Resolver(() => AccountOrmEntity)
+@Resolver(() => AccountSchema)
 export class AccountResolver {
     constructor(
         private readonly accountQueries: AccountQueries,
@@ -29,20 +30,20 @@ export class AccountResolver {
     ) {}
 
     // 다른 사용자 정보 가져오기
-    @Query((returns) => AccountOrmEntity)
+    @Query((returns) => AccountSchema)
     @UseMiddleware(AuthMiddleware)
     async getAccountInfo(
         @Arg('accountId') accountId: string,
-    ): Promise<AccountOrmEntity> {
+    ): Promise<AccountSchema> {
         return this.accountQueries.getAccountInfo({ accountId: accountId });
     }
 
     // 내 정보 가져오기
-    @Query((returns) => AccountOrmEntity)
+    @Query((returns) => AccountSchema)
     @UseMiddleware(AuthJwtMiddleware)
     async getMyAccountInfo(
         @Ctx('accountId') accountId?: string,
-    ): Promise<AccountOrmEntity> {
+    ): Promise<AccountSchema> {
         if (!accountId) {
             throw new BaseError(ERROR_CODE.UNAUTHORIZED);
         }
@@ -60,7 +61,7 @@ export class AccountResolver {
     }
 
     // 프로필 수정
-    @Mutation((returns) => AccountOrmEntity)
+    @Mutation((returns) => AccountSchema)
     @UseMiddleware(AuthJwtMiddleware)
     async updateAccountInfo(
         @Args() { nickname, content }: UpdateAccountInfoArgument,

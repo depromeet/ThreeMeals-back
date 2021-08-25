@@ -7,5 +7,5 @@ export interface ProviderUserInfo {
 }
 
 export abstract class IFetchProviderUser {
-    abstract fetchUserData(args: { token: string, provider: ProviderType }): Promise<ProviderUserInfo>
+    abstract fetch(args: { token: string, provider: ProviderType }): Promise<ProviderUserInfo>
 }

@@ -1,13 +1,13 @@
 import {
     Column,
     CreateDateColumn,
-    Entity, JoinColumn,
+    Entity,
+    JoinColumn,
     ManyToOne,
     OneToMany,
     PrimaryGeneratedColumn,
     UpdateDateColumn,
 } from 'typeorm';
-import { Field, ID, ObjectType } from 'type-graphql';
 import { Contact } from './Contact';
 import { Post } from './Post';
 import { Comment } from './Comment';
@@ -27,18 +27,14 @@ export class Provider {
     providerId!: string;
 }
 
-@ObjectType('SNSInfo')
 @Entity('account_sns_info')
 export class SNSInfoOrmEntity extends SNSInfo {
-    @Field(() => ID)
     @PrimaryGeneratedColumn({ type: 'bigint', unsigned: true })
     id!: string;
 
-    @Field((type) => SNSType)
     @Column('varchar', { name: 'sns_type' })
     snsType!: SNSType;
 
-    @Field()
     @Column('varchar')
     url!: string;
 
@@ -47,37 +43,29 @@ export class SNSInfoOrmEntity extends SNSInfo {
     accountId!: string;
 }
 
-@ObjectType('Account')
 @Entity('account')
 export class AccountOrmEntity extends Account {
-    @Field(() => ID)
     @PrimaryGeneratedColumn({ type: 'bigint', unsigned: true })
     id!: string;
 
-    @Field()
     @Column('varchar')
     nickname!: string;
 
     @Column((type) => Provider, { prefix: false })
     provider!: Provider;
 
-    @Field()
     @Column('varchar')
     status!: string;
 
-    @Field(() => String, { nullable: true })
     @Column('varchar', { nullable: true })
     image!: string | null;
 
-    @Field(() => String, { nullable: true })
     @Column('varchar', { nullable: true })
     content!: string | null;
 
-    @Field(() => String, { nullable: true })
     @Column('varchar', { name: 'profile_url', nullable: true })
     profileUrl!: string | null;
 
-    @Field(() => [SNSInfoOrmEntity])
     @OneToMany(() => SNSInfoOrmEntity,
         (social) => social.accountId,
         {
@@ -87,11 +75,9 @@ export class AccountOrmEntity extends Account {
     )
     snsInfos!: SNSInfo[];
 
-    @Field()
     @CreateDateColumn({ name: 'created_at' })
     createdAt!: Date;
 
-    @Field()
     @UpdateDateColumn({ name: 'updated_at' })
     updatedAt!: Date;
 
@@ -118,7 +104,6 @@ export class AccountOrmEntity extends Account {
     @OneToMany((type) => LikeComment, (likecomments) => likecomments.account)
     likeComments!: LikeComment[];
 
-    @Field(() => Notification)
     @OneToMany((type) => Notification, (notification) => notification.account)
     notifications!: Notification[];
 }

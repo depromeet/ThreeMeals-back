@@ -11,6 +11,7 @@ import { Field, ID, ObjectType } from 'type-graphql';
 import { AccountOrmEntity } from './AccountOrmEntity';
 import { Post } from './Post';
 import { NotiType } from './Enums';
+import { AccountSchema } from '../presentation/resolvers/schemas/AccountSchema';
 
 @ObjectType()
 @Entity('notification')
@@ -22,7 +23,7 @@ export class Notification {
     @Column({ name: 'account_id', type: 'bigint', unsigned: true })
     accountId!: string;
 
-    @Field(() => AccountOrmEntity)
+    @Field(() => AccountSchema)
     @ManyToOne((type) => AccountOrmEntity, (account) => account.notifications)
     @JoinColumn({ name: 'account_id', referencedColumnName: 'id' })
     account!: AccountOrmEntity | null;
@@ -30,7 +31,7 @@ export class Notification {
     @Column({ name: 'other_account_id', type: 'bigint', unsigned: true })
     otherAccountId!: string;
 
-    @Field(() => AccountOrmEntity, { nullable: true })
+    @Field(() => AccountSchema, { nullable: true })
     @ManyToOne(() => AccountOrmEntity)
     @JoinColumn({ name: 'other_account_id', referencedColumnName: 'id' })
     otherAccount!: AccountOrmEntity | null;

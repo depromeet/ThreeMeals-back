@@ -2,11 +2,11 @@ const { gql } = require('graphql-request');
 
 const getMyNewPostCount = (client, variables) => {
     const data = {
-        postType: 'Ask'
+
     };
 
     const query = gql`
-        query GetMyNewPostCount($postType: PostType!) {
+        query GetMyNewPostCount($postType: PostType) {
             getMyNewPostCount(postType: $postType) {
                 postCount {
                     count

@@ -3,6 +3,7 @@ import { CommentState, SecretType } from '../../../entities/Enums';
 import { Connection, Edge, PageInfo } from './base/Connection';
 import { AccountOrmEntity } from '../../../entities/AccountOrmEntity';
 import { LikeComment } from '../../../entities/LikeComment';
+import { AccountSchema } from './AccountSchema';
 
 @ObjectType('childrenComments')
 export class ChildrenCommentSchema {
@@ -24,8 +25,8 @@ export class ChildrenCommentSchema {
     @Field()
     updatedAt!: Date;
 
-    @Field((type) => AccountOrmEntity, { nullable: true })
-    account!: AccountOrmEntity | null;
+    @Field((type) => AccountSchema, { nullable: true })
+    account!: AccountSchema | null;
 
     @Field()
     postId!: string;

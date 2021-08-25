@@ -1,7 +1,7 @@
 import { Service } from 'typedi';
 import { Notification } from '../../entities/Notification';
 import { AccountOrmEntity } from '../../entities/AccountOrmEntity';
-import { BaseRepository } from './BaseRepository';
+import { BaseRepository } from '../type-orm/BaseRepository';
 
 @Service()
 export class NotificationRepository extends BaseRepository<Notification> {

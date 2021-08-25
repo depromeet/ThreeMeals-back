@@ -1,6 +1,6 @@
 import { AccountOrmEntity } from '../../entities/AccountOrmEntity';
 import { Service } from 'typedi';
-import { BaseRepository } from './BaseRepository';
+import { BaseRepository } from '../type-orm/BaseRepository';
 import { IAccountRepository } from '../../domain/aggregates/account/IAccountRepository';
 import { Account } from '../../domain/aggregates/account/Account';
 

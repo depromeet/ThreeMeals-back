@@ -11,7 +11,7 @@ export class FetchProviderUser implements IFetchProviderUser {
         this.kakaoApi = new KakaoApi();
     }
 
-    async fetchUserData(args: { token: string; provider: ProviderType }): Promise<ProviderUserInfo> {
+    async fetch(args: { token: string; provider: ProviderType }): Promise<ProviderUserInfo> {
         switch (args.provider) {
         case ProviderType.Kakao:
             return this.kakaoApi.getUser(args.token);
