@@ -32,9 +32,9 @@ export default ({ app }: { app: express.Application }) => {
         }),
     );
     // app.use(handleUserAgent);
-    app.use((req, res, next) => {
-        TypeOrmDBContext.createWithEmitters([req, res], next);
-    });
+    // app.use((req, res, next) => {
+    //     TypeOrmDBContext.createWithEmitters([req, res], next);
+    // });
     //
     // app.use(async (req, res, next) => {
     //     const oldSend = res.send;
