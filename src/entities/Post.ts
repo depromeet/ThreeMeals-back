@@ -53,6 +53,10 @@ export class Post extends AggregateRoot {
     @Column('varchar', { name: 'secret_type' })
     secretType!: SecretType;
 
+    @Field((type) => Date, { nullable: true })
+    @Column({ name: 'completed_at', type: 'timestamp', nullable: true })
+    completedAt!: Date | null;
+
     @Field()
     @CreateDateColumn({ name: 'created_at' })
     createdAt!: Date;
@@ -143,13 +147,17 @@ export class Post extends AggregateRoot {
         }
 
         // ~ 24 시간이면 null
-        if (dayjs(this.createdAt).add(1, 'day').isAfter(dayjs(Date.now()))) {
+        if (!this.completedAt) {
             this.fromAccount = null;
-        }
+        } else {
+            if (dayjs(this.completedAt).add(1, 'day').isAfter(dayjs(Date.now()))) {
+                this.fromAccount = null;
+            }
 
-        // 48 ~ 시간이면 null
-        if (dayjs(this.createdAt).add(2, 'day').isBefore(dayjs(Date.now()))) {
-            this.fromAccount = null;
+            // 48 ~ 시간이면 null
+            if (dayjs(this.completedAt).add(2, 'day').isBefore(dayjs(Date.now()))) {
+                this.fromAccount = null;
+            }
         }
     }
 
@@ -197,6 +205,7 @@ export class Post extends AggregateRoot {
             }
         }
 
+        this.completedAt = new Date();
         this.postState = PostState.Completed;
     }
 }
