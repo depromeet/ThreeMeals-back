@@ -38,6 +38,9 @@ export class SNSInfoOrmEntity extends SNSInfo {
     @Column('varchar')
     url!: string;
 
+    @Column('varchar', { name: 'sns_id' })
+    snsId!: string;
+
     @ManyToOne((type) => AccountOrmEntity, (account) => account.snsInfos)
     @JoinColumn({ name: 'account_id', referencedColumnName: 'id' })
     accountId!: string;

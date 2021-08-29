@@ -13,6 +13,18 @@ CREATE TABLE account
     PRIMARY KEY (`id`)
 ) DEFAULT CHARSET = utf8mb4 COMMENT '유저 정보';
 
+CREATE TABLE account_sns_info
+(
+    `id`         BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+    `account_id` BIGINT(20) UNSIGNED NULL COMMENT '소유자 account id',
+    `sns_type`   VARCHAR(50)         NOT NULL COMMENT 'sns 종류',
+    `sns_id`     varchar(255)                 DEFAULT NULL COMMENT 'sns id',
+    `url`        VARCHAR(255)        NULL COMMENT 'sns url',
+    `created_at` TIMESTAMP           NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` TIMESTAMP           NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`)
+) DEFAULT CHARSET = utf8mb4 COMMENT '유저 정보';
+
 CREATE TABLE post
 (
     `id`              BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,

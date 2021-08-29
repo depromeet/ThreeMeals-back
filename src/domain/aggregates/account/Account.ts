@@ -29,11 +29,11 @@ export class Account extends AggregateRoot {
         this.content = null;
     }
 
-    public registerSNSInfo(snsType: SNSType, url: string): void {
+    public registerSNSInfo(snsType: SNSType, snsId: string, url: string): void {
         this.snsInfos && this.verifyRegisteredSNSInfo(snsType);
         this.snsInfos ?
-            this.snsInfos.push(new SNSInfo(snsType, url)) :
-            this.snsInfos = [new SNSInfo(snsType, url)];
+            this.snsInfos.push(new SNSInfo(snsType, snsId, url)) :
+            this.snsInfos = [new SNSInfo(snsType, snsId, url)];
     }
 
     public deregisterSNSInfo(snsType: SNSType): void {

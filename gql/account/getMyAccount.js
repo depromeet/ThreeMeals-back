@@ -16,6 +16,7 @@ const getMyAccountInfo = (client, variables) => {
                 profileUrl
                 snsInfos {
                     id
+                    snsId
                     snsType
                     url
                 }

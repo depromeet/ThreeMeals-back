@@ -7,6 +7,9 @@ export class SNSInfoSchema {
     @Field(() => ID)
     id!: string;
 
+    @Field()
+    snsId!: string;
+
     @Field((type) => SNSType)
     snsType!: SNSType;
 

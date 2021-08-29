@@ -5,6 +5,12 @@ import { SNSType } from '../../../domain/aggregates/account/SNSType';
 @ArgsType()
 export class RegisterSnsInfoArgument {
     @IsString({
+        message: 'invalid snsId',
+    })
+    @Field()
+    snsId!: string;
+
+    @IsString({
         message: 'invalid url',
     })
     @Field()

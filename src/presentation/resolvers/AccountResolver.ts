@@ -137,6 +137,7 @@ export class AccountResolver {
         }
         await this.commandBus.send(new RegisterSnsCommand({
             snsType: args.snsType,
+            snsId: args.snsId,
             url: args.url,
             accountId,
         }));

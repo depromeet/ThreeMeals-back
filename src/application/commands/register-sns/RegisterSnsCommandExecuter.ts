@@ -15,14 +15,14 @@ export class RegisterSnsCommandExecuter implements ICommandExecuter<RegisterSnsC
 
     async execute(command: RegisterSnsCommand): Promise<Account> {
         return this.unitOfWork.withTransaction(async () => {
-            const { snsType, url, accountId } = command;
+            const { snsType, snsId, url, accountId } = command;
 
             const account = await this.accountRepository.findOneById(accountId);
             if (!account) {
                 throw new BaseError(ERROR_CODE.USER_NOT_FOUND);
             }
 
-            account.registerSNSInfo(snsType, url);
+            account.registerSNSInfo(snsType, snsId, url);
 
             await this.accountRepository.save(account);
             return account;
