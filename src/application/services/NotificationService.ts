@@ -12,6 +12,12 @@ export class NotificationService {
 
     async getNotificationsByUser(account: AccountOrmEntity): Promise<Notification[]> {
         const notifications = await this.notificationRepository.getNotifications(account);
+        notifications.forEach((notification) => {
+            // post 주인이 나라면 other account 를 가린다.
+            if (notification.relatedPost.fromAccountId === account.id) {
+                notification.otherAccount = null;
+            }
+        });
         this.readAllNotifications(account);
         return notifications;
     }
@@ -37,7 +43,6 @@ export class NotificationService {
     }
 
     async getUnreadNotiCount(account: AccountOrmEntity): Promise<number> {
-        console.log(account);
         return await this.notificationRepository.countUnreadNoti(account);
     }
 }

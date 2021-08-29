@@ -17,14 +17,12 @@ export class NotificationResolver {
     @UseMiddleware(AuthMiddleware)
     async getNotifications(@Ctx('account') account: AccountOrmEntity): Promise<Notification[]> {
         const notifications = await this.notificationService.getNotificationsByUser(account);
-        console.log(notifications);
         return notifications;
     }
 
     @Query((returns) => NotiCount)
     @UseMiddleware(AuthMiddleware)
     async getUnreadNotiCount(@Ctx('account') account: AccountOrmEntity): Promise<NotiCount> {
-        console.log(account);
         if (!account) {
             throw new BaseError(ERROR_CODE.UNAUTHORIZED);
         }
