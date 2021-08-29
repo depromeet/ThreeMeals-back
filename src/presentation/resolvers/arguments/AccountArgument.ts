@@ -17,11 +17,4 @@ export class UpdateAccountInfoArgument {
     @IsOptional()
     @Field({ nullable: true })
     content?: string;
-
-    @IsString({
-        message: 'invalid type',
-    })
-    @IsOptional()
-    @Field({ nullable: true })
-    instagramUrl?: string;
 }
