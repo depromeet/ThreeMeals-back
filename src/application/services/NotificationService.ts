@@ -14,7 +14,7 @@ export class NotificationService {
         const notifications = await this.notificationRepository.getNotifications(account);
         notifications.forEach((notification) => {
             // post 주인이 나라면 other account 를 가린다.
-            if (notification.relatedPost.fromAccountId === account.id) {
+            if (notification.relatedPost.toAccountId === account.id) {
                 notification.otherAccount = null;
             }
         });
