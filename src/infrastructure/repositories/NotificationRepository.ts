@@ -14,7 +14,9 @@ export class NotificationRepository extends BaseRepository<Notification> {
         const builder = this.entityManager.createQueryBuilder(Notification, notification)
             .where(`${notification}.accountId = :accountId`, { accountId: account.id })
             .leftJoinAndSelect(`${notification}.relatedPost`, 'relatedPost')
-            .leftJoinAndSelect(`${notification}.otherAccount`, 'otherAccount');
+            .leftJoinAndSelect(`${notification}.otherAccount`, 'otherAccount')
+            .orderBy(`${notification}.id`, 'DESC')
+            .limit(30); // 일단 30개만 보냄
         return builder.getMany();
     }
 
