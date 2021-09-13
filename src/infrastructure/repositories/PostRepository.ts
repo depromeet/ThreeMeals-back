@@ -84,14 +84,14 @@ export class PostRepository extends BaseRepository<Post> {
 
         builder = postState ?
             builder.andWhere(`${post}.post_state = :postState`, { postState }) :
-            builder;
+            builder.andWhere(`${post}.post_state != :postState`, { postState: PostState.Deleted });
 
         builder = postType ?
             builder.andWhere(`${post}.post_type = :postType`, { postType }) :
             builder;
 
         return builder
-            .andWhere(`${post}.post_state != :postState`, { postState: PostState.Deleted })
+            // .andWhere(`${post}.post_state != :postState`, { postState: PostState.Deleted })
             .orderBy(`${post}.id`, 'DESC')
             .limit(limit)
             .getMany();
