@@ -69,6 +69,8 @@ jobs:
           echo "else" >> ./deploy/deploy.sh
           echo "  docker restart hush-api-server" >> ./deploy/deploy.sh
           echo "fi" >> ./deploy/deploy.sh
+          echo "" >> ./deploy/deploy.sh
+          echo "dkrm" >> ./deploy/deploy.sh
 
       - name: Zip deploy files
         run: zip -r deploy.zip deploy
