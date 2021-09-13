@@ -63,7 +63,7 @@ jobs:
         run: |
           echo "aws ecr get-login-password --region ap-northeast-2 | docker login --username AWS --password-stdin $DOCKER_REGISTRY" >> ./deploy/deploy.sh
           echo "docker pull $DOCKER_REGISTRY/$DOCKER_REPOSITORY:$IMAGE_TAG" >> ./deploy/deploy.sh
-          echo "CONTAINER_NAME=\$(docker ps -aq -f name=hush-api-server)" >> ./deploy/deploy.sh
+          echo "CONTAINER_NAME=\$(docker ps -aq -f \"name=hush-api-server\")" >> ./deploy/deploy.sh
           echo "if [ -z \"\$CONTAINER_NAME\" -o \"\$CONTAINER_NAME\" = \" \" ]; then" >> ./deploy/deploy.sh
           echo "  docker run -d -name --name hush-api-server -p 4000:4000 $DOCKER_REGISTRY/$DOCKER_REPOSITORY:$IMAGE_TAG" >> ./deploy/deploy.sh
           echo "else" >> ./deploy/deploy.sh
