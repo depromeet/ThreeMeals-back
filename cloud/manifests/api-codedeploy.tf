@@ -41,7 +41,8 @@ resource "aws_codedeploy_deployment_group" "hush_api_server_deployment_group" {
   app_name              = aws_codedeploy_app.hush_api_server_deploy.name
   deployment_group_name = "${var.name_prefix}-api-server-code-deployment-group"
   service_role_arn      = aws_iam_role.hush_api_server_deploy_role.arn
-  deployment_config_name = aws_codedeploy_deployment_config.hush_api_server_deployment_config.id
+  deployment_config_name = "CodeDeployDefault.AllAtOnce"
+//  deployment_config_name = aws_codedeploy_deployment_config.hush_api_server_deployment_config.id
 
   deployment_style {
     deployment_type = "IN_PLACE"

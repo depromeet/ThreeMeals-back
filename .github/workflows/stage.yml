@@ -14,6 +14,7 @@ jobs:
         id: vars
         run: |
           echo ::set-output name=tag::${GITHUB_REF#refs/*/}
+          echo ::set-output name=git_hash::$(git rev-parse --short "$GITHUB_SHA")
           echo ::set-output name=app_env::stage
 
       - name: setup nodejs
@@ -57,23 +58,25 @@ jobs:
 
       - name: Upload deploy files to S3
         env:
+          GIT_HASH: ${{ steps.vars.outputs.git_hash }}
           RELEASE_VERSION: ${{ steps.vars.outputs.tag }}
           APP_ENV: ${{ steps.vars.outputs.app_env }}
         run: |
           aws s3api put-object \
             --bucket hush-it-$APP_ENV-cicd-builds \
-            --key $APP_ENV/$RELEASE_VERSION/deploy.zip \
+            --key $APP_ENV/$GIT_HASH/deploy.zip \
             --body deploy.zip
 
       - name: Deploy with Code Deploy
         env:
+          GIT_HASH: ${{ steps.vars.outputs.git_hash }}
           RELEASE_VERSION: ${{ steps.vars.outputs.tag }}
           APP_ENV: ${{ steps.vars.outputs.app_env }}
         run: |
           aws deploy create-deployment \
             --application-name hush-it-$APP_ENV-api-server-code-deploy \
             --deployment-group-name hush-it-$APP_ENV-api-server-code-deployment-group \
-            --s3-location bucket=hush-it-$APP_ENV-cicd-builds,bundleType=zip,key=$APP_ENV/$RELEASE_VERSION/deploy.zip
+            --s3-location bucket=hush-it-$APP_ENV-cicd-builds,bundleType=zip,key=$APP_ENV/$GIT_HASH/deploy.zip
 
 
 
