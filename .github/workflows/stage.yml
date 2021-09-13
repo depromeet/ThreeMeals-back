@@ -1,0 +1,78 @@
+name: Deploying Hush Stage API Server
+on:
+  push:
+    branches:
+      - stage
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source code.
+        uses: actions/checkout@v2
+      - name: Set output
+        id: vars
+        run: |
+          echo ::set-output name=tag::${GITHUB_REF#refs/*/}
+          echo ::set-output name=app_env::stage
+
+      - name: setup nodejs
+        uses: actions/setup-node@v2
+        with:
+          node-version: '12'
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_STAGE_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_STAGE_SECRET_ACCESS_KEY }}
+          aws-region: ap-northeast-2
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Build hush api server
+        id: build-hush-api-server
+        env:
+          DOCKER_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          DOCKER_REPOSITORY: hush-api
+          IMAGE_TAG: ${{ steps.vars.outputs.app_env }}
+        run: |
+          docker build -t $DOCKER_REGISTRY/$DOCKER_REPOSITORY:$IMAGE_TAG -f ./docker/Dockerfile .
+          docker push $DOCKER_REGISTRY/$DOCKER_REPOSITORY:$IMAGE_TAG
+          echo "::set-output name=image::$DOCKER_REGISTRY/$DOCKER_REPOSITORY:$IMAGE_TAG"
+
+      - name: Create dot env
+        id: create-dot-env
+        run: |
+          sh ./script/ssm_parameter_store_to_env.sh ./deploy/.env
+
+      - name: Zip deploy files
+        run: zip -r deploy.zip deploy
+
+      - name: Upload deploy files to S3
+        env:
+          RELEASE_VERSION: ${{ steps.vars.outputs.tag }}
+          APP_ENV: ${{ steps.vars.outputs.app_env }}
+        run: |
+          aws s3api put-object \
+            --bucket hush-it-$APP_ENV-cicd-builds \
+            --key $APP_ENV/$RELEASE_VERSION/deploy.zip \
+            --body deploy.zip
+
+      - name: Deploy with Code Deploy
+        env:
+          RELEASE_VERSION: ${{ steps.vars.outputs.tag }}
+          APP_ENV: ${{ steps.vars.outputs.app_env }}
+        run: |
+          aws deploy create-deployment \
+            --application-name hush-it-$APP_ENV-api-server-code-deploy \
+            --deployment-group-name hush-it-$APP_ENV-api-server-code-deployment-group \
+            --s3-location bucket=hush-it-$APP_ENV-cicd-builds,bundleType=zip,key=$APP_ENV/$RELEASE_VERSION/deploy.zip
+
+
+

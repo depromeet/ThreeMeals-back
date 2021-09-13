@@ -36,3 +36,10 @@ log
 
 # 회원 생성용
 test.html
+cloud/test/
+
+*.tfstate
+*.tfstate.backup
+.terraform
+private.tfvars
+tfplan
