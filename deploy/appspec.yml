@@ -5,4 +5,4 @@ files:
     destination: /home/ec2-user/hush-api/
 hooks:
   AfterInstall:
-    - location: docker-deploy.sh
+    - location: deploy.sh

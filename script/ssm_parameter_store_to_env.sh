@@ -1,8 +1,8 @@
 #!/bin/bash
 
-DeployDir=$1
+deployDir=$1
 
-function json_extract() {
+function json_extract {
   local key=$1
   local json=$2
 
@@ -22,5 +22,5 @@ ssmValue=$(aws ssm get-parameter --name hush-api-server-env)
 stringValue=$(json_extract Value "${ssmValue}" | sed 's/\"//g')
 
 echo $stringValue | sed 's/\\n/\
-/g' > $DeployDir
+/g' > $deployDir
 

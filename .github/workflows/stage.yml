@@ -49,6 +49,7 @@ jobs:
       - name: Create dot env
         id: create-dot-env
         run: |
+          chmod +x ./scripts/ssm_parameter_store_to_env.sh
           sh ./script/ssm_parameter_store_to_env.sh ./deploy/.env
 
       - name: Zip deploy files
