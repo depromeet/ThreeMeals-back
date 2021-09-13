@@ -50,8 +50,9 @@ jobs:
       - name: Create dot env
         id: create-dot-env
         run: |
-          chmod +x ./script/ssm_parameter_store_to_env.sh
-          sh ./script/ssm_parameter_store_to_env.sh ./deploy/.env
+          ssmValue=$(aws ssm get-parameter --name hush-api-server-env)
+          stringValue=$(echo $ssmValue | tr '\r\n' ' ' | jq '.Parameter.Value' | sed 's/\"//g')
+          echo -e $stringValue > ./deploy/.env
 
       - name: Zip deploy files
         run: zip -r deploy.zip deploy

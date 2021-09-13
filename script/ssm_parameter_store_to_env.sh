@@ -18,3 +18,5 @@ echo -e $stringValue > $deployDir
 
 #echo $stringValue | sed 's/\\n/\
 #/g' > $deployDir
+
+# sh ./script/ssm_parameter_store_to_env.sh ./deploy/.env
