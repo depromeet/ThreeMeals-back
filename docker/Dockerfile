@@ -1,12 +1,9 @@
 FROM node:14-alpine
-
-RUN mkdir /usr/src/app
-
-WORKDIR /usr/src/app
+WORKDIR /app
 
 # install pacakge
 COPY package*.json ./
-RUN npm install
+RUN npm install --silent
 
 # copy file
 COPY src ./src
