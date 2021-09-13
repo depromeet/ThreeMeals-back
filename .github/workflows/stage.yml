@@ -65,7 +65,7 @@ jobs:
           echo "docker pull $DOCKER_REGISTRY/$DOCKER_REPOSITORY:$IMAGE_TAG" >> ./deploy/deploy.sh
           echo "CONTAINER_NAME=\$(docker ps -aq -f \"name=hush-api-server\")" >> ./deploy/deploy.sh
           echo "if [ -z \"\$CONTAINER_NAME\" -o \"\$CONTAINER_NAME\" = \" \" ]; then" >> ./deploy/deploy.sh
-          echo "  docker run -d --name hush-api-server -p 4000:4000 $DOCKER_REGISTRY/$DOCKER_REPOSITORY:$IMAGE_TAG" >> ./deploy/deploy.sh
+          echo "  docker run -d --name hush-api-server -p 4000:4000 -v /home/ec2-user/hush-api/.env:/app/.env $DOCKER_REGISTRY/$DOCKER_REPOSITORY:$IMAGE_TAG" >> ./deploy/deploy.sh
           echo "else" >> ./deploy/deploy.sh
           echo "  docker restart hush-api-server" >> ./deploy/deploy.sh
           echo "fi" >> ./deploy/deploy.sh

@@ -1,3 +1,3 @@
 #!/bin/bash
 
-echo "sample data gooooooood !!"
+echo "deploy started...."
