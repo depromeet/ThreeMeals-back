@@ -22,6 +22,8 @@ private_availability_zones      = []
 
 # api-server instance
 api_server_instance_key_name = "hush-server"
+api_server_ami="ami-042236b3862889d88" // hush base image
+user_data_script = "api-server-start.tpl"
 
 # database
 hush_rds_engine = "mysql"
