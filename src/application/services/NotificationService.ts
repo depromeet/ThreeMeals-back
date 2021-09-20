@@ -18,7 +18,7 @@ export class NotificationService {
                 notification.otherAccount = null;
             }
         });
-        this.readAllNotifications(account);
+        await this.readAllNotifications(account);
         return notifications;
     }
 

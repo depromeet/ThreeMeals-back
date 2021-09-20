@@ -22,7 +22,6 @@ export class SignInCommandExecuter implements ICommandExecuter<SignInCommand> {
             const {
                 providerId,
                 nickname,
-                profileImage,
             } = await this.fetchProviderUser.fetch({ token, provider: providerType });
 
             const existedAccount = await this.accountRepository.findOneByProviderId(providerId);
@@ -33,7 +32,6 @@ export class SignInCommandExecuter implements ICommandExecuter<SignInCommand> {
             const account = new Account(
                 nickname,
                 new Provider(providerType, providerId),
-                profileImage,
             );
             await this.accountRepository.add(account);
             return issueJWT(account.id);

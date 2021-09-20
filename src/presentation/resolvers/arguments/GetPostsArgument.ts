@@ -40,4 +40,11 @@ export class GetMyNewPostCount {
     })
     @IsOptional()
     postType?: PostType;
+
+    @Field(() => PostState, { nullable: true })
+    @IsEnum(PostState, {
+        message: 'invalid postState argument',
+    })
+    @IsOptional()
+    postState?: PostState;
 }

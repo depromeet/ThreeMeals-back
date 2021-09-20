@@ -76,6 +76,7 @@ export class PostResolver {
         const postCounts = await this.postService.getNewPostsCounts({
             accountId: account.id,
             postType: args.postType || null,
+            postState: args.postState || null,
         });
 
         return new NewPostCount(postCounts);

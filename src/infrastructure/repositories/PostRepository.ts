@@ -12,7 +12,7 @@ export class PostRepository extends BaseRepository<Post> {
     }
 
     async increaseCommentCount(postId: string): Promise<void> {
-        this.entityManager.createQueryBuilder(Post, 'post')
+        await this.entityManager.createQueryBuilder(Post, 'post')
             .update(Post)
             .set({ commentsCount: () => 'comments_count + 1' })
             .where('id = :postId', { postId })
@@ -20,7 +20,7 @@ export class PostRepository extends BaseRepository<Post> {
     }
 
     async decreaseCommentCount(postId: string): Promise<void> {
-        this.entityManager.createQueryBuilder(Post, 'post')
+        await this.entityManager.createQueryBuilder(Post, 'post')
             .update(Post)
             .set({ commentsCount: () => 'comments_count - 1' })
             .where('id = :postId', { postId })
