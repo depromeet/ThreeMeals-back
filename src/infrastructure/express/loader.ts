@@ -9,7 +9,7 @@ import { logger } from '../logger/winston';
 import { handle404Error, handleError } from './middlewares/error';
 import { TypeOrmDBContext } from '../type-orm/TypeOrmDBContext';
 
-export default ({ app }: { app: express.Application }) => {
+export const expressLoader = async (app: express.Application) => {
     app.set('etag', false);
     app.set('trust proxy', true);
 
@@ -31,23 +31,6 @@ export default ({ app }: { app: express.Application }) => {
             },
         }),
     );
-    // app.use(handleUserAgent);
-    // app.use((req, res, next) => {
-    //     TypeOrmDBContext.createWithEmitters([req, res], next);
-    // });
-    //
-    // app.use(async (req, res, next) => {
-    //     const oldSend = res.send;
-    //     res.send = function(data) {
-    //         const queryRunner = TypeOrmDBContext.getQueryRunner();
-    //         if (queryRunner && !queryRunner.isReleased) {
-    //             queryRunner.release();
-    //         }
-    //         res.send = oldSend;
-    //         return res.send(data);
-    //     };
-    //     next();
-    // });
 
     app.get('/ping', (req, res, next) => {
         return res.status(200).send('pong');

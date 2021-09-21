@@ -1,5 +1,5 @@
-import { ICommand } from '../Command';
-import { ProfileImageData } from '../../../domain/aggregates/account/ProfileImageUploader';
+import { ICommand } from '../../Command';
+import { ProfileImageData } from '../../../../domain/aggregates/account/ProfileImageUploader';
 
 export class UploadAccountImageCommand implements ICommand {
     public readonly accountId: string;

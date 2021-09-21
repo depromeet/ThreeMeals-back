@@ -1,10 +1,10 @@
-import { CommandExecuter, ICommandExecuter } from '../Command';
+import { CommandExecuter, ICommandExecuter } from '../../Command';
 import { RegisterSnsCommand } from './RegisterSnsCommand';
-import { IAccountRepository } from '../../../domain/aggregates/account/IAccountRepository';
-import { Account } from '../../../domain/aggregates/account/Account';
-import { IUnitOfWork } from '../../../domain/common/IUnitOfWork';
-import BaseError from '../../../exceptions/BaseError';
-import { ERROR_CODE } from '../../../exceptions/ErrorCode';
+import { IAccountRepository } from '../../../../domain/aggregates/account/IAccountRepository';
+import { Account } from '../../../../domain/aggregates/account/Account';
+import { IUnitOfWork } from '../../../../domain/common/IUnitOfWork';
+import BaseError from '../../../../exceptions/BaseError';
+import { ERROR_CODE } from '../../../../exceptions/ErrorCode';
 
 @CommandExecuter(RegisterSnsCommand)
 export class RegisterSnsCommandExecuter implements ICommandExecuter<RegisterSnsCommand> {

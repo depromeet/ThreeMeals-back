@@ -6,11 +6,15 @@ import { GraphQLSchema } from 'graphql';
 import * as express from 'express';
 import { config } from '../../config';
 
-export default async ({ app }: { app: express.Application }) => {
+export const createSchema = async (): Promise<GraphQLSchema> => {
     const schema: GraphQLSchema = await buildSchema({
         resolvers: [__dirname + '/../../**/resolvers/*.{ts,js}'],
         container: Container,
     });
+    return schema
+}
+
+export const apolloLoader = async (app: express.Application, schema: GraphQLSchema): Promise<ApolloServer> => {
 
     const server = new ApolloServer({
         uploads: false,
@@ -29,4 +33,6 @@ export default async ({ app }: { app: express.Application }) => {
     } as ApolloServerExpressConfig);
 
     server.applyMiddleware({ app });
+
+    return server;
 };

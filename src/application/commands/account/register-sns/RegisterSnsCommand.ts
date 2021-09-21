@@ -1,5 +1,5 @@
-import { ICommand } from '../Command';
-import { SNSType } from '../../../domain/aggregates/account/SNSType';
+import { ICommand } from '../../Command';
+import { SNSType } from '../../../../domain/aggregates/account/SNSType';
 
 export class RegisterSnsCommand implements ICommand {
     public readonly snsType: SNSType;

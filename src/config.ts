@@ -1,6 +1,10 @@
 import * as dotenv from 'dotenv';
 
-dotenv.config();
+if (process.env.NODE_ENV === 'test') {
+    dotenv.config({ path: `${__dirname}/../test/.env.test` });
+} else {
+    dotenv.config();
+}
 
 export interface IConfig {
     server: {

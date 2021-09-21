@@ -1,4 +1,4 @@
-import { ICommand } from '../Command';
+import { ICommand } from '../../Command';
 
 export class DeleteAccountImageCommand implements ICommand {
     public readonly accountId: string;

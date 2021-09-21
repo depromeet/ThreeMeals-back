@@ -1,5 +1,5 @@
-import { ICommand } from '../Command';
-import { ProviderType } from '../../../domain/aggregates/account/ProviderType';
+import { ICommand } from '../../Command';
+import { ProviderType } from '../../../../domain/aggregates/account/ProviderType';
 
 export class UpdateAccountCommand implements ICommand {
     public readonly nickname?: string;

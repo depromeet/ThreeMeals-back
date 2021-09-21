@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 import * as express from 'express';
-import apolloLoader from '../infrastructure/apollo/loader';
-import expressLoader, { loadHandleError } from '../infrastructure/express/loader';
+import { createSchema, apolloLoader } from '../infrastructure/apollo/loader';
+import { expressLoader, loadHandleError } from '../infrastructure/express/loader';
 import typediLoader from '../infrastructure/typedi';
 import typeOrmLoader from '../infrastructure/type-orm/createConnection';
 import { logger } from '../infrastructure/logger/winston';
@@ -9,8 +9,11 @@ import { config } from '../config';
 
 const startApiServer = async () => {
     const app = express();
-    expressLoader({ app });
-    await apolloLoader({ app });
+    await expressLoader(app);
+
+    // graphql
+    const gqlSchema = await createSchema();
+    await apolloLoader(app, gqlSchema);
     await typeOrmLoader();
 
     await typediLoader();

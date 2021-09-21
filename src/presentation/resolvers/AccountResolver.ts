@@ -10,15 +10,15 @@ import { FileUpload, GraphQLUpload } from 'graphql-upload';
 import BaseError from '../../exceptions/BaseError';
 import { ERROR_CODE } from '../../exceptions/ErrorCode';
 import { CommandBus } from '../../application/commands/Command';
-import { SignInCommand } from '../../application/commands/sign-in/SignInCommand';
-import { UpdateAccountCommand } from '../../application/commands/update-account/UpdateAccountCommand';
-import { UploadAccountImageCommand } from '../../application/commands/upload-account-image/UploadAccountImageCommand';
-import { DeleteAccountImageCommand } from '../../application/commands/delete-account-image/DeleteAccountImageCommand';
+import { SignInCommand } from '../../application/commands/account/sign-in/SignInCommand';
+import { UpdateAccountCommand } from '../../application/commands/account/update-account/UpdateAccountCommand';
+import { UploadAccountImageCommand } from '../../application/commands/account/upload-account-image/UploadAccountImageCommand';
+import { DeleteAccountImageCommand } from '../../application/commands/account/delete-account-image/DeleteAccountImageCommand';
 import { MutationResult } from './schemas/base/MutationResult';
 import { RegisterSnsInfoArgument } from './arguments/RegisterSnsInfoArgument';
-import { RegisterSnsCommand } from '../../application/commands/register-sns/RegisterSnsCommand';
+import { RegisterSnsCommand } from '../../application/commands/account/register-sns/RegisterSnsCommand';
 import { DeregisterSnsInfoArgument } from './arguments/DeregisterSnsInfoArgument';
-import { DeregisterSnsCommand } from '../../application/commands/deregister-sns/DeregisterSnsCommand';
+import { DeregisterSnsCommand } from '../../application/commands/account/deregister-sns/DeregisterSnsCommand';
 import { AccountSchema } from './schemas/AccountSchema';
 
 @Service()

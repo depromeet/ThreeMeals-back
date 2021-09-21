@@ -26,7 +26,7 @@ if (process.argv[3]) {
 const endPoint = 'http://localhost:4000/graphql';
 const client = new GraphQLClient(endPoint, {
     headers: {
-        'account-id': '2',
+        'account-id': '1001',
     },
 });
 

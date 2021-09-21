@@ -34,7 +34,9 @@ log
 # Runtime data
 *.seed
 
-# 회원 생성용
+# 테스트
+database.sqlite
+
 test.html
 cloud/test/
 
