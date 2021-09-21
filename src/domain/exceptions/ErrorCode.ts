@@ -1,4 +1,17 @@
-export const createErrorCode = (status: number, code: string, message: string) => ({ status, code, message });
+export interface ErrorCode {
+    status: number;
+    code: string;
+    message: string;
+}
+
+export const isErrorCode = (errorCode: any): errorCode is ErrorCode =>
+    errorCode &&
+    errorCode.status &&
+    errorCode.message &&
+    errorCode.code
+;
+
+export const createErrorCode = (status: number, code: string, message: string): ErrorCode => ({ status, code, message });
 
 export const ERROR_CODE = {
     INTERNAL_SERVER_ERROR: createErrorCode(500, 'E001', 'Internal Server Problem'),
@@ -20,4 +33,5 @@ export const ERROR_CODE = {
     ALREADY_COMMENT_LIKE: createErrorCode(401, 'E017', 'already comment like'),
     JWT_SIGN_ERROR: createErrorCode(400, 'E018', 'failed to create access token'),
     SNS_ALREADY_REGISTERED: createErrorCode(400, 'E019', 'this snsType already registered'),
+    KAKAO_LOGIN_ERROR: createErrorCode(504, 'E020', 'Kakao login error'),
 };

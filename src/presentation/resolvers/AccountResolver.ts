@@ -38,6 +38,7 @@ export class AccountResolver {
     async getAccountInfo(
         @Arg('accountId') accountId: string,
     ): Promise<AccountSchema> {
+        throw new BaseError({errorCode: ERROR_CODE.ALREADY_COMMENT_LIKE, message: '테스트용도임다.'})
         return this.accountQueries.getAccountInfo({ accountId: accountId });
     }
 

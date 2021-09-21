@@ -5,11 +5,13 @@ import { buildSchema } from 'type-graphql';
 import { GraphQLSchema } from 'graphql';
 import * as express from 'express';
 import { config } from '../../config';
+import { ErrorInterceptor } from './middleware/error';
 
 export const createSchema = async (): Promise<GraphQLSchema> => {
     const schema: GraphQLSchema = await buildSchema({
         resolvers: [__dirname + '/../../**/resolvers/*.{ts,js}'],
         container: Container,
+        globalMiddlewares: [ErrorInterceptor],
     });
     return schema;
 };

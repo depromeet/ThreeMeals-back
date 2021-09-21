@@ -163,7 +163,10 @@ export class Post extends AggregateRoot {
 
     public delete(removerId: string): void {
         if (![this.toAccountId, this.fromAccountId].includes(removerId)) {
-            throw new BaseError(ERROR_CODE.UNAUTHORIZED, `unauthorized delete post with this removerId: ${removerId}`);
+            throw new BaseError({
+                errorCode: ERROR_CODE.UNAUTHORIZED,
+                message: `unauthorized delete post with this removerId: ${removerId}`,
+            });
         }
         this.postState = PostState.Deleted;
     }
@@ -171,19 +174,28 @@ export class Post extends AggregateRoot {
     public answer(answererId: string, commentContent: string, isUniqueComment: boolean): void {
         // post 가 삭제된 상태인 경우 에러
         if (this.postState === PostState.Deleted) {
-            throw new BaseError(ERROR_CODE.POST_NOT_FOUND, 'DELETED POST');
+            throw new BaseError({
+                errorCode: ERROR_CODE.POST_NOT_FOUND,
+                message: 'DELETED POST',
+            });
         }
 
         // postType 이 물어봐인경우
         if (this.postType === PostType.Ask) {
             // 답변 다는 사람이 내가 아니라면 에러
             if (answererId !== this.toAccountId) {
-                throw new BaseError(ERROR_CODE.UNAUTHORIZED_WRITE_COMMENT, '물어봐에는 내가 아닌사람이 쓸 수 없음');
+                throw new BaseError({
+                    errorCode: ERROR_CODE.UNAUTHORIZED_WRITE_COMMENT,
+                    message: '물어봐에는 내가 아닌사람이 쓸 수 없음',
+                });
             }
 
             // comment 를 이미 달았다면 에러
             if (!isUniqueComment) {
-                throw new BaseError(ERROR_CODE.ALREADY_COMMENT_SUBMITTED, `이미 답변 달음, postId: ${this.id}`);
+                throw new BaseError({
+                    errorCode: ERROR_CODE.ALREADY_COMMENT_SUBMITTED,
+                    message: `이미 답변 달음, postId: ${this.id}`,
+                });
             }
         }
 
@@ -191,17 +203,26 @@ export class Post extends AggregateRoot {
         if (this.postType === PostType.Quiz) {
             // 답변 다는 사람이 내가 아니라면 에러
             if (answererId !== this.toAccountId) {
-                throw new BaseError(ERROR_CODE.UNAUTHORIZED_WRITE_COMMENT, `OX 에는 다른사람이 쓸 수 없음`);
+                throw new BaseError({
+                    errorCode: ERROR_CODE.UNAUTHORIZED_WRITE_COMMENT,
+                    message: `OX 에는 다른사람이 쓸 수 없음`,
+                });
             }
 
             // 답변이 O,X 가 아니라면 에러
             if (!isEnum(commentContent, OXComment)) {
-                throw new BaseError(ERROR_CODE.INVALID_OX_COMMENT_CONTENT, `OX 에는 OX 만이 들어갈 수 있음, content: ${commentContent}`);
+                throw new BaseError({
+                    errorCode: ERROR_CODE.INVALID_OX_COMMENT_CONTENT,
+                    message: `OX 에는 OX 만이 들어갈 수 있음, content: ${commentContent}`,
+                });
             }
 
             // comment 를 이미 달았다면 에러
             if (!isUniqueComment) {
-                throw new BaseError(ERROR_CODE.ALREADY_COMMENT_SUBMITTED, `이미 답변 달음, postId: ${this.id}`);
+                throw new BaseError({
+                    errorCode: ERROR_CODE.ALREADY_COMMENT_SUBMITTED,
+                    message: `이미 답변 달음, postId: ${this.id}`,
+                });
             }
         }
 

@@ -98,14 +98,17 @@ export class Comment extends DomainEntity {
     public validateParentComment(postId: string): void {
         // parent 가 이미 대댓글이라면 에러
         if (this.parentId) {
-            throw new BaseError(ERROR_CODE.COMMENT_NOT_PARENT, `부모댓글이 대댓글입니다. parentId: ${this.parentId}`);
+            throw new BaseError({
+                errorCode: ERROR_CODE.COMMENT_NOT_PARENT,
+                message: `부모댓글이 대댓글입니다. parentId: ${this.parentId}`,
+            });
         }
         // parent post id 가 다른 post id 라면 에러
         if (this.postId !== postId) {
-            throw new BaseError(
-                ERROR_CODE.INVALID_MATCH_COMMENT_POST,
-                `요청한 postId 와 부모 댓글 postId 가 다릅니다. postId: ${postId}, commentPostId: ${this.postId}`,
-            );
+            throw new BaseError({
+                errorCode: ERROR_CODE.INVALID_MATCH_COMMENT_POST,
+                message: `요청한 postId 와 부모 댓글 postId 가 다릅니다. postId: ${postId}, commentPostId: ${this.postId}`,
+            });
         }
     }
 }
