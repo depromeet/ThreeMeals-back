@@ -4,10 +4,10 @@ import { graphqlUploadExpress } from 'graphql-upload';
 import * as cookieParser from 'cookie-parser';
 import * as morgan from 'morgan';
 import * as helmet from 'helmet';
+import { expressMiddleware as rTracerExpressMiddlewares } from 'cls-rtracer';
 import { config } from '../../config';
-import { logger } from '../logger/winston';
+import { JsonLogger } from '../logger/JsonLogger';
 import { handle404Error, handleError } from './middlewares/error';
-import { TypeOrmDBContext } from '../type-orm/TypeOrmDBContext';
 
 export const expressLoader = async (app: express.Application) => {
     app.set('etag', false);
@@ -21,13 +21,15 @@ export const expressLoader = async (app: express.Application) => {
     app.use(cookieParser(config.cookie.secret));
     app.use(express.json());
     app.use(express.urlencoded({ extended: true }));
+    app.use(rTracerExpressMiddlewares());
+
     app.use(
         morgan('combined', {
             skip: function(req, res) {
                 return req.path === '/ping';
             },
             stream: {
-                write: (message) => logger.info(message),
+                write: (message) => new JsonLogger('morgan').info(message),
             },
         }),
     );

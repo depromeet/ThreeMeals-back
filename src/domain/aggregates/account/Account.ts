@@ -4,8 +4,8 @@ import { Provider } from './Provider';
 import { SNSInfo } from './SNSInfo';
 import { SNSType } from './SNSType';
 import { ProfileImageData, ProfileImageUploader } from './ProfileImageUploader';
-import BaseError from '../../../exceptions/BaseError';
-import { ERROR_CODE } from '../../../exceptions/ErrorCode';
+import BaseError from '../../exceptions/BaseError';
+import { ERROR_CODE } from '../../exceptions/ErrorCode';
 
 export type ProfileUrl = string;
 

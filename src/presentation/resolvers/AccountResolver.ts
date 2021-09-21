@@ -7,8 +7,8 @@ import { AuthJwtMiddleware, AuthMiddleware } from '../../infrastructure/apollo/m
 import { SignInArgument } from './arguments/SignInArgument';
 import { UpdateAccountInfoArgument } from './arguments/AccountArgument';
 import { FileUpload, GraphQLUpload } from 'graphql-upload';
-import BaseError from '../../exceptions/BaseError';
-import { ERROR_CODE } from '../../exceptions/ErrorCode';
+import BaseError from '../../domain/exceptions/BaseError';
+import { ERROR_CODE } from '../../domain/exceptions/ErrorCode';
 import { CommandBus } from '../../application/commands/Command';
 import { SignInCommand } from '../../application/commands/account/sign-in/SignInCommand';
 import { UpdateAccountCommand } from '../../application/commands/account/update-account/UpdateAccountCommand';
@@ -20,13 +20,16 @@ import { RegisterSnsCommand } from '../../application/commands/account/register-
 import { DeregisterSnsInfoArgument } from './arguments/DeregisterSnsInfoArgument';
 import { DeregisterSnsCommand } from '../../application/commands/account/deregister-sns/DeregisterSnsCommand';
 import { AccountSchema } from './schemas/AccountSchema';
+import { Logger } from '../../infrastructure/typedi/decorator/Logger';
+import { ILogger } from '../../infrastructure/logger/ILogger';
 
 @Service()
 @Resolver(() => AccountSchema)
 export class AccountResolver {
     constructor(
-        private readonly accountQueries: AccountQueries,
+        @Logger() private readonly logger: ILogger,
         private readonly commandBus: CommandBus,
+        private readonly accountQueries: AccountQueries,
     ) {}
 
     // 다른 사용자 정보 가져오기
@@ -53,6 +56,8 @@ export class AccountResolver {
     // jwtnewAccount
     @Mutation((returns) => Token)
     async signIn(@Args() { accessToken, provider }: SignInArgument, @Ctx() ctx: any): Promise<Token> {
+        this.logger.info('signIn mutation executed', { provider });
+
         const accountToken = await this.commandBus.send(new SignInCommand({
             token: accessToken,
             providerType: provider as any,

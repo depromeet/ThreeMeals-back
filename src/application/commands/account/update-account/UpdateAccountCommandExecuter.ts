@@ -3,8 +3,8 @@ import { UpdateAccountCommand } from './UpdateAccountCommand';
 import { IAccountRepository } from '../../../../domain/aggregates/account/IAccountRepository';
 import { Account } from '../../../../domain/aggregates/account/Account';
 import { IUnitOfWork } from '../../../../domain/common/IUnitOfWork';
-import BaseError from '../../../../exceptions/BaseError';
-import { ERROR_CODE } from '../../../../exceptions/ErrorCode';
+import BaseError from '../../../../domain/exceptions/BaseError';
+import { ERROR_CODE } from '../../../../domain/exceptions/ErrorCode';
 
 @CommandExecuter(UpdateAccountCommand)
 export class UpdateAccountCommandExecuter implements ICommandExecuter<UpdateAccountCommand> {

@@ -1,7 +1,7 @@
 import { sign, SignOptions } from 'jsonwebtoken';
 import { config } from '../config';
-import BaseError from '../exceptions/BaseError';
-import { ERROR_CODE } from '../exceptions/ErrorCode';
+import BaseError from '../domain/exceptions/BaseError';
+import { ERROR_CODE } from '../domain/exceptions/ErrorCode';
 
 export interface JWTPayload {
     id: string;

@@ -5,8 +5,8 @@ import { Notification } from '../../entities/Notification';
 import { AuthMiddleware } from '../../infrastructure/apollo/middleware/auth';
 import { NotificationService } from '../../application/services/NotificationService';
 import { NotiCount } from './schemas/UnreadNotiCount';
-import BaseError from '../../exceptions/BaseError';
-import { ERROR_CODE } from '../../exceptions/ErrorCode';
+import BaseError from '../../domain/exceptions/BaseError';
+import { ERROR_CODE } from '../../domain/exceptions/ErrorCode';
 
 @Service()
 @Resolver(() => Notification)

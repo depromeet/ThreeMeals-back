@@ -6,10 +6,13 @@ import { Account } from '../../../../domain/aggregates/account/Account';
 import { Provider } from '../../../../domain/aggregates/account/Provider';
 import { IUnitOfWork } from '../../../../domain/common/IUnitOfWork';
 import { issueJWT } from '../../../../util/jwt';
+import { Logger } from '../../../../infrastructure/typedi/decorator/Logger';
+import { ILogger } from '../../../../infrastructure/logger/ILogger';
 
 @CommandExecuter(SignInCommand)
 export class SignInCommandExecuter implements ICommandExecuter<SignInCommand> {
     constructor(
+        @Logger() private readonly logger: ILogger,
         private readonly unitOfWork: IUnitOfWork,
         private readonly fetchProviderUser: IFetchProviderUser,
         private readonly accountRepository: IAccountRepository,
@@ -19,6 +22,8 @@ export class SignInCommandExecuter implements ICommandExecuter<SignInCommand> {
         return this.unitOfWork.withTransaction(async () => {
             const { token, providerType } = command;
 
+            this.logger.info('SignInCommand executed', { provider: providerType });
+
             const {
                 providerId,
                 nickname,
@@ -26,6 +31,7 @@ export class SignInCommandExecuter implements ICommandExecuter<SignInCommand> {
 
             const existedAccount = await this.accountRepository.findOneByProviderId(providerId);
             if (existedAccount) {
+                this.logger.info('SignInCommand executed success with existed user', { account: existedAccount });
                 return issueJWT(existedAccount.id);
             }
 
@@ -34,6 +40,8 @@ export class SignInCommandExecuter implements ICommandExecuter<SignInCommand> {
                 new Provider(providerType, providerId),
             );
             await this.accountRepository.add(account);
+
+            this.logger.info('SignInCommand executed success with new user', { account });
             return issueJWT(account.id);
         });
     }

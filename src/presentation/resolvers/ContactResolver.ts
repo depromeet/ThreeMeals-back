@@ -5,8 +5,8 @@ import { Service } from 'typedi';
 import { AuthMiddleware } from '../../infrastructure/apollo/middleware/auth';
 import { AccountOrmEntity } from '../../entities/AccountOrmEntity';
 import { createContactArguments } from './arguments/ContactArgument';
-import BaseError from '../../exceptions/BaseError';
-import { ERROR_CODE } from '../../exceptions/ErrorCode';
+import BaseError from '../../domain/exceptions/BaseError';
+import { ERROR_CODE } from '../../domain/exceptions/ErrorCode';
 
 
 @Service()

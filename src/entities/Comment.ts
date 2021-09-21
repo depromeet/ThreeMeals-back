@@ -14,8 +14,8 @@ import { AccountOrmEntity } from './AccountOrmEntity';
 import { Post } from './Post';
 import { LikeComment } from './LikeComment';
 import { CommentState, SecretType } from './Enums';
-import BaseError from '../exceptions/BaseError';
-import { ERROR_CODE } from '../exceptions/ErrorCode';
+import BaseError from '../domain/exceptions/BaseError';
+import { ERROR_CODE } from '../domain/exceptions/ErrorCode';
 import { DomainEntity } from '../domain/common/DomainEntity';
 import { AccountSchema } from '../presentation/resolvers/schemas/AccountSchema';
 

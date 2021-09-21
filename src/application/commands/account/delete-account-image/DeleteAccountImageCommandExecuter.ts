@@ -3,8 +3,8 @@ import { DeleteAccountImageCommand } from './DeleteAccountImageCommand';
 import { IAccountRepository } from '../../../../domain/aggregates/account/IAccountRepository';
 import { Account } from '../../../../domain/aggregates/account/Account';
 import { IUnitOfWork } from '../../../../domain/common/IUnitOfWork';
-import BaseError from '../../../../exceptions/BaseError';
-import { ERROR_CODE } from '../../../../exceptions/ErrorCode';
+import BaseError from '../../../../domain/exceptions/BaseError';
+import { ERROR_CODE } from '../../../../domain/exceptions/ErrorCode';
 import { ProfileImageUploader } from '../../../../domain/aggregates/account/ProfileImageUploader';
 
 @CommandExecuter(DeleteAccountImageCommand)

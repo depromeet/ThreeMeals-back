@@ -5,8 +5,8 @@ import { LikePostsService } from '../../application/services/LikePostsService';
 import { LikePostsArgument } from './arguments/LikePostsArgument';
 import { AuthContext } from '../../infrastructure/express/middlewares/AuthContext';
 import { AuthMiddleware } from '../../infrastructure/apollo/middleware/auth';
-import BaseError from '../../exceptions/BaseError';
-import { ERROR_CODE } from '../../exceptions/ErrorCode';
+import BaseError from '../../domain/exceptions/BaseError';
+import { ERROR_CODE } from '../../domain/exceptions/ErrorCode';
 
 @Service()
 @Resolver(() => LikePost)

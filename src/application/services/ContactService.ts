@@ -2,8 +2,8 @@ import { Service } from 'typedi';
 import { Contact } from '../../entities/Contact';
 import { AccountRepository } from '../../infrastructure/repositories/AccountRepository';
 import { ContactRepository } from '../../infrastructure/repositories/ContactRepository';
-import BaseError from '../../exceptions/BaseError';
-import { ERROR_CODE } from '../../exceptions/ErrorCode';
+import BaseError from '../../domain/exceptions/BaseError';
+import { ERROR_CODE } from '../../domain/exceptions/ErrorCode';
 import { AccountOrmEntity } from '../../entities/AccountOrmEntity';
 
 @Service()

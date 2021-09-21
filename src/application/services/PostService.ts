@@ -5,8 +5,8 @@ import { PostEmoticon } from '../../entities/PostEmoticon';
 import { AccountRepository } from '../../infrastructure/repositories/AccountRepository';
 import { PostRepository } from '../../infrastructure/repositories/PostRepository';
 import { PostState, PostType, SecretType } from '../../entities/Enums';
-import BaseError from '../../exceptions/BaseError';
-import { ERROR_CODE } from '../../exceptions/ErrorCode';
+import BaseError from '../../domain/exceptions/BaseError';
+import { ERROR_CODE } from '../../domain/exceptions/ErrorCode';
 import { AccountOrmEntity } from '../../entities/AccountOrmEntity';
 import { IUnitOfWork } from '../../domain/common/IUnitOfWork';
 

@@ -2,8 +2,8 @@ import { Service } from 'typedi';
 import { EventHandler } from './EventHandler';
 import { CommentCreatedEvent } from '../../domain/events/CommentCreatedEvent';
 import { PostRepository } from '../../infrastructure/repositories/PostRepository';
-import BaseError from '../../exceptions/BaseError';
-import { ERROR_CODE } from '../../exceptions/ErrorCode';
+import BaseError from '../../domain/exceptions/BaseError';
+import { ERROR_CODE } from '../../domain/exceptions/ErrorCode';
 
 @Service()
 export class CommentCreatedEventHandler extends EventHandler<CommentCreatedEvent> {

@@ -11,8 +11,8 @@ export const createSchema = async (): Promise<GraphQLSchema> => {
         resolvers: [__dirname + '/../../**/resolvers/*.{ts,js}'],
         container: Container,
     });
-    return schema
-}
+    return schema;
+};
 
 export const apolloLoader = async (app: express.Application, schema: GraphQLSchema): Promise<ApolloServer> => {
 

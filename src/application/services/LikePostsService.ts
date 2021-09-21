@@ -3,8 +3,8 @@ import { LikePost } from '../../entities/LikePost';
 import { LikePostRepository } from '../../infrastructure/repositories/LikePostRepository';
 import { PostRepository } from '../../infrastructure/repositories/PostRepository';
 import { AccountRepository } from '../../infrastructure/repositories/AccountRepository';
-import BaseError from '../../exceptions/BaseError';
-import { ERROR_CODE } from '../../exceptions/ErrorCode';
+import BaseError from '../../domain/exceptions/BaseError';
+import { ERROR_CODE } from '../../domain/exceptions/ErrorCode';
 import { EventPublisher } from '../../infrastructure/event-publishers/EventPublisher';
 import { LikeCreatedEvent } from '../../domain/events/LikeCreatedEvent';
 

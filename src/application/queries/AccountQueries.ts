@@ -1,7 +1,7 @@
 import { Service } from 'typedi';
 import { getManager } from 'typeorm';
-import BaseError from '../../exceptions/BaseError';
-import { ERROR_CODE } from '../../exceptions/ErrorCode';
+import BaseError from '../../domain/exceptions/BaseError';
+import { ERROR_CODE } from '../../domain/exceptions/ErrorCode';
 import { AccountOrmEntity } from '../../entities/AccountOrmEntity';
 
 @Service()

@@ -1,8 +1,8 @@
 import { CommandExecuter, ICommandExecuter } from '../Command';
 import { LikeCommentCommand } from './LikeCommentCommand';
 import { CommentRepository } from '../../../infrastructure/repositories/CommentRepository';
-import BaseError from '../../../exceptions/BaseError';
-import { ERROR_CODE } from '../../../exceptions/ErrorCode';
+import BaseError from '../../../domain/exceptions/BaseError';
+import { ERROR_CODE } from '../../../domain/exceptions/ErrorCode';
 import { PostRepository } from '../../../infrastructure/repositories/PostRepository';
 import { LikeComment } from '../../../entities/LikeComment';
 import { LikeCommentRepository } from '../../../infrastructure/repositories/LikeCommentRepository';

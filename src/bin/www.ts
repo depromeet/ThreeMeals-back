@@ -4,8 +4,10 @@ import { createSchema, apolloLoader } from '../infrastructure/apollo/loader';
 import { expressLoader, loadHandleError } from '../infrastructure/express/loader';
 import typediLoader from '../infrastructure/typedi';
 import typeOrmLoader from '../infrastructure/type-orm/createConnection';
-import { logger } from '../infrastructure/logger/winston';
 import { config } from '../config';
+import { JsonLogger } from '../infrastructure/logger/JsonLogger';
+
+const logger = new JsonLogger('www');
 
 const startApiServer = async () => {
     const app = express();

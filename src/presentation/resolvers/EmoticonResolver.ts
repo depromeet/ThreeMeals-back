@@ -1,9 +1,7 @@
-/* eslint-disable camelcase */
-import { Ctx, Resolver, Query } from 'type-graphql';
+import { Resolver, Query } from 'type-graphql';
 import { Service } from 'typedi';
 import { Emoticon } from '../../entities/Emoticon';
 import { EmoticonService } from '../../application/services/EmoticonService';
-import { logger } from '../../infrastructure/logger/winston';
 
 @Service()
 @Resolver(() => Emoticon)
