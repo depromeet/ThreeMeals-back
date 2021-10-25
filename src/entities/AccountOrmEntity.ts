@@ -1,13 +1,4 @@
-import {
-    Column,
-    CreateDateColumn,
-    Entity,
-    JoinColumn,
-    ManyToOne,
-    OneToMany,
-    PrimaryGeneratedColumn,
-    UpdateDateColumn,
-} from 'typeorm';
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 import { Contact } from './Contact';
 import { Post } from './Post';
 import { Comment } from './Comment';
@@ -18,6 +9,7 @@ import { Account } from '../domain/aggregates/account/Account';
 import { ProviderType } from '../domain/aggregates/account/ProviderType';
 import { SNSInfo } from '../domain/aggregates/account/SNSInfo';
 import { SNSType } from '../domain/aggregates/account/SNSType';
+import { Favorite } from './Favorite';
 
 export class Provider {
     @Column('varchar')
@@ -69,13 +61,10 @@ export class AccountOrmEntity extends Account {
     @Column('varchar', { name: 'profile_url', nullable: true })
     profileUrl!: string | null;
 
-    @OneToMany(() => SNSInfoOrmEntity,
-        (social) => social.accountId,
-        {
-            cascade: ['insert', 'update'],
-            createForeignKeyConstraints: false,
-        },
-    )
+    @OneToMany(() => SNSInfoOrmEntity, (social) => social.accountId, {
+        cascade: ['insert', 'update'],
+        createForeignKeyConstraints: false,
+    })
     snsInfos!: SNSInfo[];
 
     @CreateDateColumn({ name: 'created_at' })
@@ -109,4 +98,7 @@ export class AccountOrmEntity extends Account {
 
     @OneToMany((type) => Notification, (notification) => notification.account)
     notifications!: Notification[];
+
+    @OneToMany((type) => Favorite, (favorite) => favorite.account)
+    favorites!: Favorite[];
 }

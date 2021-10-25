@@ -4,12 +4,7 @@ export interface ErrorCode {
     message: string;
 }
 
-export const isErrorCode = (errorCode: any): errorCode is ErrorCode =>
-    errorCode &&
-    errorCode.status &&
-    errorCode.message &&
-    errorCode.code
-;
+export const isErrorCode = (errorCode: any): errorCode is ErrorCode => errorCode && errorCode.status && errorCode.message && errorCode.code;
 
 export const createErrorCode = (status: number, code: string, message: string): ErrorCode => ({ status, code, message });
 
@@ -34,4 +29,6 @@ export const ERROR_CODE = {
     JWT_SIGN_ERROR: createErrorCode(400, 'E018', 'failed to create access token'),
     SNS_ALREADY_REGISTERED: createErrorCode(400, 'E019', 'this snsType already registered'),
     KAKAO_LOGIN_ERROR: createErrorCode(504, 'E020', 'Kakao login error'),
+    ALREADY_FAVORITE: createErrorCode(400, 'E021', 'this favorite already added'),
+    FAVORITE_NOT_FOUND: createErrorCode(404, 'E022', 'this favorite not found'),
 };
