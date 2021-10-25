@@ -25,20 +25,26 @@ export class FavoriteService {
         return await this.favoriteRepository.findByAccount(account);
     }
 
-    async createFavorite(args: { fromAccountId: string; favoriteAccountId: string }): Promise<Favorite> {
-        const alreadyFavorite = await this.favoriteRepository.getFavorite(args.fromAccountId, args.favoriteAccountId);
+    async createFavorite(args: { accountId: string; favoriteAccountId: string }): Promise<Favorite> {
+        const alreadyFavorite = await this.favoriteRepository.getFavorite(args.accountId, args.favoriteAccountId);
 
         if (alreadyFavorite) {
             throw new BaseError(ERROR_CODE.ALREADY_FAVORITE);
         }
 
         const favorite = new Favorite();
-        favorite.accountId = args.fromAccountId;
+        favorite.accountId = args.accountId;
         favorite.favoriteAccountId = args.favoriteAccountId;
         return await this.favoriteRepository.createFavorite(favorite);
     }
 
-    async deleteFavorite(favoriteId: string): Promise<void> {
-        await this.favoriteRepository.deleteFavorite(favoriteId);
+    async deleteFavorite(accountId: string, favoriteAccountId: string): Promise<void> {
+        const favorite = await this.favoriteRepository.getFavorite(accountId, favoriteAccountId);
+
+        if (!favorite) {
+            throw new BaseError(ERROR_CODE.FAVORITE_NOT_FOUND);
+        }
+
+        await this.favoriteRepository.deleteFavorite(accountId, favoriteAccountId);
     }
 }

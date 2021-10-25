@@ -4,6 +4,7 @@ import { AccountOrmEntity } from '../../entities/AccountOrmEntity';
 import { AuthMiddleware } from '../../infrastructure/apollo/middleware/auth';
 import { Favorite } from '../../entities/Favorite';
 import { FavoriteService } from '../../application/services/FavoriteService';
+import { MutationResult } from './schemas/base/MutationResult';
 
 @Service()
 @Resolver(() => Favorite)
@@ -23,18 +24,13 @@ export class FavoriteResolver {
         @Arg('favoriteAccountId') favoriteAccountId: string,
         @Ctx('account') account: AccountOrmEntity,
     ): Promise<Favorite> {
-        return await this.favoriteService.createFavorite({ fromAccountId: account.id, favoriteAccountId: favoriteAccountId });
+        return await this.favoriteService.createFavorite({ accountId: account.id, favoriteAccountId: favoriteAccountId });
     }
-    // @Query((returns) => NotiCount)
-    // @UseMiddleware(AuthMiddleware)
-    // async getUnreadNotiCount(@Ctx('account') account: AccountOrmEntity): Promise<NotiCount> {
-    //     if (!account) {
-    //         throw new BaseError(ERROR_CODE.UNAUTHORIZED);
-    //     }
-    //     const unreadNotiCount = await this.notificationService.getUnreadNotiCount(account);
 
-    //     const notiCount = { count: unreadNotiCount };
-
-    //     return notiCount;
-    // }
+    @Mutation((returns) => Boolean)
+    @UseMiddleware(AuthMiddleware)
+    async cancelFavorite(@Arg('favoriteAccountId') favoriteAccountId: string, @Ctx('account') account: AccountOrmEntity): Promise<boolean> {
+        await this.favoriteService.deleteFavorite(account.id, favoriteAccountId);
+        return true;
+    }
 }

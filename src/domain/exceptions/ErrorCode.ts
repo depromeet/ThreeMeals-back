@@ -30,4 +30,5 @@ export const ERROR_CODE = {
     SNS_ALREADY_REGISTERED: createErrorCode(400, 'E019', 'this snsType already registered'),
     KAKAO_LOGIN_ERROR: createErrorCode(504, 'E020', 'Kakao login error'),
     ALREADY_FAVORITE: createErrorCode(400, 'E021', 'this favorite already added'),
+    FAVORITE_NOT_FOUND: createErrorCode(404, 'E022', 'this favorite not found'),
 };

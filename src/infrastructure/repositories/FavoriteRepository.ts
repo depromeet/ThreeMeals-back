@@ -25,9 +25,10 @@ export class FavoriteRepository extends BaseRepository<Favorite> {
         return await this.entityManager.save(favorite);
     }
 
-    async deleteFavorite(favoriteId: string): Promise<void> {
+    async deleteFavorite(accountId: string, favoriteAccountId: string): Promise<void> {
         await this.entityManager.delete(Favorite, {
-            id: favoriteId,
+            accountId: accountId,
+            favoriteAccountId: favoriteAccountId,
         });
     }
 }
