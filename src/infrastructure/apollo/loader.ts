@@ -17,7 +17,6 @@ export const createSchema = async (): Promise<GraphQLSchema> => {
 };
 
 export const apolloLoader = async (app: express.Application, schema: GraphQLSchema): Promise<ApolloServer> => {
-
     const server = new ApolloServer({
         uploads: false,
         schema: schema,

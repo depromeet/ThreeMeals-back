@@ -48,7 +48,11 @@ export class PostService {
         )(posts);
     }
 
-    async getNewPostsCounts(args: { accountId: string; postType: PostType | null, postState: PostState | null }): Promise<{ postType: PostType; count: number }[]> {
+    async getNewPostsCounts(args: {
+        accountId: string;
+        postType: PostType | null,
+        postState: PostState | null },
+    ): Promise<{ postType: PostType; count: number }[]> {
         const counts = await this.postRepository.countsGroupByPostType({ ...args });
 
         return flow(

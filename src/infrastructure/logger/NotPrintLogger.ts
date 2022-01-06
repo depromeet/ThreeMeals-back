@@ -20,5 +20,4 @@ export class NotPrintLogger implements ILogger {
     warn<T>(message: any, data?: T): any {
         // do nothing
     }
-
 }
