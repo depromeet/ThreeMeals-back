@@ -1,4 +1,4 @@
-import { ILogger } from "./ILogger";
+import { ILogger } from './ILogger';
 
 export class ConsoleLogger implements ILogger {
     debug<T>(message: any, data?: T): any {
@@ -20,5 +20,4 @@ export class ConsoleLogger implements ILogger {
     warn<T>(message: any, data?: T): any {
         console.log(message, data);
     }
-
 }

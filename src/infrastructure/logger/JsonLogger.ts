@@ -119,10 +119,6 @@ export class JsonLogger implements ILogger {
     }
 
     public morganMiddleware() {
-        morgan.token('requestId', (req) => {
-            return (req.headers['gameper-request-id'] as string) || 'null';
-        });
-
         return morgan('combined', {
             stream: {
                 write: (message: string) => this.log(message),

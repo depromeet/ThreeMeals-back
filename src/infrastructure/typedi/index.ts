@@ -19,8 +19,12 @@ import { SignInCommandExecuter } from '../../application/commands/account/sign-i
 import { UpdateAccountCommandExecuter } from '../../application/commands/account/update-account/UpdateAccountCommandExecuter';
 import { ProfileImageUploader } from '../../domain/aggregates/account/ProfileImageUploader';
 import { S3ImageUploader } from '../aws/s3/S3ImageUploader';
-import { UploadAccountImageCommandExecuter } from '../../application/commands/account/upload-account-image/UploadAccountImageCommandExecuter';
-import { DeleteAccountImageCommandExecuter } from '../../application/commands/account/delete-account-image/DeleteAccountImageCommandExecuter';
+import {
+    UploadAccountImageCommandExecuter,
+} from '../../application/commands/account/upload-account-image/UploadAccountImageCommandExecuter';
+import {
+    DeleteAccountImageCommandExecuter,
+} from '../../application/commands/account/delete-account-image/DeleteAccountImageCommandExecuter';
 import { RegisterSnsCommandExecuter } from '../../application/commands/account/register-sns/RegisterSnsCommandExecuter';
 import { DeregisterSnsCommandExecuter } from '../../application/commands/account/deregister-sns/DeregisterSnsCommandExecuter';
 
