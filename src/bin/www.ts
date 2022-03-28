@@ -7,11 +7,13 @@ import typeOrmLoader from '../infrastructure/type-orm/createConnection';
 import { config } from '../config';
 import { JsonLogger } from '../infrastructure/logger/JsonLogger';
 import { createExpressServer } from 'routing-controllers';
-
+import { useContainer as useContainerForRouting } from 'routing-controllers';
+import { Container } from 'typedi';
 
 const logger = new JsonLogger('www');
 
 const startApiServer = async () => {
+    useContainerForRouting(Container);
     const app = createExpressServer({
         routePrefix: '/api',
         controllers: [__dirname + '/../**/controllers/*.{ts,js}'],
