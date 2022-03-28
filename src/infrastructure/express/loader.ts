@@ -8,6 +8,10 @@ import { expressMiddleware as rTracerExpressMiddlewares } from 'cls-rtracer';
 import { config } from '../../config';
 import { JsonLogger } from '../logger/JsonLogger';
 import { handle404Error, handleError } from './middlewares/error';
+import { routingControllersToSpec } from 'routing-controllers-openapi';
+import { serve, setup } from 'swagger-ui-express';
+import { getMetadataArgsStorage } from 'routing-controllers';
+import { AccountController } from '../../presentation/controllers/AccountController';
 
 export const expressLoader = async (app: express.Application) => {
     app.set('etag', false);
@@ -22,6 +26,29 @@ export const expressLoader = async (app: express.Application) => {
     app.use(express.json());
     app.use(express.urlencoded({ extended: true }));
     app.use(rTracerExpressMiddlewares());
+    const routingControllersOptions = {
+        controllers: [__dirname + '../../presentation/controllers/*.{ts,js}'],
+        routePrefix: '/api',
+    };
+    const storage = getMetadataArgsStorage();
+    const spec = routingControllersToSpec(storage, routingControllersOptions, {
+        components: {
+            // schemas,
+            securitySchemes: {
+                basicAuth: {
+                    scheme: 'basic',
+                    type: 'http',
+                },
+            },
+        },
+        info: {
+            description: 'Generated with `routing-controllers-openapi`',
+            title: 'A sample API',
+            version: '1.0.0',
+        },
+    });
+
+    app.use('/docs', serve, setup(spec));
 
     app.use(
         morgan('combined', {
