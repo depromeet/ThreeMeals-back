@@ -53,6 +53,7 @@
         "mysql2": "^2.2.5",
         "passport": "^0.4.1",
         "reflect-metadata": "0.1.13",
+        "routing-controllers": "^0.9.0",
         "tsconfig-paths": "3.9.0",
         "type-graphql": "1.1.1",
         "type-graphql-dataloader": "0.3.7",

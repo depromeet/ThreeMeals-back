@@ -6,11 +6,16 @@ import typediLoader from '../infrastructure/typedi';
 import typeOrmLoader from '../infrastructure/type-orm/createConnection';
 import { config } from '../config';
 import { JsonLogger } from '../infrastructure/logger/JsonLogger';
+import { createExpressServer } from 'routing-controllers';
+
 
 const logger = new JsonLogger('www');
 
 const startApiServer = async () => {
-    const app = express();
+    const app = createExpressServer({
+        routePrefix: '/api',
+        controllers: [__dirname + '/../**/controllers/*.{ts,js}'],
+    });
     await expressLoader(app);
 
     // graphql
