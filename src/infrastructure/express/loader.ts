@@ -11,7 +11,7 @@ import { handle404Error, handleError } from './middlewares/error';
 import { routingControllersToSpec } from 'routing-controllers-openapi';
 import { serve, setup } from 'swagger-ui-express';
 import { getMetadataArgsStorage } from 'routing-controllers';
-import { AccountController } from '../../presentation/controllers/AccountController';
+import { validationMetadatasToSchemas } from 'class-validator-jsonschema';
 
 export const expressLoader = async (app: express.Application) => {
     app.set('etag', false);
@@ -31,8 +31,12 @@ export const expressLoader = async (app: express.Application) => {
         routePrefix: '/api',
     };
     const storage = getMetadataArgsStorage();
+    const schemas = validationMetadatasToSchemas({
+        refPointerPrefix: '#/dtos',
+    });
     const spec = routingControllersToSpec(storage, routingControllersOptions, {
         components: {
+            schemas,
             // schemas,
             securitySchemes: {
                 basicAuth: {
@@ -42,8 +46,8 @@ export const expressLoader = async (app: express.Application) => {
             },
         },
         info: {
-            description: 'Generated with `routing-controllers-openapi`',
-            title: 'A sample API',
+            description: 'Hush RestApi',
+            title: '허쉬 서비스의 Rest Api Swagger',
             version: '1.0.0',
         },
     });

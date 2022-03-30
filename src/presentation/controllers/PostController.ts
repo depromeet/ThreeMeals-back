@@ -4,11 +4,12 @@ import { PostService } from '../../application/services/PostService';
 import { AuthMiddleware } from '../../infrastructure/express/middlewares/AuthMiddleware';
 import { Post as ContentPost } from '../../entities/Post';
 import { Body, Get, JsonController, Param, Req, Res, UseBefore, Post } from 'routing-controllers';
-import { GetPostsReqDto } from './dtos/GetPostsReqDto';
+import { GetMyNewPostCountReqDto, GetPostsReqDto } from './dtos/GetPostsReqDto';
 import { PostState } from '../../entities/Enums';
 import BaseError from '../../domain/exceptions/BaseError';
 import { ERROR_CODE } from '../../domain/exceptions/ErrorCode';
 import { PostConnection } from '../resolvers/schemas/PostConnection';
+import { NewPostCount } from '../resolvers/schemas/NewPostCount';
 
 @Service()
 @JsonController('/post')
@@ -28,10 +29,10 @@ export class PostController {
         console.log(this == null);
         console.log(this.postService == null);
 
-        return this.postService.getPost({
+        return res.json(this.postService.getPost({
             postId,
             myAccountId: account ? account.id : null,
-        });
+        }));
     }
 
     @Post('/posts')
@@ -54,7 +55,26 @@ export class PostController {
             postType: args.postType || null,
             postState: args.postState || null,
         });
-        return new PostConnection(posts, 'id');
+        return res.json(new PostConnection(posts, 'id'));
+    }
+
+
+    @Post('/count')
+    async getMyNewPostCount(
+        @Body() args: GetMyNewPostCountReqDto,
+        @Req() req: any, @Res() res: any,
+    ): Promise<NewPostCount> {
+        // if (!req.account) {
+        //     throw new BaseError(ERROR_CODE.UNAUTHORIZED);
+        // }
+
+        const postCounts = await this.postService.getNewPostsCounts({
+            accountId: '1',
+            postType: args.postType || null,
+            postState: args.postState || null,
+        });
+
+        return res.json(new NewPostCount(postCounts));
     }
 
     //
