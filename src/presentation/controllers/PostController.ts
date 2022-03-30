@@ -1,10 +1,14 @@
 import { Arg, Args, Ctx, FieldResolver, Mutation, Query, Resolver, Root, UseMiddleware } from 'type-graphql';
 import { Container, Inject, Service } from 'typedi';
-import { Post } from '../../entities/Post';
 import { PostService } from '../../application/services/PostService';
 import { AuthMiddleware } from '../../infrastructure/express/middlewares/AuthMiddleware';
-
-import { Get, JsonController, Param, Req, Res, UseBefore } from 'routing-controllers';
+import { Post as ContentPost } from '../../entities/Post';
+import { Body, Get, JsonController, Param, Req, Res, UseBefore, Post } from 'routing-controllers';
+import { GetPostsReqDto } from './dtos/GetPostsReqDto';
+import { PostState } from '../../entities/Enums';
+import BaseError from '../../domain/exceptions/BaseError';
+import { ERROR_CODE } from '../../domain/exceptions/ErrorCode';
+import { PostConnection } from '../resolvers/schemas/PostConnection';
 
 @Service()
 @JsonController('/post')
@@ -19,7 +23,7 @@ export class PostController {
     async getPost(
         @Param('postId') postId: string,
         @Req() req: any, @Res() res: any,
-    ): Promise<Post> {
+    ): Promise<ContentPost> {
         const account = req.account;
         console.log(this == null);
         console.log(this.postService == null);
@@ -28,6 +32,29 @@ export class PostController {
             postId,
             myAccountId: account ? account.id : null,
         });
+    }
+
+    @Post('/posts')
+    @UseBefore(AuthMiddleware)
+    async getPosts(
+        @Body() args: GetPostsReqDto,
+        @Req() req: any, @Res() res: any,
+    ): Promise<PostConnection> {
+        if (args.postState && args.postState === PostState.Deleted) {
+            console.error('post state cannot be deleted');
+            throw new BaseError(ERROR_CODE.INVALID_POST_STATE);
+        }
+        const account = req.account;
+        const posts = await this.postService.getPosts({
+            myAccountId: account ? account.id : null,
+            accountId: args.accountId,
+            hasUsedEmoticons: false,
+            after: args.after ? args.after : null,
+            limit: args.first,
+            postType: args.postType || null,
+            postState: args.postState || null,
+        });
+        return new PostConnection(posts, 'id');
     }
 
     //
